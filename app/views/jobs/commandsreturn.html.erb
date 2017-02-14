@@ -1,0 +1,31 @@
+<div class="headlabel" align="center">
+<h1>Retrun</h1>
+<table class="mainTable" id="widthControl1">
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', :action => "show",:id => @job_id, :controller=>"jobs" %></div></td>
+			</tr>
+			<tr><td>
+				<table class="tableDetail">
+					<tr>
+						<td>Commmand</td>
+						<td id="secondTd"><%=h mask_sensitive_string(@run_commands.commands) %></td>
+					</tr>
+					<tr>
+						<td>Return</td>
+						<td id="secondTd">
+						  <%if @run_commands.ret_mark%>
+						  <%for ret_mark in @run_commands.ret_mark.split("\n")%>
+						    <p><%=h ret_mark %></p>
+						  <%end%>
+						  <%end%>
+						</td>
+					</tr>
+				</table>
+			</td></tr>
+		</table>
+	</td></tr>
+</table>
+
+</div>

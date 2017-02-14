@@ -1,0 +1,36 @@
+<h2 class="bodyTitle">All Active Snapshot</h2>
+<table class="mainTable">
+<tr><td>
+<table class="tableList">
+  <tr>
+    <th>Snapshot ID</th>
+	<th>State</th>
+	<th>AMI ID</th>
+    <th>Volume ID</th>
+	<th>Size</th>
+	<th>Region</th>
+	<th>Operations</th>
+    <th>Create Time</th>
+  </tr>
+
+<% count = 0 %>
+<% for record in @records %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+    <td><%=h record[:snapshot_id] %></td>
+	<td><%=h record[:status] %></td>
+	<td><%=h record[:ami] %></td>
+    <td><%=h record[:volume_id] %></td>
+	<td><%=h record[:size] %></td>
+	<td><%=h record[:region] %></td>
+	<td></td>
+	<td><%=h record[:start_at] %></td>	
+  </tr>
+<% count = count + 1 %>
+<% end %>
+</table>
+</td></tr>
+</table>>

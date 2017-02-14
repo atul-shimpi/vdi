@@ -1,0 +1,31 @@
+ONE_MINUTE = 60
+ONE_HOUR = 60
+
+class Ec2machine < ActiveRecord::Base
+  has_many :jobs
+  
+  def is_publicdns_valid
+    #TODO: the ip checker should be optimized
+    ipnums = public_dns.split('.')    
+    if public_dns && (public_dns.include?('ec2') || ipnums.size >=4)
+      return true
+    else 
+      return false
+    end
+  end
+  
+  def self.is_valid_ip(ip)
+    #TODO: the ip checker should be optimized    
+    ipnums = ip.split('.')
+    if ipnums.size ==4
+      return true
+    else 
+      return false
+    end
+  end
+
+  def running_for_hour?
+   running_for_minutes = ((Time.now - launch_time).to_i)/ONE_MINUTE
+   return (running_for_minutes >= ONE_HOUR)
+  end
+end

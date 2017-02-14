@@ -1,0 +1,72 @@
+<div align="center">
+<table class="mainTable" id="widthControl1">
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', elasticips_path %></div></td>
+			</tr>
+			<tr><td>
+				<table class="tableDetail">
+					<tr>
+					  <td><b>Elastic IP Operations:</b></td>
+					  <td id="secondTd">
+					  	<%if @elasticip.deleted == 0 %>
+					    <%= link_if can_access('edit','elasticips'), 'Edit', edit_elasticip_path(@elasticip) %>
+					    <%if !@elasticip.is_attached%>
+						<br> <%= link_if can_access('attach','elasticips'), 'Attach', :action=>"attach", :controller=>"elasticips", :id=>@elasticip.id %>
+						<br> <%= link_if can_access('destroy','elasticips'), 'Delete', @elasticip, :confirm => 'Are you sure?', :method => :delete %>
+						<%elsif @elasticip.is_attached%>
+						<br> <%= link_if can_access('detach','elasticips'), 'Detach', :action=>"detach", :controller=>"elasticips", :id=>@elasticip.id %>
+						<%end%>
+						<%end%>
+					  </td>
+					</tr>
+					  <td><b>elasticip Name:</b></td>
+					  <td id="secondTd"><%=h @elasticip.name %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>elasticip IP:</b></td>
+					  <td id="secondTd"><%=h @elasticip.ip %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Owner:</b></td>
+					  <td id="secondTd"><%=h @elasticip.user.name if @elasticip.user %></td>
+					</tr>
+					<tr>
+					
+					<tr>
+					  <td><b>Region:</b></td>
+					  <td id="secondTd"><%=h @elasticip.region%></td>
+					</tr>
+					
+   				    <tr>
+					  <td><b>Attached Job:</b></td>
+					  <td id="secondTd"><%=h @elasticip.job_id%></td>
+					</tr>
+   				    <tr>
+					  <td><b>Scope:</b></td>
+					  <td id="secondTd"><%=h @elasticip.scope%></td>
+					</tr>
+   				    <tr>
+					  <td><b>Allocation ID:</b></td>
+					  <td id="secondTd"><%=h @elasticip.allocation_id%></td>
+					</tr>										
+					<tr>
+					  <td><b>Is Deleted:</b></td>
+					  <td id="secondTd"><%= @elasticip.deleted == 0 ? "No" : "Yes"%></td>
+					</tr>	
+					<tr>
+					  <td><b>Create Time:</b></td>
+					  <td id="secondTd"><%=h @elasticip.created_at%></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Updated Time:</b></td>
+					  <td id="secondTd"><%=h @elasticip.updated_at %></td>
+					</tr>
+				</table>
+	</td></tr>
+</table>	
+</div>

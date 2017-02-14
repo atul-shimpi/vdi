@@ -1,0 +1,235 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'popen4'
+require 'daemons'
+require 'thread'
+require 'time'
+
+RAILS_ENV = 'production'
+#RAILS_ENV = 'development'
+APP_DIR = File.join(File.dirname(File.expand_path(__FILE__)), '..')
+
+# Daemonising changes the pwd to /, so we need to switch 
+# back to RAILS_ROOT.
+Dir.chdir(APP_DIR)
+
+# Load our Rails environment.
+require File.join('config', 'environment')
+@@config = YAML.load_file(RAILS_ROOT + "/config/config.yml")
+@@database = YAML.load_file(RAILS_ROOT + "/config/database.yml")
+@@pk = @@config["ec2_bin_path"] + @@config["pk"]
+@@cert = @@config["ec2_bin_path"] + @@config["cert"]
+@@schedule5_check_file = @@config["task_checker_file"] + "_5"
+@@deploy_count = 0
+@@recover_count = 0
+
+def deploy_job(job)
+  ScheduleTask.wtire_current_task_time(@@schedule5_check_file)
+  if job.configuration_id != nil
+    Job.write_user_data(job)
+  end
+  start_deploy_job(job)
+end
+
+def start_deploy_job(job)
+  if job.state != "Deploying"
+    job.state = "Deploying"  
+    job.save
+  end
+  puts "Start deploy job: " + job.id.to_s
+  puts "Getting commands"
+  cmds = Cmd.find(:all,:conditions => ["job_id = :job_id and job_type= :create", {:job_id =>job.id,:create=>"C"}])
+  puts "Commands got"
+  cmds.each do |cmd|
+    commandLine = cmd.command
+    # Skip the duplicate deployment
+    if commandLine.include?(@@config["create_instance"]) || commandLine.include?(@@config["create_spot_instance"])
+      updatedCMD = Cmd.find(cmd.id) 
+      if updatedCMD.state != nil && updatedCMD.state != "" && updatedCMD.state != "Pending"
+        if updatedCMD.state == "Fail"
+          break
+        elsif updatedCMD.state == "Running"
+          # Skip running command
+          break
+        elsif commandLine.include?(@@config["create_spot_instance"])
+          # If spot deployment, set it to Open and the spot request is the last command
+          if cmds[(cmds.size)-1].id == updatedCMD.id
+            job.state = "Open"
+          else
+            next
+          end
+        else
+          job.state = "Run"
+        end
+        job.save
+        next
+      end
+      cmd.state = "Running"
+      cmd.save
+    end  
+    # Skip success command
+    if cmd.state == "Success"
+      puts "Skip successed command: " + cmd.command
+    else
+      #Sometimes, the command update was failed.
+      if commandLine.include?('$securitygroup_id')
+        puts "update security group"
+        ScheduleTask.update_securitygroup_id(job)
+        puts "security group updated"
+        job.state = "Pending"
+        job.save
+        puts "Set retry"
+        ScheduleTask.set_cmd_retry(cmd, job, "SecurityGroup was not replaced")
+        break
+      end
+      sleep 1
+      puts "start run command " +  commandLine
+      POpen4.popen4(commandLine) do |stdout, stderr, stdin, pid|
+        puts "Finished command " +  commandLine
+        status_out = stdout.read.strip
+        status_err = stderr.read.strip          
+        #puts status_out
+        #puts "Error:"
+        #puts status_err
+        if status_out != nil && status_out != ""
+          cmd.state = "Success"
+          cmd.updated_at = Time.now
+          cmd.save
+          lines = status_out.split("\n")
+          if lines[0]
+            records = lines[0].split(" ")
+            #Update the security group ids. since VPC deployment need security group id. the name does not work for vpc
+            if commandLine.include?(@@config["add_group"]) && records[1] && records[1].include?("sg-")
+              group = Securitytype.find_by_name(job.securitytype_name)              
+              group.securitygroup_id = records[1]              
+              group.save
+              ScheduleTask.update_all_securitygroup_id(job, group.securitygroup_id)
+              if job.is_vpc
+                #restart the deploymented once have the group created for vpc deployment
+                job.state = "Pending"
+                job.save
+                break
+              end
+            end
+          end
+          if lines[1]
+            records = lines[1].split(" ")
+            if records[1] && records[1].include?("i-")
+              ec2machine = Ec2machine.new()
+              ec2machine.instance_id = records[1]
+              puts "Initial the EC2 machine"
+              ScheduleTask.initialec2machine(ec2machine)
+              job.ec2machine_id = ec2machine.id
+              job.state = "Run"
+              job.save
+              puts "Job deployed: " + job.id.to_s
+              break              
+            end
+          end
+          if status_out.include?("sir-")
+            requests = status_out.split(" ")
+            job.request_id = requests[1]
+            job.state = "Open"
+            puts "Job deployed: " + job.id.to_s
+            job.save
+            break
+          end
+        else
+          if status_err == nil || status_err == "" || status_err.include?("Client.InvalidPermission.Duplicate") || 
+            status_err.include?("Client.InvalidGroup.Duplicate")
+            # This error is because of re-add ports to security group, we can treat the command success.
+            cmd.state = "Success"
+            cmd.updated_at = Time.now
+            cmd.save
+          else
+            puts status_err
+            puts cmd.command
+            ScheduleTask.set_cmd_retry(cmd, job, status_err)
+            break;
+          end
+        end
+      end
+    end
+  end
+end
+
+def create_instances_task 
+  @@deploy_count = @@deploy_count + 1
+  puts "Deploy count: " + @@deploy_count.to_s
+  
+  if @@deploy_count >= 3
+    puts "To many deployment process running, skip it"
+    @@deploy_count = @@deploy_count - 1
+    return
+  end
+  
+  skip_count = 0  
+  deploy = true  
+  ScheduleTask.each_job("('Pending')") do |index, job, pending_jobs_count|	
+	if (index == 2) and (pending_jobs_count < 4)	 			
+		if ((job.state == "Run") or (job.state == "Deploying"))		  
+			puts "Skip machine deployment, another task is running"
+			deploy = false
+		end #job.state == Deploying
+		if deploy
+			puts "deploying"
+			deploy_job(job)
+		end
+	end #index == 6			  
+  end #ScheduleTask.each_job 
+  @@deploy_count = @@deploy_count - 1
+end
+
+# Do not make this process synchronized to avoid the dead task
+def cleanup_dead_deployment
+  @@recover_count = @@recover_count + 1
+  puts "Recover count: " + @@recover_count.to_s
+  if @@recover_count >= 2
+    puts "To many recover process running, skip it"
+    @@recover_count = @@recover_count - 1
+    return
+  end
+  ScheduleTask.cleanup_dead_deployment(9, 2, "id desc")  
+  @@recover_count = @@recover_count - 1
+end
+
+Daemons.run_proc(
+  'schedule',
+  :dir_mode => :normal, 
+  :dir => File.join(APP_DIR, 'log'),
+  :multiple => false,
+  :backtrace => true,
+  :monitor => true,
+  :log_output => true
+) do    
+  begin
+    # Initialise the OpenWFE scheduler object.
+    require 'rufus/scheduler'
+    @@scheduler = Rufus::Scheduler.start_new
+    #scheduler.start
+    
+    ActiveRecord::Base.connection.reconnect! unless ActiveRecord::Base.connection.active?
+
+    # Now assign jobs to the scheduler (see API). For example:
+    
+    #Create instances
+    @@scheduler.every("25s") do
+      puts Time.now.to_s + "create_instances"      
+      # If there is no pending jobs then treat the task works correctly.
+      if ScheduleTask.jobs_count("('Deploying', 'Pending')") == 0
+       ScheduleTask.wtire_current_task_time(@@schedule5_check_file)
+      else
+        create_instances_task
+      end
+    end
+    
+    @@scheduler.every("26s") do
+      cleanup_dead_deployment
+    end
+    
+    @@scheduler.join
+  rescue => e
+    RAILS_DEFAULT_LOGGER.warn "Exception in schedule: #{e.inspect}"
+    exit
+  end
+end

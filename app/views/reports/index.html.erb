@@ -1,0 +1,20 @@
+<div class="headlabel"><h1>Reports</h1></div>
+<table width="100%">
+<tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;&nbsp;<%= link_if can_access('active_jobs_by_user','reports'), '<img class="secondBarImage" src="/images/ReleaseDemo.png">&nbsp;Job counts by User', :action=> 'active_jobs_by_user', :controller=>'reports'%> </td></tr>
+<tr><td>&nbsp;&nbsp;<%= link_if can_access('cost_by_user','reports'), '<img class="secondBarImage" src="/images/ReleaseDemo.png">&nbsp;Cost by User', :action=> 'cost_by_user', :controller=>'reports'%> </td></tr>
+<tr><td>&nbsp;&nbsp;<%= link_if can_access('cost_by_team','reports'), '<img class="secondBarImage" src="/images/ReleaseDemo.png">&nbsp;Cost by Team', :action=> 'cost_by_team', :controller=>'reports'%> </td></tr>
+<tr><td>&nbsp;&nbsp;<%= link_if can_access('cost_by_template','reports'), '<img class="secondBarImage" src="/images/ReleaseDemo.png">&nbsp;Cost by Template', :action=> 'cost_by_template', :controller=>'reports'%> </td></tr>
+<tr><td>&nbsp;&nbsp;<%= link_if can_access('machines_by_availablezone','reports'), '<img class="secondBarImage" src="/images/ReleaseDemo.png">&nbsp;Machines by avaialbe zone', :action=> 'machines_by_availablezone', :controller=>'reports'%> </td></tr>
+<tr><td>&nbsp;&nbsp;<%= link_if can_access('dirty_ami','reports'), '<img class="secondBarImage" src="/images/ReleaseDemo.png">&nbsp;AMIs not in VDI or deleted on VDI', :action=> 'dirty_ami', :controller=>'reports'%></td></tr>
+<tr><td>&nbsp;&nbsp;<%= link_if can_access('dirty_snapshot','reports'), '<img class="secondBarImage" src="/images/ReleaseDemo.png">&nbsp;Snapshots is not used in VDI', :action=> 'dirty_snapshot', :controller=>'reports'%> </td></tr>
+<tr><td>&nbsp;&nbsp;<%= link_if can_access('active_ami','reports'), '<img class="secondBarImage" src="/images/ReleaseDemo.png">&nbsp;All Active AMIs', :action=> 'active_ami', :controller=>'reports'%> </td></tr>
+<tr><td>&nbsp;&nbsp;<%= link_if can_access('active_ebs','reports'), '<img class="secondBarImage" src="/images/ReleaseDemo.png">&nbsp;All Active EBS', :action=> 'active_ebs', :controller=>'reports'%> </td></tr>
+<tr><td>&nbsp;&nbsp;<%= link_if can_access('active_instance','reports'), '<img class="secondBarImage" src="/images/ReleaseDemo.png">&nbsp;All Active Instances', :action=> 'active_instance', :controller=>'reports'%> </td></tr>
+<tr><td>&nbsp;&nbsp;<%= link_if can_access('active_snpshot','reports'), '<img class="secondBarImage" src="/images/ReleaseDemo.png">&nbsp;All Active Snapshot', :action=> 'active_snapshot', :controller=>'reports'%> </td></tr>
+<tr><td>&nbsp;&nbsp;<%= link_if can_access('active_spot','reports'), '<img class="secondBarImage" src="/images/ReleaseDemo.png">&nbsp;All Active Spot', :action=> 'active_spot', :controller=>'reports'%> </td></tr>
+<tr><td>&nbsp;&nbsp;<%= link_if can_access('templates_by_team','reports'), '<img class="secondBarImage" src="/images/ReleaseDemo.png">&nbsp;Template Count by team', :action=> 'templates_by_team', :controller=>'reports'%> </td></tr>
+<tr><td>&nbsp;&nbsp;<%= link_if can_access('all_jobs_by_owner_disabled','reports'), '<img class="secondBarImage" src="/images/ReleaseDemo.png">&nbsp;All jobs from dislabed user', :action=> 'all_jobs_by_owner_disabled', :controller=>'reports'%>
+</td></tr>
+<tr><td>&nbsp;</td></tr>
+</table>

@@ -1,0 +1,37 @@
+<div class="headlabel" align="center">
+	<h1>Editing template mapping</h1>
+	
+<% form_for(@edit_template_mapping) do |f| %>
+<table class="mainTable" style="width:45%">
+	<tr><td><%= f.error_messages %></td></tr>
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', template_mappings_path %></div></td>
+				<td><div align="right"><%= link_to 'Show', @edit_template_mapping %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<tr>
+						<td class="firstTd"><b>Template mapping name:</b></td>
+						<td id="secondTd"><%= f.text_field :name %></td>
+					</tr>
+					<tr>
+						<td class="firstTd"><b><%= f.label :template%></b></td>
+						<td id="secondTd"> <%= f.select :template_id, @templates.collect{|template| [template.id.to_s + "--" + template.name, template.id]},{:include_blank => false,:selected => @edit_template_mapping.template_id},:class=>"input_search"%></td>
+					</tr>
+					<tr>
+						<td class="firstTd"><b><%= f.label :usage%></b></td>
+						<td id="secondTd"><%= f.select :usage, @template_usages,{:include_blank => false,:selected => @edit_template_mapping.usage},:class=>"input_search"%></td>
+					</tr>
+				</table>
+			</td></tr>
+			
+			<tr><td colspan="2" align="right">
+				<%= f.submit "Update" %>
+			</td></tr>
+		</table>
+	</td></tr>
+</table>	
+<% end %>	
+</div>

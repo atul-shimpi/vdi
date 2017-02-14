@@ -1,0 +1,37 @@
+<div class="headlabel" align="center">
+	<h1>New Snapshot</h1>
+	<table class="mainTable" id="widthControl1">
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'BACK', snapshots_path %></div></td>
+				<td><div align="center"><%= error_messages_for :snapshot %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<% form_for(@snapshot) do |f| %>
+				    <%= hidden_field_tag :job_id, @job_id if(@job_id && !@job_id.blank? )%>  
+				    <%= hidden_field_tag :volume_id, @ebsvolume_id %>
+				    <tr> 	  
+				      <td><b>EBS Volume ID:</b></td>
+				      <td id="secondTd"><%= h @ebsvolume_id %></td>
+				    </tr>		
+				  	<%= hidden_field_tag :region, @region %>
+				    <tr> 	  
+				      <td><b>Region:</b></td>
+				      <td id="secondTd"><%= h @region %></td>
+				    </tr>		
+				    <tr>
+				      <td><label for="name">Name</label></td>
+				      <td id="secondTd"><%= f.text_field :name %></td>
+				    </tr>
+				</table>
+			</td></tr>
+			<tr><td align="right" colspan="2">
+				<%= f.submit "Create" %>
+			</td></tr>
+			<% end %>
+		</table>
+	</td></tr>
+</table>
+</div>

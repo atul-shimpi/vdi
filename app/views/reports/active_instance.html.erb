@@ -1,0 +1,46 @@
+<h1>All Active Instance</h1>
+
+<table>
+<h2 class="bodyTitle">All Active Instance</h2>
+<table class="mainTable">
+<tr><td>
+<table class="tableList">
+<h1>All Active Instance</h1>
+<table>
+  <tr>
+    <th>Instance ID</th>
+	<th>State</th>
+	<th>Job Name</th>	
+    <th>Instance Type</th>
+	<th>OS</th>
+	<th>AMI</th>
+	<th>Security Group</th>
+	<th>Avaliable Zone</th>	
+	<th>Region</th>
+	<th>Operations</th>
+    <th>Launch Time</th>
+  </tr>
+<% count = 0 %>
+<% for record in @records %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+    <td><%=h record[:instance_id] %></td>
+	<td><%=h record[:state] %></td>
+	<td><%=h record[:job_name] %></td>
+    <td><%=h record[:instance_type] %></td>
+	<td><%=h record[:os] %></td>
+	<td><%=h record[:ami_id] %></td>
+    <td><%=h record[:security_group] %></td>	
+	<td><%=h record[:availabilityZone] %></td>
+	<td><%=h record[:region] %></td>
+	<td></td>
+	<td><%=h record[:launche_time] %></td>	
+  </tr>
+<% count = count + 1 %>
+<% end %>
+</table>
+</td></tr>
+</table>e>

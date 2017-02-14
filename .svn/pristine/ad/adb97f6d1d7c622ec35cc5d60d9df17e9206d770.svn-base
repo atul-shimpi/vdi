@@ -1,0 +1,154 @@
+#windows
+ec2_bin_path : C:\ec2-api-tools-1.4\bin\
+get_instance_command : ec2-describe-instances.cmd
+pk : VDI-key.pem
+cert : VDI-cert.pem
+delete_securitygroup_command : ec2-delete-group.cmd
+delete_instance_command : ec2-terminate-instances.cmd
+get_ami_command : ec2-describe-images.cmd
+add_group : ec2-add-group.cmd
+change_group_port : ec2-authorize.cmd
+create_instance : ec2-run-instances.cmd
+create_spot_instance : ec2-request-spot-instances.cmd
+check_spot_requests : ec2-describe-spot-instance-requests.cmd
+cancel_spot_requests : ec2-cancel-spot-instance-requests.cmd
+ec2-reboot-instances : ec2-reboot-instances.cmd
+ec2-stop-instances : ec2-stop-instances.cmd
+ec2-start-instances : ec2-start-instances.cmd
+ec2-create-image: ec2-create-image.cmd
+key-pair: gdev-xqs
+java_jar_path: F:\gDevVDI\external\telnet\out\dist\telnet.jar
+get_volume_command: ec2-describe-volumes.cmd
+get_snapshot_command: ec2-describe-snapshots.cmd
+create_snapshot: ec2-create-snapshot.cmd
+create_ebs_volume: ec2-create-volume.cmd
+delete_snapshot: ec2-delete-snapshot.cmd
+delete_ebs_volume: ec2-delete-volume.cmd
+ec2-attach-volume: ec2-attach-volume.cmd
+ec2-detach-volume: ec2-detach-volume.cmd
+ec2-allocate-address: ec2-allocate-address.cmd
+ec2-release-address: ec2-release-address.cmd
+ec2-associate-address: ec2-associate-address.cmd
+ec2-disassociate-address: ec2-disassociate-address.cmd
+ec2-describe-addresses: ec2-describe-addresses.cmd
+ec2-revoke: ec2-revoke.cmd
+cloudwatch_bin_path : C:\CloudWatch-1.0.20.0\bin\
+cw-get-stats: mon-get-stats.cmd
+
+#public
+task_checker_file: /temp/task_checker
+regions: us-east-1
+create_instances_time : 115
+update_dns_interval : 80s
+delete_expire_job_interval : 355s
+delete_securitygroup_interval : 30m
+check_spot_requests_time: 190s
+power_operations_interval: 1m
+
+#iland
+iland_api_jar_path: C:\Sandbox\gdevVDI\external\iland\out\dist\Iland.jar
+iland_configuration_path: C:\Sandbox\gdevVDI\external\iland\
+iland_new_vapp: com.iland.api.NewVappFromTemplate
+iland_create_vm: com.iland.api.GetVmFromVapp
+iland_delete_job: com.iland.api.UndeployVM
+iland_delete_vapp: com.iland.api.UndeployVapp
+iland_start_instances: com.iland.api.PowerOn
+iland_stop_instances: com.iland.api.PowerOff
+iland_reboot_instances: com.iland.api.RebootVM
+iland_capture_template: com.iland.api.CaptureTemplate
+iland_get_vm_status: com.iland.api.GetVMStatus
+iland_get_vapp_status: com.iland.api.GetVappStatus
+iland_get_template_status: com.iland.api.GetTemplateStatus
+iland_get_all_vm: com.iland.api.GetAllVm
+iland_region: iland
+
+iland_new_job_interval : 5m
+iland_get_vmstatus_interval : 1m
+iland_capture_template_interval: 5m
+iland_get_template_status_interval: 5m
+iland_undeploy_interval: 1m
+iland_reboot_interval: 1m
+
+mask: 255.255.255.0
+public_dns: 147.75.152.0
+
+# Time in minute
+send_mail_interval: 1
+job_expire_warning_interval: 30
+invalid_password: QEL9MoMS, alterpoint, vmlogix, Changeme!, zen2oidh
+
+windows : Windows
+ubuntu : Ubuntu
+fedora : Fedora
+centos : Cent Os
+debian : Debian
+gentoo : Gentoo
+opensolaris : OpenSolaris
+redhat : Red Hat
+suse : SUSE
+keylist : windows,ubuntu,fedora,centos,debian,gentoo,opensolaris,redhat,suse
+per_page : 50
+create_security_group_description : Create Security Group
+add_security_group_protocol_description : Add Security Group protocol
+add_security_group_port_description : Port
+add_security_group_source_description : Source
+create_normal_instance_description : Create Normal Instance
+create_spot_instance_description : Create Spot Instance
+# Available deployment way: Spot, normal
+admin_job_deploymentway : DailyOff,Spot,normal
+other_user_job_deploymentway : DailyOff,Spot
+iland_job_deploymentway : DailyOff,normal
+conf_admin_job_deploymentway : normal
+conf_other_user_job_deploymentway : normal
+#Can only deployed as normal
+only_ebs_instances: t1.micro
+template_usage: Dev,QA,other
+
+environment: development
+ec2_account_id: 572481847476
+init_cmd_path: /tmp/userdata
+verify: vdiservice
+default_spot_quota: 300
+demo_deploy_userid: 333
+demo_mailer.address: smtp.gmail.com
+demo_mailer.port: 587
+demo_mailer.domain: gdev.biz
+demo_mailer.user_name: relay@gdev.biz
+demo_mailer.password: 123456
+license_manager: tech@gdev.com
+#linux
+#ec2_bin_path : /opt/ec2-api-tools/bin/
+#get_instance_command : ec2-describe-instances
+#pk : pk-LLC4YOKVZ2RRXMATEXGUSGCIE7OP7I5V.pem
+#cert : cert-LLC4YOKVZ2RRXMATEXGUSGCIE7OP7I5V.pem
+#delete_securitygroup_command : ec2-delete-group
+#delete_instance_command : ec2-terminate-instances
+#get_ami_command : ec2-describe-images
+#add_group : ec2-add-group
+#change_group_port : ec2-authorize
+#create_instance : ec2-run-instances
+#create_spot_instance : ec2-request-spot-instances
+#check_spot_requests : ec2-describe-spot-instance-requests
+#cancel_spot_requests : ec2-cancel-spot-instance-requests
+#ec2-reboot-instances : ec2-reboot-instances
+#ec2-stop-instances : ec2-stop-instances
+#ec2-start-instances : ec2-start-instances
+#ec2-create-image: ec2-create-image
+#key-pair: gdevvdi
+#java_jar_path: /var/www/gdevvdi/external/telnet/out/dist/Telnet.jar
+#get_volume_command: ec2-describe-volumes
+#get_snapshot_command: ec2-describe-snapshots
+#create_snapshot: ec2-create-snapshot
+#create_ebs_volume: ec2-create-volume
+#delete_snapshot: ec2-delete-snapshot
+#delete_ebs_volume: ec2-delete-volume
+#ec2-attach-volume: ec2-attach-volume
+#ec2-detach-volume: ec2-detach-volume
+#ec2-allocate-address: ec2-allocate-address
+#ec2-release-address: ec2-release-address
+#ec2-associate-address: ec2-associate-address
+#ec2-disassociate-address: ec2-disassociate-address
+#ec2-describe-addresses: ec2-describe-addresses
+#ec2-revoke: ec2-revoke
+#cloudwatch_bin_path: /home/CloudWatch-1.0.20.0/bin/
+#cw-get-stats: mon-get-stats

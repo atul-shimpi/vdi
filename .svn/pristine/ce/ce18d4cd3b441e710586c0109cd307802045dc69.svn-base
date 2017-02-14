@@ -1,0 +1,42 @@
+<div class="headlabel" align="center">
+<h1>Attach Elastic IP</h1>
+
+<%= error_messages_for :elasticip %>
+
+<% form_tag('/elasticips/attach') do%>
+<input id="id" name="id" type="hidden" value="<%= @elasticip.id  %>" />
+
+<table class="mainTable" id="widthControl1">
+  	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', elasticips_path %></div></td>
+				<td><div align="right"><%= link_to 'Show', @elasticip %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					  <tr>
+					  	<td><b>Name</b></td>
+					  	<td id="secondTd"><%=@elasticip.name%></td>  		
+					  </tr>
+					  <tr>
+					  	<td><b>IP</b></td>
+					  	<td id="secondTd"><%=@elasticip.ip%></td>  		
+					  </tr>    	
+					  <tr>
+					  	<td><b>Job ID</b></td>  
+						<td id="secondTd"><%= text_field_tag :job_id, params[:job_id]%>
+						&nbsp;<img src="/images/question-small-white.png" align="top" height="25px" title="Please input the VDI job id you want to attach the IP"></td> 
+					  </tr>
+				</table>
+			</td></tr>
+			<tr><td align="right" colspan="2">
+				 <%= submit_tag "Attach", :name => 'submit' %>
+			</td></tr>
+		</table>
+	</td></tr>
+  </table>
+
+<% end %>
+
+</div>

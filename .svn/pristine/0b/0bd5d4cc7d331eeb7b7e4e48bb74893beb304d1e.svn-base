@@ -1,0 +1,1 @@
+Please only add batutil64 to the system path when you use a 64 bit machine

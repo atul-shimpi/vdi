@@ -1,0 +1,45 @@
+<h2 class="bodyTitle">Listing Demos</h2>
+
+<table class="mainTable">
+	<tr><td style="padding-left:30px;">
+	<div>
+		<%= link_if can_access('demo_job_list','demos'), 'Active Demos', :action=> 'demo_job_list', :controller=>'demos', :scope=> "active"%> |
+		<%= link_if can_access('demo_job_list','demos'), 'All Demoss', :action=> 'demo_job_list', :controller=>'demos', :scope=> "all"%>
+	</div>
+	</td></tr>
+	<tr><td>
+		<table class="tableList">
+		  <tr>
+		    <th>ID</th>
+		    <th>Name</th>
+		    <th>Company</th>
+		    <th>Email</th>	
+		    <th>Job ID</th>
+			<th>Demo</th>
+			<th>Product</th>
+			<th>State</th>
+			<th>Lease Time</th> 
+		  </tr>
+		
+		<% count = 0 %>
+		<% for job in @demo_jobs %>
+		<% if count % 2 == 0 %>
+			<tr class="row_0">
+		<% else %>
+			<tr class="row_1">
+		<% end %>
+		    <td><%=h job.id %></td>
+			<td><%=h job.name %></td>
+			<td><%=h job.company %></td>
+			<td><%=h job.email %></td>	
+		    <td><%=link_if can_access('show','jobs'), (h job.job_id), job_path(job.job) %></td>
+		    <td><%=link_if can_access('show','demos'), (h job.demo.name), demo_path(job.demo) if job.demo %></td>
+		    <td><%=h job.demo.demo_product.name if job.demo%></td>	
+		    <td><%=h job.state %></td>
+		    <td><%=h job.job.lease_time %></td>
+		  </tr>
+		<% count = count + 1 %>
+		<% end %>
+		</table>
+	</td></tr>
+</table>

@@ -1,0 +1,37 @@
+<h2 class="bodyTitle">Listing Demos</h2>
+<table class="mainTable">
+	<tr><td>
+		<table class="tableList">
+			<tr>
+			    <th>ID</th>
+			    <th>Name</th>
+			    <th>Product </th>
+			    <th>Configuration </th>	
+			    <th>Operations</th>
+			  </tr>
+			
+			
+			<% count = 0 %>
+			<% for demo in @demos %>
+			<% if count % 2 == 0 %>
+				<tr class="row_0">
+			<% else %>
+				<tr class="row_1">
+			<% end %>
+			    <td><%=h demo.id %></td>
+			    <td><%=link_if can_access('show','demos'), (h demo.name), demo_path(demo) %></td>
+			    <td><%=h demo.demo_product.name if demo.demo_product %></td>
+			    <td><%=h demo.configuration.name if demo.configuration %></td>	
+			    <td class="imageConfig"><%= link_if can_access('edit','demos'), '<img src="/images/application_form_edit.png" title="Edit">', edit_demo_path(demo) %>&nbsp;&nbsp;&nbsp;
+			        <%= link_if can_access('destroy','demos'), '<img src="/images/application_form_delete.png" title="Delete">', demo, :confirm => 'Are you sure?', :method => :delete %></td>
+			  </tr>
+			<% count = count + 1 %>
+			<% end %>
+		</table>
+	</td></tr>
+	<tr><td class="lastTd">
+		<div align="left" class="lastRow"><img src="/images/new.png">&nbsp;<%= link_if can_access('new','demos'), 'New Demo', new_demo_path %></div>
+	</td></tr>
+</table>
+
+

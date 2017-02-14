@@ -1,0 +1,33 @@
+<table class="mainTable">
+    <tr><td><div style="height:10px;">&nbsp;</div></td></tr>
+	<tr align=center><td><div>Current Job <%= link_if can_access('show','jobs'), (h @job.name), @job %> - Lease Time: <%=@job.lease_time%></div></td></tr>
+	<tr><td>
+		<% form_tag ({:action => 'extend_lease'}) do %>
+		<table class="tableDetail" style="width:50%">
+			<tr>
+            	<td class="firstTd"><b>Warning:</b></td>
+            	<td id="secondTd">Make sure the reason is at least 30 characters</td>
+        	</tr>
+			<tr>
+            	<td class="firstTd"><b>Extend Days(1-7):</b></td>
+            	<td id="secondTd">
+				<%= select_tag :days, options_for_select(ExtendLeaseLog::DAYS,params[:days].to_i)%>
+				</td>
+        	</tr>
+			<tr>
+            	<td class="firstTd"><b>Reason:</b></td>
+            	<td id="secondTd"><%= text_area_tag 'reason',params[:reason],{:size=>"35x6"}%></td>
+        	</tr>
+			<tr><td colspan="2" align="right">
+			   <div id="submit_link">
+			     <%= image_submit_tag("submit_button.png")%>
+               </div>
+			</td></tr>
+		</table>
+		<%end%>
+	</td></tr>
+	
+	<tr><td>
+		<%=render :partial => "extend_lease_logs"%>
+	</td></tr>
+</table>

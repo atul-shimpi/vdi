@@ -1,0 +1,56 @@
+<table class="tableList">
+  <tr>
+    <th>ID</th>
+    <th>IP</th>	
+	<th>Name</th>
+    <th>Owner</th>	
+	<th>Region</th>
+	<th>Associated Job</th>
+	<th>Scope</th>
+	<th>Allocation ID</th>
+	<th>IS Deleted</th>
+    <th colspan="4">Operations</th>
+  </tr>
+<% count = 0 %>
+<% for elasticip in @elasticips %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+    <td><%=h elasticip.id %></td>
+    <td><%= link_if can_access('show','elasticips'), (h elasticip.ip), elasticip %></td>
+    <td><%=h elasticip.name%></td>
+	<td ><%=h elasticip.user.name if elasticip.user %></td>
+	<td><%=h elasticip.region%></td>
+	<td><%=h elasticip.job_id %></td>
+	<td><%=h elasticip.scope %></td>
+	<td><%=h elasticip.allocation_id %></td>
+	<td><%if elasticip.deleted == 0%>
+	    No
+		<%else%>
+		Yes
+		<%end%>
+	</td>
+	<% if elasticip.can_access_elasticip(current_user) %>
+    <td class="imageConfig"><%= link_if can_access('show','elasticips'), '<img src="/images/application_form_magnify.png" title="Show">', elasticip %></td>
+    <%end%>
+	<%if elasticip.deleted == 0 %>
+	<% if elasticip.can_access_elasticip(current_user) %>
+    <td class="imageConfig"><%= link_if can_access('edit','elasticips'), '<img src="/images/application_form_edit.png" title="Edit">', edit_elasticip_path(elasticip) %></td>
+    <%if !elasticip.is_attached%>
+	<td class="imageConfig"><%= link_if can_access('destroy','elasticips'), '<img src="/images/application_form_delete.png" title="Delete">', elasticip, :confirm => 'Are you sure?', :method => :delete %></td>
+	<td><%= link_if can_access('attach','elasticips'), 'Attach', :action=>"attach", :controller=>"elasticips", :id=>elasticip.id %></td>
+	<%elsif elasticip.is_attached %>
+	<td><%= link_if can_access('detach','elasticips'), 'Detach', :action=>"detach", :controller=>"elasticips", :id=>elasticip.id %></td>
+	<td></td>
+	<%else%>
+	  <td></td>
+	  <td></td>
+	<%end%>
+	<%end%>
+	<%end%>
+  </tr>
+<% count = count + 1 %>
+<% end %>  
+</table>

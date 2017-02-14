@@ -1,0 +1,126 @@
+<div align="center">
+<table class="mainTable">
+	<tr><td>&nbsp;</td></tr>
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td align="left"><%= link_to 'BACK', configurations_path %></td>
+				<td align="right" class="imageConfig">
+					<%= link_to 'EDIT', edit_configuration_path(@configuration) %>
+				</td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<tr>
+					  <td><b>Configuration Name:</b></td>
+					  <td id="secondTd"><%=h @configuration.name %></td>
+					</tr>
+					<%unless @configuration.updater.blank?%>
+					<tr>
+						<td><b>Latest Update</b></td>
+						<td id="secondTd"><%="By #{@configuration.updater.name} at #{@configuration.updated_at.strftime("%Y-%m-%d %H:%M:%S")}"%></td>
+					</tr>
+					<%end%>
+					<tr>
+					<tr>
+					  <td><b>Description:</b></td>
+					  <td id="secondTd"><%=h @configuration.description %></td>
+					</tr>
+					<tr>
+					  <td><b>Configuration Operations:</b></td>
+					  <td id="secondTd">
+					  	<% if @configuration.deleted == 1 %>
+							  The Configuration has been deleted
+					    <% else %>
+						  <%= link_to 'Deploy Job', :action => 'deployjob', :id => @configuration_id, :controller => "configurations" %>
+					      <br><%= link_if can_access('edit','configurations'), 'Edit', edit_configuration_path(@configuration)%>
+					      <br><%= link_if can_access('destroy','configurations'), 'Delete', @configuration, :confirm => 'Are you sure?', :method => :delete %>
+					    <% end %>
+					  </td>
+					</tr>
+					<tr>
+					  <td><b>User:</b></td>
+					  <td id="secondTd"><%=h @configuration.user.name if @configuration.user %></td>
+					</tr>
+				  <%if @template_mapping %>
+				  	<tr>
+					  <td><b>Template Mapping:</b></td>
+					  <td id="secondTd"><%= link_to (h @template_mapping.name), :action => "show",:controller => "template_mappings", :id=> @template_mapping.id %></td>
+					</tr>
+				  
+				  <%end%>
+					
+					<tr>
+					  <td><b>Template:</b></td>
+					  <td id="secondTd"><%= link_to (h @tempalte.name), :action => "show",:controller => "templates", :id=> @tempalte.id %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Instance Type:</b></td>
+					  <td id="secondTd"><%=h (@configuration.instancetype.name + ' - ' + @configuration.instancetype.description) if @configuration.instancetype %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Security Group:</b></td>
+					  <td id="secondTd"><%= link_to (h @configuration.securitygroup.name), :action => "show",:controller => "securitygroups", :id=> @configuration.securitygroup.id if @configuration.securitygroup %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Ec2machine User:</b></td>
+					  <td id="secondTd"><%=h @tempalte.user %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Password:</b></td>
+					  <td id="secondTd"><%=h @tempalte.password %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Platform:</b></td>
+					  <td id="secondTd"><%=h @tempalte.platform %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Shared to -- R/W:</b></td>
+					  <td id="secondTd"><%=h @configuration.group.name + " -- " + (h (@configuration.rpermission=='1') ) + "/" + (h (@configuration.permission == '1')) %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Deployment Way:</b></td>
+					  <td id="secondTd"><%=h @configuration.deploymentway%></td>
+					</tr>
+					<% if @configuration.deploymentway == "DailyOff" %>
+					<tr>
+					  <td><b>Daily off time:</b></td>
+					  <td id="secondTd"><%=h @configuration.poweroff_hour %> : <%=h @configuration.poweroff_min%></td>
+					</tr>
+					<% end %>
+					<tr>
+					  <td><b>Create Time:</b></td>
+					  <td id="secondTd"><%=h @configuration.created_at if @configuration.created_at %></td>
+					</tr>
+					<tr>
+					  <td><b>Update Time:</b></td>
+					  <td id="secondTd"><%=h @configuration.created_at if @configuration.updated_at %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Lease Time:</b></td>
+					  <td id="secondTd"><%=h @configuration.lease_time if @configuration.lease_time %>day</td>
+					</tr>
+					<tr>
+					  <td><b>Init Commands:</b></td>
+					  <td id="secondTd">
+					  	<%if @init_commands%>
+					  	<% for init_command in @init_commands %>
+					      <p><%=h mask_sensitive_string(init_command) %></p>
+					    <% end %>
+						<% end %>
+					  </td>
+					</tr>
+				</table>
+			</td></tr>
+		</table>
+	</td></tr>
+</table>
+</div>

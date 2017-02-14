@@ -1,0 +1,36 @@
+<h2 class="bodyTitle">Listing securitygroups</h2>
+<table class="mainTable">
+	<tr><td>
+		<table class="tableList">
+		  <tr>
+		    <th>Name</th>
+		    <th id="kong">&nbsp;</th>
+		    <th id="kong">&nbsp;</th>
+			<th id="kong">&nbsp;</th>
+		  </tr>
+		<% count = 0 %>
+		<% for securitygroup in @securitygroups %>
+		<% if count % 2 == 0 %>
+			<tr class="row_0">
+		<% else %>
+			<tr class="row_1">
+		<% end %>
+		  	<% if @user.is_admin%>
+			<td><%= link_to securitygroup.name, :action => "selectport", :id =>securitygroup.id %></td>
+			<%else%>
+			<td><%= securitygroup.name%></td>
+			<%end%>
+		    <td class="imageConfig"><%= link_if can_access('show','securitygroups'), '<img src="/images/application_form_magnify.png" title="Show">', securitygroup %></td>
+		    <td class="imageConfig"><%= link_if can_access('edit','securitygroups'), '<img src="/images/application_form_edit.png" title="Edit">', edit_securitygroup_path(securitygroup) %></td>
+		    <td class="imageConfig"><%= link_if can_access('destroy','securitygroups'), '<img src="/images/application_form_delete.png" title="Delete">', securitygroup, :confirm => 'Are you sure?', :method => :delete %></td>
+		  </tr>
+		  <% count = count + 1 %>
+		<% end %>
+		</table>
+	</td></tr>
+	<tr>
+		<td class="lastTd">
+			<div align="left"><img src="/images/new.png">&nbsp;<%= link_if can_access('new','securitygroups'), 'New securitygroup', new_securitygroup_path %></div>
+		</td>
+	</tr>
+</table>

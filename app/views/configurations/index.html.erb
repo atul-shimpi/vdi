@@ -1,0 +1,78 @@
+<h2 class="bodyTitle">Listing configurations</h2>
+<table class="mainTable">
+	<tr><td id="shortForm">
+		<% form_tag('/configurations/index') do%>
+		  <table class="tableFilter">
+		    <tr>	
+		      <td>Configuration name contains</td>
+			  <td><%= text_field_tag :search_name, params[:search_name],:class=>"input_search" %></td>
+			  <td>Team name</td>
+			  <td><%=select "filter", "search_team_id", @teamnames,{:include_blank => true},:class=>"input_search"%></td>
+		      <td><%= submit_tag "Search", :name => 'submit' %></td>
+		    <tr>
+		  </table>
+		<% end %> 
+	</td></tr>
+	<tr><td>
+		<table class="tableList">
+		  <tr>
+		  	<th>ID</th>
+		    <th>Name</th>
+			<th>Template ID</th>
+		    <th>Template Name</th>
+		    <th>Ec2 ami</th>
+		    <th>User</th>
+		    <th>Password</th>
+			<th>Archit-<br>ecture</th>
+		    <th>Platform</th>
+		    <th>Team</th>
+			<th>Image<br>size</th>
+		    <th id="kong">&nbsp;</th>
+		  </tr>
+		  <% count = 0 %>
+		<% for configuration in @configurations %>
+		 <% if count % 2 == 0 %>
+			<tr class="row_0">
+		 <% else %>
+		 	<tr class="row_1">
+		 <% end %> 
+		    <td><%=h configuration.id %></td>
+		    <td><div title="<%=configuration.name%>" id="AutoNewLine" style="width:100px;"><%= link_if can_access('show','configurations'), (h configuration.name), configuration %></div></td>
+			<% if configuration.template_mapping
+               template = configuration.template_mapping.template 
+            %>
+			  <td>TM_<%=h configuration.template_mapping.id %></td>
+			  <td><div title="TemplateMapping -- <%=configuration.template_mapping.name%>" id="AutoNewLine" style="width:100px;">TemplateMapping -- <%=h configuration.template_mapping.name %></div></td>			
+			<%else
+               template = configuration.template
+            %>
+			  <td><%=h configuration.template.id %></td>
+			  <td><div title="<%=configuration.template.name%>" id="AutoNewLine" style="width:100px;"><%=h configuration.template.name %></div></td>
+		    <%end%>
+			<td><%=h template.ec2_ami %></td>
+		    <td><%=h template.user %></td>
+		    <td><%=h template.password %></td>
+			<td><%=h template.architecture %></td>
+			<td><%=h template.platform %></td>
+			<td><%=if template.team_id
+		               h template.team.name
+		           else 
+		               "Unknown"
+		           end %>
+		    </td>
+			<td><%=h template.image_size %></td>
+		    <td class="imageConfig"><div id="AutoNewLine" style="width:120px;"><%= link_to '<img src="/images/application_form_add.png" title="deploy job">', :action => 'deployjob', :id => configuration, :controller => "configurations" %>
+		    <%= link_if can_access('show','configurations'), '<img src="/images/application_form_magnify.png" title="Show">', configuration%>
+		    <%= link_if can_access('edit','configurations'), '<img src="/images/application_form_edit.png" title="Edit">', edit_configuration_path(configuration)%>
+		    <%= link_if can_access('destroy','configurations'), '<img src="/images/application_form_delete.png" title="Delete">', configuration, :confirm => 'Are you sure?', :method => :delete %></div></td>
+		  </tr>
+		  <% count = count + 1 %>
+		<% end %>
+		</table>
+	</td></tr>
+	<tr>
+		<td class="lastTd">
+			<div align="right"><%=will_paginate(@configurations ,:prev_label=>'Previous',:next_label=>'Next',:separator=>" | ") %></div>
+		</td>
+	</tr>
+</table>

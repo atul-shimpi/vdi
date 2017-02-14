@@ -1,0 +1,46 @@
+<div class="headlabel" align="center">
+<h1>Edit License Request</h1>
+<% form_for(@edit_license_request) do |f| %>
+<table class="mainTable">
+	<tr><td><%= f.error_messages %></td></tr>
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', license_requests_path %></div></td>
+				<td><div align="right"><%= link_to 'Show', @edit_license_request %></div></td>
+			</tr>
+			<tr><td colspan=2>
+				<table class="tableDetail">
+					<tr>
+						<td><b>Software:</b</td>
+						<td id="secondTd"><%=@edit_license_request.software.name%></td>
+					</tr>
+					<tr>
+						<td><b>Requester:</b></td>
+						<td id="secondTd"><%=@edit_license_request.requester.name%></td>
+					</tr>
+					<tr>
+						<td><b>Approver:</b></td>
+						<td id="secondTd"><%=@edit_license_request.approver.name unless @edit_license_request.approver.nil?%></td>
+					</tr>
+					<tr>
+						<td><b>Count:</b></td>
+						<td id="secondTd"><%=@edit_license_request.count %></td>
+					</tr>
+					<tr>
+						<td><b>Status:</b></td>
+						<td id="secondTd"><%=f.select "status",can_access_license_request(@edit_license_request.id,'approve') ? ["new","active","closed"]:["new","closed"]%></td>
+					</tr>
+					<tr>
+						<td><b>Last Edit BY:</b></td>
+						<td id="secondTd"><%= User.find_by_id(@edit_license_request.last_edit_by).name unless @edit_license_request.last_edit_by.blank?%></td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td colspan=2 align="right"><%= f.submit "Update" %></td></tr>
+		</table>
+	</td></tr>
+</table>
+<% end %>
+
+</div>

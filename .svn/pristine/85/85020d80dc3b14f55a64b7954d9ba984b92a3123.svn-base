@@ -1,0 +1,36 @@
+<div class="headlabel" align="center">
+	<h1>New Role</h1>
+
+<table class="mainTable" id="widthControl2">
+	<tr><td>
+		<div style="height:10px;">&nbsp;</div>
+	</td></tr>
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow"><td><div align="left"><%= link_to 'Back', roles_path %></div></td>
+		    	<td><div align="center"><%= error_messages_for :role %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<% form_for(@role) do |f| %>
+				    <tr>
+				      <td><label for="user_name">Role Name</label></td>
+				      <td id="secondTd"><%= f.text_field :role_name %></td>
+				    </tr>
+				    <tr>
+				      <td><label for="user_name">Role description</label></td>
+				      <td id="secondTd"><%= f.text_field :description %></td>
+				    </tr>
+				</table>
+			</td></tr>
+			<tr><td colspan="2" align="right">
+				<%= f.submit "Create" %>
+			</td></tr>
+			 <% end %>
+		</table>
+	</td></tr>
+	<tr><td>
+		<div style="height:10px;">&nbsp;</div>
+	</td></tr>
+</table>
+</div>

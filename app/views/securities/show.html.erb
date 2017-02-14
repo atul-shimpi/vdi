@@ -1,0 +1,36 @@
+<div class="headlabel" align="center">
+  <table class="mainTable" id="widthControl1">
+  	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', securities_path %></div></td>
+				<td><div align="right"><%= link_to 'Edit', edit_security_path(@security) %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<tr>
+						<td><b>Name:</b></td>
+						<td id="secondTd"><%=h @security.name %></td>
+					</tr>
+					<tr>
+						<td><b>Protocol:</b></td>
+						<td id="secondTd"><%=h @security.protocol %></td>
+					</tr>
+					<tr>
+						<td><b>Port From:</b></td>
+						<td id="secondTd"><%=h @security.port_from %></td>
+					</tr>
+					<tr>
+						<td> <b>Port To:</b></td>
+						<td id="secondTd"><%=h @security.port_to %></td>
+					</tr>
+					<tr>
+						<td><b>Source:</b></td>
+						<td id="secondTd"><%=h @security.source %></td>
+					</tr>
+				</table>
+			</td></tr>
+		</table>
+	</td></tr>
+  </table>
+</div>

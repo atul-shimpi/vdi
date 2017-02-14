@@ -1,0 +1,1 @@
+ALTER TABLE templates ADD creator_id INT(11) NOT NULL;

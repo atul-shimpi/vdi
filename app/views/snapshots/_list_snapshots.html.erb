@@ -1,0 +1,51 @@
+<table class="tableList">
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Owner</th>
+    <th>Snapshot ID</th>
+	<th>Size</th>
+	<th>Region</th>
+	<th>Volume ID</th>
+	<th>State</th>
+	<th>IS Deleted</th>
+    <th colspan="4">Operations</th>
+  </tr>
+<% count = 0 %>
+<% for snapshot in @snapshots %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+    <td><%=h snapshot.id %></td>
+    <td><%= link_if can_access('show','snapshots'), (h snapshot.name), snapshot %></td>
+    <td ><%=h snapshot.user.name if snapshot.user %></td>
+	<td><%=h snapshot.snapshot_id %></td>
+	<td><%=h snapshot.size%></td>
+	<td><%=h snapshot.region%></td>
+	<td><%=h snapshot.volume_id %></td>
+	<td><%=h snapshot.status%></td>
+	<td><%if snapshot.deleted == 0%>
+	    No
+		<%else%>
+		Yes
+		<%end%>
+	</td>
+	<% if snapshot.can_access_snapshot(current_user) %>
+    <td class="imageConfig"><%= link_if can_access('show','snapshots'), '<img src="/images/application_form_magnify.png" title="Show">', snapshot %></td>
+    <%end%>
+	<%if snapshot.deleted == 0 %>
+	<% if snapshot.can_access_snapshot(current_user) %>
+    <td class="imageConfig"><%= link_if can_access('edit','snapshots'), '<img src="/images/application_form_edit.png" title="Edit">', edit_snapshot_path(snapshot) %></td>
+    <%if snapshot.status == "completed"%>
+	<td class="imageConfig"><%= link_if can_access('destroy','snapshots'), '<img src="/images/application_form_delete.png" title="Delete">', snapshot, :confirm => 'Are you sure?', :method => :delete %></td>
+	<%else%>
+	  <td></td>
+	<%end%>
+	<%end%>
+	<%end%>
+  </tr>
+<% count = count + 1 %>
+<% end %>  
+</table>

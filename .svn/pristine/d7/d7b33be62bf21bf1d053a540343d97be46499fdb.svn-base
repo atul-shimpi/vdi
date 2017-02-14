@@ -1,0 +1,111 @@
+# To change this template, choose Tools | Templates
+# and open the template in the editor.
+class Email < ActiveRecord::Base
+
+  @@config = YAML.load_file(RAILS_ROOT + "/config/config.yml")  
+  def self.create_job_notification(job, event, content)
+    email_match = Regexp.new(/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/)
+    email = Email.new
+    email.subject = "[VDI 1]" + event + " -- " + job.name
+    email.from = ActionMailer::Base.smtp_settings[:user_name]
+    if email.from == nil || email.from == ""
+      email.from = "support@gdev.zendesk.com"
+    end
+    to_addrs = ""
+    if job.user.email != nil
+      to_addrs = job.user.email if email_match.match(job.user.email) != nil
+      email.to = to_addrs
+    end
+    email.content = content
+    email.save    
+  end
+  
+  def self.mail_to_admin(subject, content)
+    email = Email.new
+    email.subject = "[VDI 1-Error] " + subject
+    email.from = ActionMailer::Base.smtp_settings[:user_name]
+    if email.from == nil || email.from == ""
+      email.from = "support@gdev.zendesk.com"
+    end
+    email.to = "sysadmin@gdev.com"
+    email.content = content
+    email.save     
+  end
+  
+  def self.send_lease_warning(subject, content,owner_email)
+    email = Email.new
+    email.subject = "[VDI 1] - " + subject
+    email.from = ActionMailer::Base.smtp_settings[:user_name]
+    if email.from == nil || email.from == ""
+      email.from = "support@gdev.zendesk.com"
+    end
+    email.to = "sysadmin@gdev.com,#{owner_email}"
+    email.content = content
+    email.save     
+  end
+
+  def self.mail_to_admin_about_cost_warning_jobs(jobs)
+    email_match = Regexp.new(/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/)
+    jobs.each do |job|
+      email = Email.new
+      email.subject = "[VDI 1] Job costs too much money -- " + job.id.to_s
+      email.to = "sysadmin@gdev.com"
+      if job.user.email != nil
+        to_addrs = nil
+        to_addrs = job.user.email if email_match.match(job.user.email) != nil
+        email.to = email.to + ", " + to_addrs if to_addrs
+      end
+      email.from = "ryan.shillington@devfactory.com"
+      email.content = "Can you please tell me why your job costs so much money? Is this still in use? <br>
+                      <br>
+                      The referred job is: https://vdi.gdev.com/jobs/" + job.id.to_s + "<br>"
+      email.content = email.content + job.name + "   "  + job.usage + "    " + job.created_at.to_s               
+      email.save
+    end
+  end
+  
+  def self.mail_to_requester_and_approver_notify_license_status_change(license_request_id,event)
+    license_request =LicenseRequest.find(license_request_id)
+    email =Email.new
+    email.from = "support@gdev.zendesk.com"
+    email.to = license_request.requester.email.to_s
+    email.to = email.to + "," + (license_request.approver.email).to_s if license_request.approver
+    email.to = email.to + "," + @@config["license_manager"]
+    email.subject = "[VDI 1] License Request of software #{license_request.software.name} #{event.capitalize}"
+    email.content = "Your license request of software #{license_request.software.name} 
+              (RequestID: #{license_request.id},License count: #{license_request.count})
+               has been #{event}.<br>
+              For more detail please view http://vdi.gdev.com/license_requests/#{license_request.id}"
+    email.save
+  end
+  
+  def self.update_mail_variables
+    from = ActionMailer::Base.smtp_settings[:user_name]
+    if from == nil || from == ""
+      from = "support@gdev.zendesk.com"
+    end
+    from
+  end
+
+  def self.send_network_warning(job, avg_mbps_transferred, max_mbps_transferred)
+    email_match = Regexp.new(/\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/)
+    email = Email.new
+    email.subject = "[VDI 1] Job is consuming an extreme amount of network bandwidth: " + job.id.to_s
+    email.to = "ryan.shillington@devfactory.com"
+    # if job.user.email != nil
+    #   to_addrs = nil
+    #   to_addrs = job.user.email if email_match.match(job.user.email) != nil
+    #   email.to = email.to + ", " + to_addrs if to_addrs
+    # end
+    email.from = "support@gdev.zendesk.com"
+    email.content = "This VDI Job (https://vdi.gdev.com/jobs/#{job.id}) is using WAY more network bandwidth than it should.
+        There is almost certainly a virus on this machine. You might find
+        <a href=\"https://confluence.devfactory.com/display/gDevKB/Ryan%27s+10+step+program+to+removing+this+terrible+virus+that+nobody+can+get+rid+of\">this</a> useful.<br>
+        <br>
+        Specifically, this job has averaged #{avg_mbps_transferred} MB/s, with a maximum of #{max_mbps_transferred} MB/s over the past hour. <br><br>
+        Job name: <a href=\"https://vdi.gdev.com/jobs/#{job.id}\">#{job.name}</a>, Created at: #{job.created_at}"
+
+    email.content = email.content + job.name + "   " + job.usage + "    " + job.created_at.to_s
+    email.save
+  end
+end

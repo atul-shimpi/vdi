@@ -1,0 +1,29 @@
+<div class="headlabel" align="center">
+<h1>New instancetype</h1>
+
+<% form_for(@instancetype) do |f| %>
+  <%= f.error_messages %>
+  <table class="mainTable" id="widthControl1">
+  	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', instancetypes_path %></div></td>
+			</tr>
+			<tr><td>
+				<table class="tableDetail">
+					<tr>
+						<td><%= f.label :name %></td>
+						<td id="secondTd"><%= f.text_field :name %></td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td align="right">
+				  <%= f.submit "Create" %>
+			</td></tr>
+		</table>
+	</td></tr>
+  </table>
+<% end %>
+</div>		
+
+

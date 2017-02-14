@@ -1,0 +1,4 @@
+undeployed job id:
+<% for job in @jobs %>
+  <%=h job.id %>
+<% end %>

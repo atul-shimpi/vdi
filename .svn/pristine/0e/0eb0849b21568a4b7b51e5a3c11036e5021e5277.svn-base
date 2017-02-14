@@ -1,0 +1,50 @@
+<div class="headlabel" align="center">
+<h1>Editing security</h1>
+<% form_for(@security) do |f| %>
+  <%= f.error_messages %>
+  <table class="mainTable" id="widthControl1">
+  	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', securities_path %></div></td>
+				<td><div align="right"><%= link_to 'Show', @security %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<tr>
+						<td><%= f.label :name %></td>
+						<td id="secondTd"><%= f.text_field :name %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :protocol %></td>
+						<td id="secondTd">
+							<select name="protocol">
+						        <option value="tcp">tcp</option>
+						        <option value="udp">udp</option>
+						        <option value="icmp">icmp</option> 
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td><%= f.label :port_from %></td>
+						<td id="secondTd"><%= f.text_field :port_from %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :port_to %></td>
+						<td id="secondTd"><%= f.text_field :port_to %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :source %></td>
+						<td id="secondTd"> <%= f.text_field :source %></td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td align="right" colspan="2">
+				  <%= f.submit "Update" %>
+			</td></tr>
+		</table>
+	</td></tr>
+  </table>
+<% end %>
+</div>
+

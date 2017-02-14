@@ -1,0 +1,41 @@
+<h2 class="bodyTitle">Cluster Configurations List</h2>
+<table class="mainTable">
+	<tr><td>
+		<table class="tableList">
+		  <tr>
+		  	<th>ID</th>
+		    <th>Name</th>
+			<th>Description</th>
+		    <th>State</th>
+		    <th id="kong">&nbsp;</th>
+		    <th id="kong">&nbsp;</th>
+		    <th id="kong">&nbsp;</th>
+		    <th id="kong">&nbsp;</th>
+		  </tr>
+		<% count = 0 %>
+		<% for cluster in @clusters %>
+		<% if count % 2 == 0%>
+			<tr class="row_0">
+		<% else %>
+			<tr class="row_1">
+		<% end %>
+		    <td><%=h cluster.id %></td>
+		    <td><%= link_if can_access('show','clusterconfigurations'), (h cluster.name), cluster %></td>
+			<td><%=h cluster.description %></td>
+			<td><%=h cluster.state %></td>
+		    <td><%= link_to 'deploy cluster', :action => 'deploycluster', :id => cluster.id, :controller => "clusters" %></td>
+		    <td class="imageConfig"><%= link_if can_access('show','clusters'), '<img src="/images/application_form_magnify.png" title="Show">', cluster%></td>
+		    <td class="imageConfig"><%= link_if can_access('edit','clusters'), '<img src="/images/application_form_edit.png" title="Edit">', edit_cluster_path(cluster)%></td>
+		    <td class="imageConfig"><%= link_if can_access('destroy','clusters'), '<img src="/images/application_form_delete.png" title="Delete">', cluster, :confirm => 'Are you sure?', :method => :delete %></td>
+		  </tr>
+		<% count = count + 1 %>
+		<% end %>
+		</table>
+	</td></tr>
+	<tr>
+		<td class="lastTd">
+			<div align="left" class="lastRow"><img src="/images/new.png">&nbsp;<%= link_if can_access('new','clusters'), 'New cluster configuration', new_cluster_path %></div>
+			<div align="right"><%=will_paginate(@clusters ,:prev_label=>'Previous',:next_label=>'Next',:separator=>" | ") %></div>
+		</td>
+	</tr>
+</table>

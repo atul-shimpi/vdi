@@ -1,0 +1,13 @@
+<%= javascript_include_tag 'tab/organictabs.jquery' %>
+<script type='text/javascript'>
+    jQuery(document).ready(function () {
+        jQuery("#example-two").organicTabs({
+            "speed": 200
+        });
+
+        jQuery('.top_tab_L a').click(function (e) {
+            e.preventDefault();
+            jQuery('.top_tab_links').toggle();
+        });
+    });
+</script>

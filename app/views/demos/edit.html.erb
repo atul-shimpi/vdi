@@ -1,0 +1,36 @@
+<div class="headlabel" align="center">
+<h1>Editing demo</h1>
+
+<% form_for(@demo) do |f| %>
+  <%= f.error_messages %>
+<table class="mainTable" id="widthControl1">
+  	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', demos_path %></div></td>
+				<td><div align="right"><%= link_to 'Show', @demo %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<tr>
+						<td><b><%= f.label :name %></b></td>
+						<td id="secondTd"><%= f.text_field :name %></td>
+					</tr>
+					<tr>
+						<td><b><%= f.label :configuration_id %></b></td>
+						<td id="secondTd"> <%= f.text_field :configuration_id %></td>
+					</tr>
+					<tr>
+						<td><b for="demo_product_id">Product</b></td>
+						<td id="secondTd"><%=f.select "demo_product_id", DemoProduct.find(:all).uniq.collect {|r| [ r.name, r.id ]},{:include_blank => false},:class=>"input_search"%></td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td align="right" colspan="2">
+				  <%= f.submit "Update" %>
+			</td></tr>
+		</table>
+	</td></tr>
+  </table>
+<% end %>
+</div>

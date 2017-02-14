@@ -1,0 +1,56 @@
+<h2 class="bodyTitle">Select securities</h2>
+<table class="mainTable">
+	<tr><td>
+		<table class="tableFilter">
+			<% form_for(@securitygroup) do |f| %>
+			<div id="notice"><%= flash[:notice] %></div>
+			  <tr>
+			    <td style="padding-left:30px;"><b>Securitygroup name:</b>&nbsp;<%= @securitygroup.name %></td>
+			  </tr>
+			<% end %>
+		</table>
+	</td></tr>
+	<tr><td>
+		<table class="tableList">
+		  <tr>
+		  	<th>&nbsp;</th>
+		    <th>Name</th>
+		    <th>Protocol</th>
+		    <th>Port From</th>
+		    <th>Port To</th>	
+		    <th>Source</th>
+		  </tr>
+		<% count = 0 %>
+		<% for security in @securities  %>
+		<% if count % 2 == 0 %>
+			<tr class="row_0">
+		<% else %>
+			<tr class="row_1">
+		<% end %>
+		  	<td>
+		  	  <%checked = @securitygroup.securities.include?security%>
+		      <%=check_box_tag( security.id,security.name,checked, :onclick =>
+		  remote_function(
+		    :update=>"notice",
+		    :before => "style.cursor= 'wait';",
+		    :success => "style.cursor= 'default';",
+		    :url => {:action=>'update_securitygroups_port', :securitygroup_id => @securitygroup.id,:security_id => security.id}))%>
+		    </td>
+		    <td><%=h security.name %></td>
+		    <td><%=h security.protocol %></td>
+		    <td><%=h security.port_from %></td>
+		    <td><%=h security.port_to %></td>	
+		    <td><%=h security.source %></td>
+		  </tr>
+		<% count = count + 1 %>
+		<% end %>
+		</table>
+	</td></tr>
+	<tr>
+		<td class="lastTd">
+			<div align="left"><%= link_to 'Back', securitygroups_path %></div>
+		</td>
+	</tr>
+</table>
+
+

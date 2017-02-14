@@ -1,0 +1,28 @@
+<section class="table_details">
+  <div class="table_details_heading">
+    <ul>
+      <li class="name5"><span>account</span></li>
+      <li class="name"><span>name</span></li>
+      <li class="name"><span>email</span></li>
+      <li class="id2"><span>&nbsp;</span></li>
+    </ul>
+  </div>
+  <% users.each_with_index do |user, index| %>
+      <% row_type = row_type(index) %>
+      <div class="table_details_<%= row_type %> clearfix">
+        <ul>
+          <li class="name5"><span><%= h user.account %></span></li>
+          <li class="name"><span><%= h user.name %></span></li>
+          <li class="name"><span><%= h user.email %></span></li>
+          <li class="id2"><span>
+            <%= check_box_tag(user.id, user.id, checked.call(user), :onclick =>
+                    remote_function(
+                            :update => "notice",
+                            :before => "style.cursor= 'wait';",
+                            :success => "style.cursor= 'default';",
+                            :url => {:controller => 'groups', :action => 'update_user_group', :group_id => @group.id, :user_id => user.id})) %></span>
+          </li>
+        </ul>
+      </div>
+  <% end %>
+</section>

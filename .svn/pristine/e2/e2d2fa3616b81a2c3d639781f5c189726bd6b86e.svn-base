@@ -1,0 +1,12 @@
+<div class="headlabel"><h1>Jobs from template</h1></div>
+<table class="mainTable">
+	<tr><td>&nbsp;</td></tr>
+	<tr><td>
+&nbsp;&nbsp;&nbsp;&nbsp;<%= link_to (h @template_name), :action => "show",:controller => "templates", :id=> @template_id.to_i %> <br>
+<%=render :partial => "list_jobs"%>
+
+	</td></tr>
+	<tr><td class="lastTd">
+		<div align="right"><%=will_paginate(@jobs ,:prev_label=>'Previous',:next_label=>'Next',:separator=>" | ") %></div>
+	</td></tr>
+</table>

@@ -1,0 +1,95 @@
+<div align="center">
+<table class="mainTable" id="widthControl1">
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', ebsvolumes_path %></div></td>
+			</tr>
+			<tr><td>
+				<table class="tableDetail">
+					<tr>
+					  <td><b>EBS Operations:</b></td>
+					  <td id="secondTd">
+					  	<%if @ebsvolume.deleted == 0 %>
+					    <%= link_if can_access('edit','ebsvolumes'), 'Edit', edit_ebsvolume_path(@ebsvolume) %>
+					    <%if @ebsvolume.status == "available"%>
+						<br> <%= link_if can_access('attach','ebsvolumes'), 'Attach', :action=>"attach", :controller=>"ebsvolumes", :id=>@ebsvolume.id %>
+						<br> <%= link_if can_access('destroy','ebsvolumes'), 'Delete', @ebsvolume, :confirm => 'Are you sure?', :method => :delete %>
+						<%elsif @ebsvolume.status == "attached" %>
+						<br> <%= link_if can_access('detach','ebsvolumes'), 'Detach', :action=>"detach", :controller=>"ebsvolumes", :id=>@ebsvolume.id %>
+						<%end%>
+						<%if @ebsvolume.status == "attached" ||  @ebsvolume.status == "attached"%>
+						<br> <%= link_if can_access('create','snapshots'), 'Take Snapshot', :action=>"new", :controller=>"snapshots", :ebsvolume_id=>@ebsvolume.volume_id, :region=>@ebsvolume.region %>
+						<%end%>
+						<%end%>
+					  </td>
+					</tr>
+					<tr>
+					  <td><b>Ebsvolume Status:</b></td>
+					  <td id="secondTd"><%=h @ebsvolume.status %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Ebsvolume Name:</b></td>
+					  <td id="secondTd"><%=h @ebsvolume.name %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Ebsvolume ID:</b></td>
+					  <td id="secondTd"><%=h @ebsvolume.volume_id %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Owner:</b></td>
+					  <td id="secondTd"><%=h @ebsvolume.user.name if @ebsvolume.user %></td>
+					</tr>
+					<tr>
+					
+					<tr>
+					  <td><b>Zone:</b></td>
+					  <td id="secondTd"><%=h @ebsvolume.availabilityZone%></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Region:</b></td>
+					  <td id="secondTd"><%=h @ebsvolume.region%></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Attached Device:</b></td>
+					  <td id="secondTd"><%=h @ebsvolume.attach_device%></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Size:</b></td>
+					  <td id="secondTd"><%=h @ebsvolume.size%></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Attached Instance ID:</b></td>
+					  <td id="secondTd"><%=h @ebsvolume.instance_id%></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Attached Job:</b></td>
+					  <td id="secondTd"><%=h @ebsvolume.job_id%></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Snapshot ID:</b></td>
+					  <td id="secondTd"><%=h @ebsvolume.snapshot_id%></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Create Time:</b></td>
+					  <td id="secondTd"><%=h @ebsvolume.created_at%></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Updated Time:</b></td>
+					  <td id="secondTd"><%=h @ebsvolume.updated_at %></td>
+					</tr>
+				</table>
+	</td></tr>
+</table>	
+</div>

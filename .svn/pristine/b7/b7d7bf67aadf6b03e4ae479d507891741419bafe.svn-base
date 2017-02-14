@@ -1,0 +1,57 @@
+<div class="headlabel" align="center">
+<h1>New software</h1>
+<% form_for(:software,:url=>{:action=>"add",:controller=>"softwares"}) do |f| %>
+<table class="mainTable">
+	<tr><td><%= f.error_messages %></td></tr>
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><%= link_to 'Back', softwares_path %></td>
+			</tr>
+			<tr><td>
+				<table class="tableDetail">
+					<tr>
+						<td><%= f.label :name %></td>
+						<td id="secondTd"><%= f.text_field :name %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :version %></td>
+						<td id="secondTd"><%= f.text_field :version %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :license_amount %></td>
+						<td id="secondTd"><%= f.text_field :license_count %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :download_link %></td>
+						<td id="secondTd"><%= f.text_field :download_link %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :download_account %></td>
+						<td id="secondTd"><%= f.text_field :download_account %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :download_password %></td>
+						<td id="secondTd"><%= f.text_field :password %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :license_detail %></td>
+						<td id="secondTd">Currently none</td>
+					</tr>
+					<tr>
+						<td>Is Free:</td>
+						<td id="secondTd"><%=f.check_box "is_free"%></td>
+					</tr>
+					<tr>
+						<td>Open for reqests:</td>
+						<td id="secondTd"><%=f.check_box "open_for_request"%></td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td align="right"><%= f.submit "Create" %></td></tr>
+		</table>
+	</td></tr>
+</table>
+<% end %>
+
+</div>

@@ -1,0 +1,1 @@
+<%if @verify != nil %><% if @job != nil %><% if @initcommands != nil && @initcommands != "" %><% for initcommand in @initcommands.split("\r\n") %><%=h initcommand %><% end %><% end %><% else %>The instance was not existed.<% end %><% else %>Please input the correct verify.<% end %>

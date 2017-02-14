@@ -1,0 +1,267 @@
+#!/usr/bin/env ruby
+# This script should be used when there is only machine in the VDI server cluster
+require 'rubygems'
+require 'popen4'
+require 'daemons'
+require 'thread'
+require 'time'
+
+RAILS_ENV = 'production'
+#RAILS_ENV = 'development'
+APP_DIR = File.join(File.dirname(File.expand_path(__FILE__)), '..')
+
+# Daemonising changes the pwd to /, so we need to switch 
+# back to RAILS_ROOT.
+Dir.chdir(APP_DIR)
+
+# Load our Rails environment.
+require File.join('config', 'environment')
+@@config = YAML.load_file(RAILS_ROOT + "/config/config.yml")
+@@database = YAML.load_file(RAILS_ROOT + "/config/database.yml")
+@@pk = @@config["ec2_bin_path"] + @@config["pk"]
+@@cert = @@config["ec2_bin_path"] + @@config["cert"]
+@@deploy_count = 0
+@@recover_count = 0
+
+# encapsulate into a method so testing would be easier
+def update_ec2machine_public_dns
+  ScheduleTask.update_ec2machine_public_dns
+end
+
+def delete_job_ec2machine_and_update_security_type
+  ScheduleTask.delete_job_ec2machine_and_update_security_type
+end
+
+#delete securitytype
+def delete_security_type
+  ScheduleTask.delete_security_type
+end
+
+def check_spot_requests(region)
+  ScheduleTask.check_spot_requests(region)
+end
+
+def deploy_normal_instance(job)
+  ScheduleTask.deploy_normal_instance(job)
+end
+
+def deploy_job(job)
+  ScheduleTask.wtire_current_task_time(@@config["task_checker_file"])
+  ScheduleTask.deploy_job(job)
+end
+
+def create_instances_task
+  @@deploy_count = @@deploy_count + 1
+  puts "Deploy count: " + @@deploy_count.to_s
+  
+  if @@deploy_count >= 2
+    puts "To many deployment process running, skip it"
+    @@deploy_count = @@deploy_count - 1
+    return
+  end  
+  
+  if ScheduleTask.jobs_count() >= 8 
+	@@deploy_count = @@deploy_count - 1
+    #Do nothing if the deploy load is high
+    return
+  end  
+  
+  skip_count = 0
+  ScheduleTask.each_job("('Pending', 'Deploying')") do |index, job, pending_jobs_count|	
+	if ( (job.state == "Deploying") and (pending_jobs_count == 0) )
+     if skip_count == (@@recover_count + @@recover_count) || pending_jobs_count <= (@@recover_count + @@recover_count) 
+       skip_count = 0
+       deploy_job(job)        
+     else  
+       skip_count = skip_count + 1
+       puts "Skip deployment: " + job.id.to_s
+       next
+     end #skip_count
+    end #(state == Deployment)
+    puts "deploying job"
+	deploy_job(job)
+  end # ScheduleTask.each_job  
+  
+  @@deploy_count = @@deploy_count - 1
+ end
+
+# Do not make this process synchronized to avoid the dead task
+def cleanup_dead_deployment
+  @@recover_count = @@recover_count + 1
+  puts "Recover count: " + @@recover_count.to_s
+  if @@recover_count >= 2
+    puts "To many recover process running, skip it"
+    @@recover_count = @@recover_count - 1
+    return
+  end
+  ScheduleTask.cleanup_dead_deployment(11, 0)    
+  @@recover_count = @@recover_count - 1
+end
+
+def initialec2machine(ec2machine)
+  ScheduleTask.initialec2machine(ec2machine)
+end
+
+def falsetoprocess(job)
+  #remove_securitygroup(job)
+  ScheduleTask.falsetoprocess(job)   
+end
+
+def send_mail
+  ScheduleTask.send_mail
+end
+
+def connect_telnet_service
+  ScheduleTask.connect_telnet_service
+end
+
+def run_telnet_commands
+  ScheduleTask.run_telnet_commands
+end
+
+def recover_dead_deployment
+  ScheduleTask.recover_dead_deployment
+end
+
+def pending_job_warning
+  ScheduleTask.pending_job_warning
+end 
+
+def check_volumes
+  ScheduleTask.check_volumes
+end
+
+def check_snapshots
+  ScheduleTask.check_snapshots
+end
+
+def check_demo_jobs
+  ScheduleTask.check_demo_jobs
+end
+
+Daemons.run_proc(
+  'schedule',
+  :dir_mode => :normal, 
+  :dir => File.join(APP_DIR, 'log'),
+  :multiple => false,
+  :backtrace => true,
+  :monitor => true,
+  :log_output => true
+) do    
+  begin
+    # Initialise the OpenWFE scheduler object.
+    require 'rufus/scheduler'
+    @@scheduler = Rufus::Scheduler.start_new
+    #scheduler.start
+    
+    ActiveRecord::Base.connection.reconnect! unless ActiveRecord::Base.connection.active?
+
+    # Now assign jobs to the scheduler (see API). For example:
+
+    # update ec2machine's public_dns
+    @@scheduler.every(@@config["update_dns_interval"]) do
+      puts Time.now.to_s + "update dns"
+      update_ec2machine_public_dns
+    end
+    
+    #delete job ec2machine,update securitytype
+    @@scheduler.every(@@config["delete_expire_job_interval"]) do
+      puts Time.now.to_s + "delete_expire_job"
+      delete_job_ec2machine_and_update_security_type
+    end    
+    
+    #delete securitygroup
+    @@scheduler.every(@@config["delete_securitygroup_interval"]) do
+      puts Time.now.to_s + "delete_securitygroup"
+      delete_security_type
+    end
+
+    #check spot requests
+    @@scheduler.every(@@config["check_spot_requests_time"]) do
+      puts Time.now.to_s + "check_spot_requests"
+      regions = @@config["regions"].split(",")
+      for region in regions
+        check_spot_requests(region.strip)
+      end
+    end
+    
+    #Create instances
+    @@scheduler.every("45s") do
+      puts Time.now.to_s + "create_instances"      
+      # If there is no pending jobs then treat the task works correctly.
+      if ScheduleTask.jobs_count("('Deploying', 'Pending')") == 0
+        ScheduleTask.wtire_current_task_time(@@config["task_checker_file"])
+      end
+      create_instances_task
+    end
+    
+    
+    #Cleanup dead deployments
+    @@scheduler.every("42s") do
+      puts Time.now.to_s + "cleanup_dead_deployment"
+      cleanup_dead_deployment
+    end
+
+    #Send email
+    @@scheduler.every(@@config["send_mail_interval"].to_s + "m") do
+      puts Time.now.to_s + "send_mail_interval"
+      send_mail
+    end
+    
+    # Send warning to admin while there are too many pending jobs, which means vdi is hung...
+    @@scheduler.every("100s") do
+      puts Time.now.to_s + "pending job warning"
+      pending_job_warning
+    end
+
+    # Update volume status
+    @@scheduler.every("25s") do
+      puts Time.now.to_s + "check volumes"
+      check_volumes
+    end  
+    
+    # Update snapshot status
+    @@scheduler.every("125s") do
+      puts Time.now.to_s + "check snapshots"
+      check_snapshots
+    end
+    
+    # check_demo_jobs
+    @@scheduler.every("5m") do
+      puts Time.now.to_s + "check_demo_jobs"
+      check_demo_jobs
+    end 
+    @@scheduler.every("30s") do
+      puts Time.now.to_s + "assign_vpc_elasticip"
+      ScheduleTask.assign_vpc_elasticip
+    end     
+    @@scheduler.every("333s") do
+      puts Time.now.to_s + "cleanup_vpc_elasticip"
+      ScheduleTask.cleanup_vpc_elasticip
+    end     
+    #Connect to Telnet service
+    #@@scheduler.every("155s") do
+    #  puts Time.now.to_s + "connect telnet service"
+    #  connect_telnet_service
+    #end
+    
+    #Run telnet command
+    #@@scheduler.every("165s") do
+    #  puts Time.now.to_s + "run telnet commands"
+    #  run_telnet_commands
+    #end
+    
+    # Sometimes,the deployment will be deadline because of the stability issue of amaone. 
+    # this task is used to recover the dead jobs 
+    #@@scheduler.every("302s") do
+    #  puts Time.now.to_s + "recover dead deployment"
+    #  recover_dead_deployment
+    #end
+    # Tell the scheduler to perform these jobs until the 
+    # process is stopped.
+    @@scheduler.join
+  rescue => e
+    RAILS_DEFAULT_LOGGER.warn "Exception in schedule: #{e.inspect}"
+    exit
+  end
+end

@@ -1,0 +1,35 @@
+<div class="headlabel" align="center">
+<h1>Import job</h1>
+
+<table class="mainTable" id="widthControl2">
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', jobs_path %></div></td>
+			</tr>
+			<tr><td>
+				<table class="tableDetail">
+				<% form_tag('/jobs/import') do%>
+					<tr>
+						<td><b>Job name: </b></td>
+						<td id="secondTd"><%= text_field_tag :job_name, params[:job_name]%></td>
+					</tr>
+					<tr>
+						<td><b> Instance Id: </b></td>
+						<td id="secondTd"><%= text_field_tag :instance_id, params[:instance_id]%></td>
+					</tr>
+					<tr>
+						<td><b> Template Id: </b></td>
+						<td id="secondTd"><%= text_field_tag :template_id, params[:template_id]%></td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td align="right">
+				 <%= submit_tag "Import", :name => 'submit' %>
+			</td></tr>
+			<% end %>
+		</table>
+	</td></tr>
+</table>
+</div>
+

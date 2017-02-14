@@ -1,0 +1,94 @@
+<div class="headlabel" align="center">
+<div align="left" style="color:red;font-weight:bold;">
+<%=@message%>
+</div>
+<h1>Capture template</h1>
+	<% form_tag("/templates/capturetemplate", :id=>"capture_form") do%>
+	<table class="mainTable" style="width:40%">
+		<tr><td>
+			<table class="tableList" id="noTrHover">
+				<tr id="firstRow">
+					<td><div align="left"><%= link_to 'Back', templates_path %></div></td>
+				</tr>
+				<tr><td>
+					<table class="tableFilter">
+						<tr><td>
+							Job Name: <%= link_if can_access('show','jobs'), @job_name, :controller => "jobs", :action => "show", :id=>@job_id %>
+						</td></tr>
+					</table>
+				</td></tr>
+				<tr><td>
+					<table class="tableDetail">
+						<tr style="display:none;"><td colspan="2"><%= text_field_tag :jobid, params[:jobid],:type => "hidden" %></td></tr>
+						<tr>
+							<td>Template Name:</td>
+							<td id="secondTd"><%= text_field_tag :name, params[:name]%></td>
+						</tr>
+						<tr>
+							<td>Template Description: </td>
+							<td id="secondTd"><%= text_field_tag :description, params[:description]%></td>
+						</tr>
+						<tr>
+							<td>Template username:</td>
+							<td id="secondTd"><%= text_field_tag :user,(params[:user].blank? ? @job.template.user : params[:user])%></td>
+						</tr>
+						<tr>
+							<td>Template password:</td>
+							<% default_password = params[:password]
+                               if default_password.blank?
+                                  default_password = @job.machinepassword
+                               end
+                               if default_password.blank?
+                                  default_password = @job.template.password  
+                               end
+                            %>
+							<td id="secondTd">
+						       <%= text_field_tag :password, default_password%>
+							   <a href="javascript:getpassword();">Generate one</a>
+							</td>
+						</tr>
+						<% if !current_user.is_external %>
+						<tr>
+							<td>Team: </td>
+							<td id="secondTd"><%=select "team", "team_id", User.find_by_sql("SELECT u.name,u.id FROM users u, roles_users ru, roles r where  u.id = ru.user_id and ru.role_id=r.id and r.role_name='client' and u.disabled=0 order by u.name").collect {|p| [ p.name, p.id ]},{:include_blank => true},:class=>"input_search"%></td>
+						</tr>
+						<% end %>
+						<tr>
+							<td>Note:</td>
+						    <td id="secondTd">1. Please update the password inside your VM properly first. The password you specified here will not automatically reflect to the VM<br>
+							                  2. For nightly/AAR template, please remember to reconfig the autologin</td> 
+						</tr>
+						
+					</table>
+				</td></tr>
+				<tr>
+					<td align="right" colspan="2">
+					   <div id="submit_link" onclick="javascript:submit();" onmouseover="javascript:handCursor(this);">
+			              <img src="/images/submit_button.png">	   
+                       </div>
+			        </td>
+				</tr>
+			</table>
+		</td></tr>
+	</table>
+	<% end %>
+</div>
+<script type="text/javascript">
+	function submit(){
+		password = document.getElementById("password").value
+		result = checkstrong(password)
+		old_password = "<%=@job.template.password%>"
+		if (old_password == password) {
+			alert("You should change the password for your new template. Currently it's the same with old template")
+		    return
+		}
+        if (result == true) {			
+			document.getElementById("capture_form").submit();
+		} else {
+			alert("Your new password is not stong enough, please reset a stronger one");
+		}
+	}
+	function getpassword() {
+		document.getElementById("password").value = generatePassword();
+	}	
+</script>

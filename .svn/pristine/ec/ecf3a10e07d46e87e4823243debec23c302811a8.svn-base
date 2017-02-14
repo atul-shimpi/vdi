@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+<project name="Telnet" basedir="." default="jar">
+    <property name="out" value="${basedir}/out" />
+    <property name="classes" value="${out}/classes" />
+    <property name="test.classes" value="${classes}/test" />
+    <property name="junit.out" value="${out}/junit" />
+    <property name="lib" value="${basedir}/lib" />
+    <property name="src" value="${basedir}/src" />
+    <property name="test" value="${basedir}/test" />
+    <property file="ant.properties" />
+    <path id="classpath">
+        <fileset dir="${lib}">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+    <target name="clean">
+        <delete dir="${out}" />
+    </target>
+    <target name="init" depends="clean">
+        <mkdir dir="${out}" />
+        <mkdir dir="${classes}" />
+        <mkdir dir="${test.classes}" />
+        <mkdir dir="${out}/dist" />
+        <mkdir dir="${junit.out}" />
+    </target>
+    <target name="compile" depends="init" description="compile the source files" >
+        <javac srcdir="${src}" destdir="${classes}" >
+            <classpath refid="classpath" />
+        </javac>
+    </target>
+    <target name="test.compile" depends="compile" description="compile the test source files">
+        <javac srcdir="${test}" destdir="${test.classes}">
+            <classpath refid="classpath" />
+            <classpath location="${classes}"/>
+        </javac>
+    </target>
+    <target name="jar" depends="compile">
+        <jar destfile="${out}/dist/${ant.project.name}.jar">
+            <fileset dir="${classes}">
+                <include name="**/*.class" />
+            </fileset>
+            <manifest>
+                <attribute name="Main-class" value="com.gdev.telnet.VDITelnetControler" />
+                <attribute name="Class-Path" value="commons-dbcp-1.2.1.jar commons-net-2.0.jar commons-pool-1.4.jar mysql.jar" />
+            </manifest>
+        </jar>
+        <copy todir="${out}/dist">
+            <fileset dir="${lib}">
+                <include name="**/*.jar" />
+            </fileset>
+        </copy>
+    </target>
+    <target name="junit" depends="test.compile">
+        <junit printsummary="true" fork="true">
+            <classpath refid="classpath" />
+            <classpath location="${classes}"/>
+            <classpath location="${test.classes}"/>
+            <formatter type="brief" />
+            <formatter type="xml" />
+            <batchtest todir="${junit.out}">
+                <fileset dir="${test.classes}">
+                    <include name="**/*Test.*" />
+                </fileset>
+            </batchtest>
+        </junit>
+        <junitreport todir="${junit.out}">
+            <fileset dir="${junit.out}" includes="TEST-*.xml" />
+            <report format="frames" todir="${junit.out}" />
+        </junitreport>
+    </target>
+    <target name="quality" depends="junit">
+    </target>
+</project>

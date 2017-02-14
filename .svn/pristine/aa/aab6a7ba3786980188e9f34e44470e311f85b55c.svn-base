@@ -1,0 +1,37 @@
+<div class="headlabel" align="center">
+<h1>Editing action</h1>
+
+<%= error_messages_for :action %>
+
+<% form_for(@edit_action) do |f| %>
+<table class="mainTable" id="widthControl1">
+  	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', actions_path %></div></td>
+				<td><div align="right"><%= link_to 'Show', @action %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<tr>
+						<td><b>Action</b></td>
+						<td id="secondTd"><%=  text_field_tag 'edit_action_action', @edit_action.action, :size => 35 %></td>
+					</tr>
+					<tr>
+						<td><b>Controller</b></td>
+						<td id="secondTd"><%=  text_field_tag 'edit_action_controller', @edit_action.controller, :size => 35 %></td>
+					</tr>
+					<tr>
+						<td> <b>Description</b></td>
+						<td id="secondTd"><%=  text_field_tag 'edit_action_description', @edit_action.description, :size => 35 %></td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td align="right" colspan="2">
+				   <%= f.submit "Update" %>
+			</td></tr>
+		</table>
+	</td></tr>
+  </table>
+<% end %>
+</div>	

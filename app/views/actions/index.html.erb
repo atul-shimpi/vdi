@@ -1,0 +1,41 @@
+<h2 class="bodyTitle">Listing actions</h2>
+
+<table class="mainTable">
+	<tr><td>
+		<table class="tableList">
+		  <tr>
+		    <th>Action</th>
+		    <th>Controller</th>
+		    <th>Description</th>
+		    <th id="kong">&nbsp;</th>
+		    <th id="kong">&nbsp;</th>
+		    <th id="kong">&nbsp;</th>
+		  </tr>
+		
+		<% count = 0 %>
+		<% for action in @actions %>
+		<% if count % 2 == 0 %>
+			<tr class="row_0">
+		<% else %>
+			<tr class="row_1">
+		<% end %>
+		    <td><%=h action.action %></td>
+		    <td><%=h action.controller %></td>
+		    <td><%=h action.description %></td>
+		    <td><%= link_to 'Show', action %></td>
+		    <td><%= link_to 'Edit', edit_action_path(action) %></td>
+		    <td><%= link_to 'Destroy', action, :confirm => 'Are you sure?', :method => :delete %></td>
+		  </tr>
+		<% count = count + 1 %>
+		<% end %>
+		</table>
+	</td></tr>
+	<tr>
+		<td class="lastTd">
+			<div align="left"><img src="/images/new.png">&nbsp;<%= link_to 'New action', new_action_path %></div>
+		</td>
+	</tr>
+</table>
+
+
+

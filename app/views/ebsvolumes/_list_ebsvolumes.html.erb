@@ -1,0 +1,58 @@
+<table class="tableList">
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Owner</th>
+    <th>Volume ID</th>
+	<th>Snapshot ID</th>
+	<th>Size</th>
+	<th>Region</th>
+	<th>Attached Job</th>
+	<th>State</th>
+	<th>IS Deleted</th>
+    <th colspan="4">Operations</th>
+  </tr>
+<% count = 0 %>
+<% for ebsvolume in @ebsvolumes %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+    <td><%=h ebsvolume.id %></td>
+    <td><%= link_if can_access('show','ebsvolumes'), (h ebsvolume.name), ebsvolume %></td>
+    <td ><%=h ebsvolume.user.name if ebsvolume.user %></td>
+	<td><%=h ebsvolume.volume_id %></td>
+	<td><%=h ebsvolume.snapshot_id %></td>
+	<td><%=h ebsvolume.size%></td>
+	<td><%=h ebsvolume.region%></td>
+	<td><%=h ebsvolume.job_id %></td>
+	<td><%=h ebsvolume.status%></td>
+	<td><%if ebsvolume.deleted == 0%>
+	    No
+		<%else%>
+		Yes
+		<%end%>
+	</td>
+	<% if ebsvolume.can_access_ebsvolume(current_user) %>
+    <td class="imageConfig"><%= link_if can_access('show','ebsvolumes'), '<img src="/images/application_form_magnify.png" title="Show">', ebsvolume %></td>
+    <%end%>
+	<%if ebsvolume.deleted == 0 %>
+	<% if ebsvolume.can_access_ebsvolume(current_user) %>
+    <td class="imageConfig"><%= link_if can_access('edit','ebsvolumes'), '<img src="/images/application_form_edit.png" title="Edit">', edit_ebsvolume_path(ebsvolume) %></td>
+    <%if ebsvolume.status == "available"%>
+	<td class="imageConfig"><%= link_if can_access('destroy','ebsvolumes'), '<img src="/images/application_form_delete.png" title="Delete">', ebsvolume, :confirm => 'Are you sure?', :method => :delete %></td>
+	<td><%= link_if can_access('attach','ebsvolumes'), 'Attach', :action=>"attach", :controller=>"ebsvolumes", :id=>ebsvolume.id %></td>
+	<%elsif ebsvolume.status == "attached" %>
+	<td><%= link_if can_access('detach','ebsvolumes'), 'Detach', :action=>"detach", :controller=>"ebsvolumes", :id=>ebsvolume.id %></td>
+	<td></td>
+	<%else%>
+	  <td></td>
+	  <td></td>
+	<%end%>
+	<%end%>
+	<%end%>
+  </tr>
+<% count = count + 1 %>
+<% end %>  
+</table>

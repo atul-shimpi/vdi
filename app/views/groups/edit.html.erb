@@ -1,0 +1,43 @@
+<div class="headlabel" align="center">
+	<h1>Editing group</h1>
+	<table class="mainTable" id="widthControl2">
+	<tr><td>
+		<div style="height:10px;">&nbsp;</div>
+	</td></tr>
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow"><td><div align="left"><%= link_to 'Back', groups_path %></div></td>
+		    	<td><div align="center"><%= error_messages_for :group %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+				<% form_for(@group) do |f| %>
+					<tr>
+				      <td><label for="user_name">Name</label></td>
+				      <td id="secondTd"><%= f.text_field :name %></td>
+				    </tr>
+				    <tr>
+				      <td><label for="user_name">Description</label></td>
+				      <td id="secondTd"><%= f.text_field :description %></td>
+				    </tr>
+				    <tr>
+				      <td><label for="user_name">Manager</label></td>
+				      <td id="secondTd"><%=f.select "manager_id", @group.users.sort_by{|u| u.name}.collect {|r| [ r.name + "-" + r.account, r.id ]},{:include_blank => true},:class=>"input_search"%></td>
+				    </tr>
+				    <tr>
+				      <td><%= f.label :ispublic %></td>
+				      <td id="secondTd"><%= f.check_box :ispublic %></td>
+				    </tr> 
+				</table>
+			</td></tr>
+			<tr><td colspan="2" align="right">
+				<%= f.submit "Update" %>
+			</td></tr>
+			 <% end %>
+		</table>
+	</td></tr>
+	<tr><td>
+		<div style="height:10px;">&nbsp;</div>
+	</td></tr>
+</table>
+</div>

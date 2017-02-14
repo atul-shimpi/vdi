@@ -1,0 +1,32 @@
+<h2 class="bodyTitle">Active Jobs by User</h2>
+<table class="mainTable">
+	<tr><td>
+		<table class="tableList">
+		  <tr>
+		    <th>User</th>
+		    <th>Running</th>
+		    <th>PowerOff</th>
+			<th>ALL jobs</th>
+			<th>Operations</th>
+		  </tr>
+		<% count = 0 %>
+		<% for report in @reports %>
+		<% if count % 2 == 0 %>
+			<tr class="row_0">
+		<% else %>
+			<tr class="row_1">
+		<% end %>
+		    <td><%=h report[:name] %></td>
+		    <td><%=h report[:running] %></td>
+		    <td><%=h report[:poweroff] %></td>
+			<td><%=h report[:alljobs] %></td>
+			<td><%= link_if can_access('byuser','jobs'), 'Active Jobs', :action=> 'byuser', :controller=>'jobs', :userid=> report[:userid], :onlyactive=> 'true'%>
+			   |<%= link_if can_access('byuser','jobs'), 'All Jobs', :action=> 'byuser', :controller=>'jobs', :userid=> report[:userid]%> 
+			</td>
+		  </tr>
+		<% count = count + 1 %>
+		<% end %>
+		</table>
+	</td></tr>
+</table>
+

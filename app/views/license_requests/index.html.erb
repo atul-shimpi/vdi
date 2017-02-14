@@ -1,0 +1,72 @@
+<h2 class="bodyTitle">Listing License Requests</h2>
+
+<table class="mainTable">
+	<tr>
+		<td>
+		<% form_tag('/license_requests/index') do%>
+  		  <table class="tableFilter">
+    		<tr>	
+		      <td>Software name</td>
+			  <td><%=select "filter", "software", Software.find_by_sql("select s.name,s.id from softwares s order by s.name").collect {|s| [s.name, s.id]},{:include_blank => true},:class=>"input_search" %></td>
+		      <td>Requester</td>
+			  <td><%=select "filter", "requester", User.find_by_sql("select u.name,u.id from users u left join license_requests ls on ls.request_id = u.id where ls.id is not null order by u.name").collect{|u| [u.name, u.id]}.uniq,{:include_blank => true},:class=>"input_search"%></td>
+		      <td>Approver</td>
+			  <td><%=select "filter", "approver", User.find_by_sql("select u.name,u.id from users u left join license_requests ls on ls.approval_id = u.id where ls.id is not null order by u.name").collect{|u| [u.name, u.id]}.uniq,{:include_blank => true},:class=>"input_search"%></td>
+			  <td>Status</td>
+			  <td><%=select "filter", "status", ["new","active","closed"],{:include_blank => true},:class=>"input_search"%></td>
+			  <td><%= submit_tag "Search", :name => 'submit' %></td>
+		    <tr>
+		  </table>
+		<% end %> 
+		</td>
+	</tr>
+	<tr>
+		<td>
+		<table class="tableList">
+		  <tr>
+		  	<th>ID</th>
+		    <th>Software</th>
+		    <th>Requester</th>
+			<th>Approver</th>
+			<th>Count</th>
+			<th>Status</th>
+		    <th>Operations</th>
+		  </tr>
+			<% @license_requests.each_with_index do |license_request,index|%>
+			<% if index % 2 == 1 %>
+			<tr>
+			<% else %>
+		 	<tr class="row_1">
+		 	<% end %>
+			<td><%=h license_request.id %></td>
+			<td><% if can_access_license_request(license_request.id,'show')%>
+				<%= link_to (h license_request.software.name),license_request.software unless license_request.software.nil? %>
+				<% else %>
+				<%= license_request.software.name unless license_request.software.nil? %>
+				<% end %>
+			</td>
+		    <td><%=h license_request.requester.name unless license_request.requester.nil? %></td>
+		    <td><%=h license_request.approver.name unless license_request.approver.nil? %></td>
+		    <td><%=h license_request.count %></td>
+			<td><%=h license_request.status %></td>
+			<td class="imageConfig">
+				<div id="AutoNewLine" style="width:170px;">
+				<%= link_if can_access_license_request(license_request.id,'show'), '<img src="/images/application_form_magnify.png" title="Show">', license_request %>
+			    <%= link_if can_access_license_request(license_request.id,'edit'), '<img src="/images/application_form_edit.png" title="Edit">', edit_license_request_path(license_request)%>
+				<%= link_if (license_request.status=='new' && can_access_license_request(license_request.id,'approve')),'approve',:action=>'edit',:controller=>'license_requests',:id=>license_request.id,:approve=>true %>
+				<%= link_if (license_request.status!='closed' && can_access_license_request(license_request.id,'close')),'close',:action=>'edit',:controller=>'license_requests',:id=>license_request.id,:close=>true %>
+				</div>
+			</td>
+		 	</tr>
+		  <% end %>
+		</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="lastTd">
+			<div align="left" class="lastRow"><img src="/images/new.png">&nbsp;<%= link_if can_access('new','license_requests'), 'New License Request',new_license_request_path %></div>
+			<div align="right"><%=will_paginate(@license_requests ,:prev_label=>'Previous',:next_label=>'Next',:separator=>" | ") %></div>
+		</td>
+	</tr>
+</table>
+

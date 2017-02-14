@@ -1,0 +1,37 @@
+<div class="headlabel"><h1>gdevVDI Users</h1></div> 
+
+<table class="mainTable">
+	<tr><td style="padding-left:30px">
+		<table class="tableFilter">
+			<tr style="display:none;"><td><div id="notice"><%= flash[:notice] %></div></td></tr>
+			<tr>
+				<td>
+					<label for="user_name">Filter on name  : </label>
+					<%= text_field_tag("query", params['query'], :size => 15 ) %>      
+           			 <%= image_tag("/images/spinner.gif",
+                          :align => "absmiddle",
+                          :border => 0,
+                          :id => "spinner",
+                          :style =>"display: none;" )%>
+					&nbsp;&nbsp;&nbsp;&nbsp;<img src="/images/new.png"><%= link_to 'Create new user', :action => 'new' %>
+				</td>
+			</tr>
+		</table>
+	</td></tr>
+	<tr><td>
+		<table id='table' class="tableList">
+          <%=render :partial => "list_users"%> 
+  		</table>
+	</td></tr>
+	<tr><td class="lastTd">
+		<div align="right"><%= will_paginate @users %></div>
+	</td></tr>
+</table>
+<%= observe_field 'query',  :frequency => 2,
+         :update => 'table',
+         :before => "Element.show('spinner')",
+         :success => "Element.hide('spinner')",
+         :url => {:action => 'index'},
+         :with => 'query' %>
+
+

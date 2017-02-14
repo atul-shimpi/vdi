@@ -1,0 +1,72 @@
+<div align="center">
+<table class="mainTable" id="widthControl1">
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', snapshots_path %></div></td>
+			</tr>
+			<tr><td>
+				<table class="tableDetail">
+					<tr>
+					  <td><b>Snapshot Operations:</b></td>
+					  <td id="secondTd">
+					  	<%if @snapshot.deleted == 0 %>
+					    <%= link_if can_access('edit','snapshots'), 'Edit', edit_snapshot_path(@snapshot) %>
+					    <%if @snapshot.status == "completed"%>
+					    <br> <%= link_if can_access('create','ebsvolumes'), 'Create EBS', :action=>"new", :controller=>"ebsvolumes", :snapshot_id=>@snapshot.snapshot_id, :region=>@snapshot.region %>
+						<br> <%= link_if can_access('destroy','snapshots'), 'Delete', @snapshot, :confirm => 'Are you sure?', :method => :delete %>
+						<%end%>
+						<%end%>
+					  </td>
+					</tr>
+					<tr>
+					  <td><b>Snapshot Status:</b></td>
+					  <td id="secondTd"><%=h @snapshot.status %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Snapshot Name:</b></td>
+					  <td id="secondTd"><%=h @snapshot.name %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Snapshote ID:</b></td>
+					  <td id="secondTd"><%=h @snapshot.snapshot_id %></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Owner:</b></td>
+					  <td id="secondTd"><%=h @snapshot.user.name if @snapshot.user %></td>
+					</tr>
+					<tr>
+					
+					<tr>
+					  <td><b>Region:</b></td>
+					  <td id="secondTd"><%=h @snapshot.region%></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Size:</b></td>
+					  <td id="secondTd"><%=h @snapshot.size%></td>
+					</tr>
+					
+					<tr>
+					  <td><b>EBD Volume ID:</b></td>
+					  <td id="secondTd"><%=h @snapshot.volume_id%></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Create Time:</b></td>
+					  <td id="secondTd"><%=h @snapshot.created_at%></td>
+					</tr>
+					
+					<tr>
+					  <td><b>Updated Time:</b></td>
+					  <td id="secondTd"><%=h @snapshot.updated_at %></td>
+					</tr>
+					</table>
+			</td></tr>
+		</table>
+	</td></tr>
+</table>
+</div>

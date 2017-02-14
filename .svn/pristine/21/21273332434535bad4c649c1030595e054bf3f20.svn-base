@@ -1,0 +1,47 @@
+body {
+	background-color: #eee;	
+	font-size:11px;
+}
+#main {
+	margin:0px auto;
+	width:960px;
+	clear:left;
+	background-color: #fff;	
+	margin-top: -7px;
+}
+#header {
+	height:72px;	
+}
+#requet_form{
+	width: 940px;
+	margin-left:10px;
+	float:left;	
+}
+#request_table_div {
+	background-color: #f7f7f7;
+	width: 100%;
+	float:left;
+}
+#request_table td {
+	padding-left: 50px;
+	padding-top: 30px;
+}
+.left_td {
+}
+.text_input {
+	width: 200px;	
+}
+#submit_link{
+	margin-top: 20px;
+	margin-left: 100px;
+	height: 33px;
+	width: 120px;
+	float:left;
+}
+#footer{
+	
+}
+#content {
+	padding-top: 200px;
+	padding-bottom: 200px;
+}

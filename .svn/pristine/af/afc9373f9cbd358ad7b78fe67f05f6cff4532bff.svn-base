@@ -1,0 +1,4 @@
+<%= render :partial => 'layouts/popup', :locals => {:link_style => 'delete add_u', :link_text => 'Delete', :title => 'Confirm Delete', :index => index,
+                                                    :link_content => (defined? link_content) ? link_content : nil,
+                                                    :message => "Are you sure you want to delete the following #{(defined? target_type) ? target_type : target.class.to_s.downcase}?<br/><span>#{h name}</span>",
+                                                    :link => ((defined? delete_link) ? delete_link : link_to('Delete', target, :method => :delete, :title => 'Delete'))} %>

@@ -1,0 +1,69 @@
+<div class="headlabel" align="center">
+<h1>Editing Demo Product</h1>
+
+<% form_tag ({:action => 'update'}, {:multipart=> true}) do %>
+  <input name="_method" type="hidden" value="put" />
+  <table class="mainTable">
+  	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', demo_products_path %></div></td>
+				<td><div align="right"><%= link_to 'Show', demo_product_path(@demoproduct) %> </div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<tr>
+						<td><b>Name</b></td>
+						<td id="secondTd"><%= text_field "demoproduct","name" %></td>
+					</tr>
+					<tr>
+						<td><b>Tech Contact Mail</b></td>
+						<td id="secondTd"><%= text_field "demoproduct","contact_mail" %></td>
+					</tr>
+					<tr>
+						<td><b>Sales Contact Mail</b></td>
+						<td id="secondTd"><%= text_field "demoproduct","sales_mail" %></td>
+					</tr>
+					<tr>
+						<td><b>Auth Key</b></td>
+						<td id="secondTd"><%= text_field "demoproduct","auth_key" %></td>
+					</tr>
+					<tr>
+						<td><b>Mail Subject</b></td>
+						<td id="secondTd"><%= text_field "demoproduct","mail_subject", :class=>"long-text" %></td>
+					</tr>
+					<tr>
+						<td><b>Mail Template</b></td>
+						<td id="secondTd"><%= text_area "demoproduct","mail_template" %></td>
+					</tr>
+					<tr>
+						<td><b>Logo</b></td>
+						<td id="secondTd"> <%= file_field("demoproduct", "logo_temp") %></td>
+					</tr>
+					<tr>
+						<td><b>Current logo:</b></td>
+    	 				<td id="secondTd"><%= image_tag("/demo_products/product_logo?id=" + @demoproduct.id.to_s, :size=>'270x70') %></td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td align="right" colspan="2">
+				 <%= submit_tag "update" %>
+			</td></tr>
+		</table>
+	</td></tr>
+	<tr><td class="noteText">
+		<div align="left">
+			Note:<br>
+			Some special tokens will be replaced with dynamic data in mail template and subject:<br>
+			1. $request_name -- the name of the demo requester<br>
+			2. $demo_name -- the name of the demo<br>
+			3. $demo_product -- the name of the product<br>
+			4. $machine_ip  -- the IP of the demo machine<br>
+			5. $machine_username -- the username of the demo machine<br>
+			6. $machine_password  -- the password of the demo machine<br>
+		</div>
+	</td></tr>
+  </table>
+<% end %>
+</div>
+

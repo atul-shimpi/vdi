@@ -1,0 +1,24 @@
+<div align="center">
+<table class="mainTable" id="widthControl1">
+  	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', ec2machines_path %></div></td>
+				<td><div align="right"><%= link_to 'Edit', edit_ec2machine_path(@ec2machine) %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<tr>
+						<td><b>Instance:</b></td>
+						<td id="secondTd"><%=h @ec2machine.instance_id %></td>
+					</tr>
+					<tr>
+						<td><b>Public dns:</b></td>
+						<td id="secondTd"><%=h @ec2machine.public_dns %></td>
+					</tr>
+				</table>
+			</td></tr>
+		</table>
+	</td></tr>
+  </table>
+</div>	

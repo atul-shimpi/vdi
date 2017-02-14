@@ -1,0 +1,82 @@
+<h2 class="bodyTitle">Listing Softwares</h2>
+
+<table class="mainTable">
+	<tr>
+		<td>
+		<% form_tag('/softwares/index') do%>
+  		  <table class="tableFilter">
+    		<tr>	
+		      <td>Software name contains</td>
+			  <td><%= text_field_tag :search_name, params[:search_name],:class=>"input_search" %></td>
+		      <td>Available</td>
+			  <td><%=select "filter", "available", ["available","not available"],{:include_blank => true},:class=>"input_search"%></td>
+		      <td>Authorization</td>			  
+			  <td><%=select "filter", "isfree", ["free","not free"],{:include_blank => true},:class=>"input_search"%></td>
+			  <td><%= submit_tag "Search", :name => 'submit' %></td>
+		    <tr>
+		  </table>
+		<% end %> 
+		</td>
+	</tr>
+	<tr>
+		<td>
+		<table class="tableList">
+		  <tr>
+		  	<th>ID</th>
+		    <th>Name</th>
+		    <th>Version</th>
+		    <%if @user.is_admin%>
+				<th>License Count</th>
+		    	<th>Available Count</th>
+			<%else%>
+				<th>Is Available</th>
+			<%end%>
+			<% if current_user.is_admin %>
+		       <th>License Detail</th>
+			<% end %>
+			<th>Authorization</th>
+			<th>Open for request</th>
+		    <th id="kong">&nbsp;</th>
+		  </tr>
+			<% @softwares.each_with_index do |software,index|%>
+			<%available_count = software.license_count.to_i - software.get_license_active_count%>
+			<% next if (@available_filter == "available" && available_count<=0)||(@available_filter == "not available" && available_count>0) %>
+			<% if index % 2 == 1 %>
+			<tr>
+			<% else %>
+		 	<tr class="row_1">
+		 	<% end %>
+			<td><%=h software.id %></td>
+		    <td><%= link_if can_access('show','softwares'),(h software.name),software %></td>
+		    <td><%=h software.version %></td>
+			<%if @user.is_admin%>
+		   		<td><%=h software.license_count %></td>
+				<td><%=h available_count>0 ? available_count : 0%></td>
+			<%else%>
+				<td><%=h available_count>0 ? available_count : 0%></td>
+			<%end%>	
+			<% if current_user.is_admin %>
+			  <td><%= link_if can_access('license_detail','softwares'), 'show detail', :action=>'license_detail',:id=>software.id%></td>
+			<%end%>
+			<td><%=(software.is_free ? "Free":"Not Free") %></td>
+			<td><%=(software.open_for_request ? "Yes":"No") %></td>
+			<td class="imageConfig">
+				<div id="AutoNewLine" style="width:120px;">
+				<%= link_if can_access('show','softwares'), '<img src="/images/application_form_magnify.png" title="Show">', software%>
+			    <%= link_if can_access('edit','softwares'), '<img src="/images/application_form_edit.png" title="Edit">', edit_software_path(software)%>
+				<%= link_if (available_count>0 && software.open_for_request && can_access('new','license_requests')),'request',:action=>'new',:controller=>'license_requests',:id=>software.id%>
+				</div>
+			</td>
+		  </tr>
+		  <% end %>
+		</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="lastTd">
+			<div align="left" class="lastRow"><img src="/images/new.png">&nbsp;<%= link_if can_access('new','softwares'), 'New Software',new_software_path %></div>
+			<div align="right"><%=will_paginate(@softwares ,:prev_label=>'Previous',:next_label=>'Next',:separator=>" | ") %></div>
+		</td>
+	</tr>
+</table>
+

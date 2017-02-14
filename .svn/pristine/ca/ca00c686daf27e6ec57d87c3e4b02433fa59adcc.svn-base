@@ -1,0 +1,36 @@
+<div class="headlabel"><h1>Listing groups</h1></div>
+
+<table class="mainTable">
+	<tr><td style="padding-left:30px;">
+		<table class="tableFilter">
+			<tr><td><div id="notice"><%= flash[:notice] %></div></td></tr>
+			<tr>
+				<td>
+					<label for="user_name">Filter groups by name  : </label>
+					<%= text_field_tag("query", params['query'], :size => 15 ) %>
+                        <%= image_tag("/images/spinner.gif",
+                          :align => "absmiddle",
+                          :border => 0,
+                          :id => "spinner",
+                          :style =>"display: none;" )%>
+					&nbsp;&nbsp;&nbsp;&nbsp;<img src="/images/new.png"><% if current_user.is_admin %><%= link_to 'Create new group', new_group_path %><%end%>
+				</td>
+			</tr>
+		</table>
+	</td></tr>
+	<tr><td>
+		<div id='group_table'>
+          <%=render :partial => "list_groups"%>
+  		</div>	
+	</td></tr>
+	<tr><td class="lastTd">
+		<div align="right">
+		<%= observe_field 'query',  :frequency => 2,
+         :update => 'group_table',
+         :before => "Element.show('spinner')",
+         :success => "Element.hide('spinner')",
+         :url => {:action => 'update_group_table'},
+         :with => 'query' %>
+		<%= will_paginate @groups %></div>
+	</td></tr>
+</table>

@@ -1,0 +1,36 @@
+<h2 class="bodyTitle">Jobs By Owner Disabled</h2>
+<table class="mainTable">
+<tr><td>
+<table class="tableList">
+  <tr>
+    <th>Job ID</th>
+    <th>Job Name</th>
+	<th>Job State</th>
+	<th>Lease Time</th>
+    <th>Public DNS</th>	
+	<th>Cost</th>
+	<th>Owner Account</th>
+	<th>Owner Mail</th>
+  </tr>
+
+<% count = 0 %>
+<% for report in @reports %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+	<td><%=link_if can_access('show','jobs'), (h report[:job_id]), :action => 'show',:controller=> "jobs", :id=>report[:job_id]%></td>
+    <td><%=h report[:job_name] %></td>
+	<td><%=h report[:job_state] %></td>
+	<td><%=h report[:lease_time] %></td>
+    <td><%=h report[:public_dns] %></td>
+	<td><%=h report[:job_cost] %></td>
+	<td><%=h report[:account] %></td>
+	<td><%=h report[:email] %><td>
+  </tr>
+<% count = count + 1 %>
+<% end %>
+</table>
+</td></tr>
+</table>

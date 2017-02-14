@@ -1,0 +1,42 @@
+<div class="headlabel" align="center">
+<h1>Show License Request</h1>
+<table class="mainTable">
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', license_requests_path %></div></td>
+				<td><div align="right"><%= link_to 'Edit', edit_license_request_path(@license_request) %></div></td>
+			</tr>
+			<tr><td colspan=2>
+				<table class="tableDetail">
+					<tr>
+						<td><b>Software:</b</td>
+						<td id="secondTd"><%= link_if can_access('show','softwares'),(h @license_request.software.name),@license_request.software%></td>
+					</tr>
+					<tr>
+						<td><b>Requester:</b></td>
+						<td id="secondTd"><%=@license_request.requester.name%></td>
+					</tr>
+					<tr>
+						<td><b>Approver:</b></td>
+						<td id="secondTd"><%=@license_request.approver.name unless @license_request.approver.nil?%></td>
+					</tr>
+					<tr>
+						<td><b>Count:</b></td>
+						<td id="secondTd"><%=@license_request.count %></td>
+					</tr>
+					<tr>
+						<td><b>Status:</b></td>
+						<td id="secondTd"><%=@license_request.status%></td>
+					</tr>
+					<tr>
+						<td><b>Last Edit BY:</b></td>
+						<td id="secondTd"><%= User.find_by_id(@license_request.last_edit_by).name unless @license_request.last_edit_by.blank?%></td>
+					</tr>
+				</table>
+			</td></tr>
+		</table>
+	</td></tr>
+</table>
+
+</div>

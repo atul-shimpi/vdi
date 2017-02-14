@@ -1,0 +1,40 @@
+<h2 class="bodyTitle">Cost by Template</h2>
+<table class="mainTable">
+<tr><td style="padding-left:30px;">
+<div>
+<%= link_if can_access('cost_by_template','reports'), 'All jobs Closed In the past Month', :action=> 'cost_by_template', :controller=>'reports', :scope=> "lastmonth"%> |
+<%= link_if can_access('cost_by_template','reports'), 'All Running Jobs', :action=> 'cost_by_template', :controller=>'reports', :scope=> "running"%> |
+<%= link_if can_access('cost_by_template','reports'), 'All Cost Since 2010-10-26', :action=> 'cost_by_template', :controller=>'reports', :scope=> "all"%> 
+</div>
+</td></tr>
+<tr><td>
+<table class="tableList">
+  <tr>
+    <th>Template name</th>
+    <th>Job Number</th>
+	<th>Architecture</th>
+	<th>Template Type</th>
+    <th><%= link_if can_access('cost_by_template','reports'), 'Total Cost', :action=> 'cost_by_template', :controller=>'reports', :scope=> @scope, :orderby=>'total_cost'%></th>
+	<th><%= link_if can_access('cost_by_template','reports'), 'Cost Per Unit', :action=> 'cost_by_template', :controller=>'reports', :scope=> @scope, :orderby=>'per_unit'%></th>
+	<th>Operations</th>
+  </tr>
+<% count = 0 %>
+<% for record in @records %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+    <td><%= link_to (h record[:name]), :action=> 'show', :controller=>'templates', :id=>record[:id]%></td>
+    <td><%=h record[:number] %></td>
+	<td><%=h record[:architecture] %></td>
+	<td><%=h record[:template_type] %></td>
+    <td><%=h record[:total_cost] %></td>
+	<td><%=h record[:per_unit] %></td>
+	<td></td>
+  </tr>
+<% count = count + 1 %>
+<% end %>
+</table>
+</td></tr>
+</table>

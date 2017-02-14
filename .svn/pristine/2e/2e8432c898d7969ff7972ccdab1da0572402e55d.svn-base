@@ -1,0 +1,36 @@
+<div class="headlabel" align="center">
+<h1>Editing sensitivemask</h1>
+<% form_for(@sensitivemask) do |f| %>
+  <%= f.error_messages %>
+  <table class="mainTable" id="widthControl1">
+  	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', sensitivemasks_path %></div></td>
+				<td><div align="right"><%= link_to 'Show', @sensitivemask %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<tr>
+						<td><%= f.label :name %></td>
+						<td id="secondTd"><%= f.text_field :name %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :sensitive_string %></td>
+						<td id="secondTd"><%= f.text_field :sensitive_string %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :mask_string %></td>
+						<td id="secondTd"><%= f.text_field :mask_string %></td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td align="right" colspan="2">
+				  <%= f.submit "Update" %>
+			</td></tr>
+		</table>
+	</td></tr>
+  </table>
+<% end %>
+</div>
+

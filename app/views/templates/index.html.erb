@@ -1,0 +1,95 @@
+<h2 class="bodyTitle">Listing Templates</h2>
+
+<table class="mainTable">
+	<tr>
+		<td>
+		<% form_tag('/templates/index') do%>
+  		  <table class="tableFilter" width="100%">
+    		<tr>			  
+			  <td>Template name contains</td>
+			  <td><%= text_field_tag :search_name, params[:search_name],:class=>"input_search" %></td>
+		      <td>Region</td>
+			  <td><%=select "filter", "region", @regions,{:include_blank => true},:class=>"input_short"%></td>
+
+			  <td>Architecture</td>
+			  <td><%=select "filter", "arch", ["i386", "x86_64"],{:include_blank => true},:class=>"input_short"%></td>
+			  <td>OS</td>
+			  <td><%=select "filter", "os", ["windows", "linux"],{:include_blank => true},:class=>"input_short"%></td>
+			  <% if !current_user.is_external%>
+			  <td>Team</td>
+			  <td><%=select "filter", "team_id", User.find_by_sql("SELECT u.name,u.id FROM users u, roles_users ru, roles r where  u.id = ru.user_id and ru.role_id=r.id and r.role_name='client' and u.disabled=0 order by u.name").collect {|p| [ p.name, p.id ]},{:include_blank => true},:class=>"input_search"%></td>
+			  <% end %>
+			  <% if @user.is_admin%>
+			  <td>isdelete</td>
+			  <td><%=select "filter", "isdeleted", ["deleted","not deleted"],{:include_blank => true},:class=>"input_short"%></td>
+		      <% end%>
+		      <td><%= submit_tag "Search", :name => 'submit' %></td>
+		    <tr>
+		  </table>
+		<% end %> 
+		</td>
+	</tr>
+	<tr>
+	  <td>
+	  	<div align="left" class="lastRow">
+	  	  <img src="/images/new.png">&nbsp;<%= link_if can_access('new','templates'), 'New Template', new_template_path %>
+		  &nbsp;&nbsp;&nbsp;
+		  <img src="/images/new.png">&nbsp;<%= link_if can_access('newiland','templates'), 'New Ilandmachine Template', :controller=>'templates',:action=>'newiland'%></div></td>
+	</tr>	
+	<tr>
+		<td>
+		<table class="tableList">
+		  <tr>
+		    <th>Name</th>
+		    <th>AMI</th>
+		    <th>User</th>
+		    <th>Password</th>
+			<th><div>Archit-</div><div>ecture</div></th>
+		    <th>os</th>
+			<th>Region</th>
+		    <th>Team</th>
+			<th><div>Image</div><div>size</div></th>
+			<th>Creator</th>
+		    <th id="kong">&nbsp;</th>
+		  </tr>
+		  
+			<% @templates.each_with_index do |template,index|%>
+			<% if index % 2 == 1 %>
+			<tr>
+			<% else %>
+		 	<tr class="row_1">
+		 	<% end %>
+		    <td><div title="<%=template.name%>" id="AutoNewLine" style="width:150px;"><%=link_if can_access('show','templates'), (h template.name), template%></div></td>
+		    <td><%=h template.ec2_ami %></td>
+		    <td><%=h template.user %></td>
+		    <td><%=h template.password %></td>
+			<td><%=h template.architecture %></td>
+			<td><%=h template.platform %></td>
+			<td><%=h template.region %></td>
+			<td><%=if template.team_id
+		               h template.team.name
+		           else 
+		               "Unknown"
+		           end %>
+		    </td>
+			<td><%=h template.image_size %></td>
+			<td><%=h template.creator.name unless template.creator.nil?%></td>
+			<td class="imageConfig"><div id="AutoNewLine" style="width:120px;">
+			<% if template.state == "available" %>
+		    <%= link_if can_access('new','jobs'), '<img src="/images/application_form_add.png" title="Create New Job">', new_job_path(:template_ids=>template) %>
+			<% end %>
+			<%= link_if can_access('show','templates'), '<img src="/images/application_form_magnify.png" title="Show">', template%>
+		    <%= link_if can_access('edit','templates'), '<img src="/images/application_form_edit.png" title="Edit">', edit_template_path(template)%>
+		    <%= link_if can_access('destroy','templates'), '<img src="/images/application_form_delete.png" title="Delete">', template, :confirm => 'Are you sure?', :method => :delete %></div></td>
+		  </tr>
+		  <% end %>
+		</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="lastTd">			
+			<div align="right"><%=will_paginate(@templates ,:prev_label=>'Previous',:next_label=>'Next',:separator=>" | ") %></div>
+		</td>
+	</tr>
+</table>
+

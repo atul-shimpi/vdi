@@ -1,0 +1,34 @@
+<h2 class="bodyTitle">History configurations</h2>
+<table class="mainTable">
+	<tr><td>
+		<table class="tableList">
+			<tr>
+			  	<th>ID</th>
+			    <th>Name</th>
+				<th>Description</th>
+			    <th>State</th>
+				<th>&nbsp;</th>
+			  </tr>
+			<% count = 0 %>
+			<% for runcluster in @clusters %>
+			<% if count % 2 == 0 %>
+				<tr class="row_0">
+			<% else %>
+				<tr class="row_1">
+			<% end %>
+			    <td><%=h runcluster.id %></td>
+				<td><%= link_if can_access('showruncluster','clusters'), (h runcluster.name),:id =>runcluster.id, :action => 'showruncluster',:controller=>"clusters"%></td>
+				<td><%=h runcluster.description %></td>
+				<td><%=h runcluster.state %></td>
+				<td class="imageConfig"><%= link_if can_access('showruncluster','clusters'), '<img src="/images/application_form_magnify.png" title="Show">',:id =>runcluster.id, :action => 'showruncluster',:controller=>"clusters"%></td>
+			  </tr>
+			<% count = count + 1 %>
+			<% end %>
+		</table>
+	</td></tr>
+	<tr>
+		<td class="lastTd">
+			<div align="right"><%=will_paginate(@clusters ,:prev_label=>'Previous',:next_label=>'Next',:separator=>" | ") %></div>
+		</td>
+	</tr>
+</table>

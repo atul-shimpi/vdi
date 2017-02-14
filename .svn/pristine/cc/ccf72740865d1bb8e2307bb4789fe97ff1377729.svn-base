@@ -1,0 +1,37 @@
+<h2 class="bodyTitle">Listing Demo Products</h2>
+<table class="mainTable">
+<tr><td>
+
+<table class="tableList">
+  <tr>
+  	<th>ID</th>
+    <th>Name</th>
+	<th>Contact</th>
+    <th>Auth Key</th>
+    <th>Operations</th>
+  </tr>
+<% count = 0 %>
+<% for demoproduct in @demoproducts %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+    <td><%=h demoproduct.id %></td>
+    <td><%= link_if can_access('show','demo_products'), (h demoproduct.name), demo_product_path(demoproduct) %></td>
+    <td><%=h demoproduct.contact_mail %></td>
+	<td><%=h demoproduct.auth_key %></td>
+    <td class="imageConfig"><%= link_if can_access('edit','demo_products'), '<img src="/images/application_form_edit.png" title="Edit">', edit_demo_product_path(demoproduct) %>
+        <%= link_if can_access('destroy','demo_products'), '<img src="/images/application_form_delete.png" title="Delete">', demoproduct, :confirm => 'Are you sure?', :method => :delete %>
+		<%= link_if can_access('demodeploy','demos'), 'Deploy Demo', :host=> "demo.versata.com",:action=>'demodeploy', :controller=>'demos', :product=> demoproduct.name%></td>
+  </tr>
+<% count = count + 1 %>
+<% end %>
+</table>
+</td></tr>
+<tr><td class="lastTd">
+	<div align="left" class="lastRow"><img src="/images/new.png">&nbsp;<%= link_if can_access('new','demo_products'), 'New demoproduct', new_demo_product_path %></div>
+</td></tr>
+</table>
+
+

@@ -1,0 +1,38 @@
+<div class="headlabel" align="center">
+<h1>Editing Run Cluster Configuration</h1>
+	<form action="/clusters/updateruncluster" method="post">
+		<table class="mainTable">
+		<tr><td><input name="id" type="text" style="width:150px;display:none;" value= <%= @run_cluster_id %>></input></td></tr>
+		<tr><td>
+			<table class="tableList" id="noTrHover">
+				<tr id="firstRow">
+					<td><div align="left"><%= link_if can_access('actives','clusters'), "Back", :action => 'actives',:controller=>"clusters"%></div></td>
+					<td><div align="right"><%= link_if can_access('showruncluster','clusters'), 'Show',:id =>@run_cluster.id, :action => 'showruncluster',:controller=>"clusters"%></div></td>
+				</tr>
+				<tr><td colspan='2'>
+					<table class="tableDetail">
+						<tr>
+					  	  <td>
+					  	    <label>Name:</label>
+						  </td>
+					      <td id="secondTd">
+					        <input name="clustersname" type="text" style="width:150px;" value= <%= @run_cluster.name %>></input>
+					      </td>
+						</tr>
+						
+						<tr>
+					  	  <td>
+					  	    <label>Description:</label>
+						  </td>
+					      <td id="secondTd">
+					        <input name="description" type="text" style="width:150px;" value= <%= @run_cluster.description %>></input>
+					      </td>
+						</tr>
+					</table>
+				</td></tr>
+				<tr><td align="right" colspan="2"><input type="submit" value="update"/></td></tr>
+			</table>
+		</td></tr>
+	</table>
+	</form>
+</div>

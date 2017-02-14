@@ -1,0 +1,204 @@
+<table class="mainTable">
+	<tr><td><div style="height:10px;">&nbsp;</div></td></tr>
+	<tr><td>
+		<div align="left" style="width:50%;margin-left:22px;">
+		<table class="tableDetail">
+			<tr>
+			  <td class="firstTd"><b>Cluster Configuration Name:</b></td>
+			  <td id="secondTd" colspan="2"><%=h @run_cluster.name %></td>
+			</tr>
+			
+			<tr>
+			  <td class="firstTd"><b>Description:</b></td>
+			  <td id="secondTd" colspan="2"><%=h @run_cluster.description %></td>
+			</tr>
+			
+			<tr>
+			  <td class="firstTd"><b>State:</b></td>
+			  <td id="secondTd" colspan="2"><%=h @run_cluster.state %></td>
+			</tr>
+			
+			<tr>
+			  <td class="firstTd"><b>Lock Name:</b></td>
+			  <td id="secondTd">
+			  	<%if @locks.size != 0 %>
+			  	  <%for lock in @locks%>
+				    <p><%=h lock.name %></p>
+			      <%end%>
+				<%end%>
+			  </td>
+			  <td bgcolor="#f0f0f0">
+			    <%for lock_status in @lockstatus%>
+				  <p><%=h lock_status %></p>
+				<%end%>
+			  </td>
+			</tr>
+			</table>
+			</div>
+	</td></tr>
+	<% if @run_cluster.state == "actives" %>
+	<tr><td class="imageConfig" align="right" style="padding:10px 35px 10px 0px">
+		<%= link_if can_access('editruncluster','clusters'), '<img src="/images/application_form_edit.png" title="Edit">', :id =>@run_cluster.id, :action => 'editruncluster',:controller=>"clusters"%> 
+		<%= link_if can_access('deleteruncluster','clusters'), '<img src="/images/application_form_delete.png" title="Delete">', :id =>@run_cluster.id, :action => 'deleteruncluster',:controller=>"clusters", :confirm => 'Are you sure?', :method => :delete %> 
+		<%= link_if can_access('stop','clusters'), '<img src="/images/power_off.png" title="Power Off">', :action => "stop", :id => @run_cluster.id ,:controller=>"clusters", :confirm => 'Are you sure you want to Stop this cluster' %>
+		<%= link_if can_access('start','clusters'), '<img src="/images/power_on.png" title="Power ON">', :action => "start", :id => @run_cluster.id,:controller=>"clusters", :confirm => 'Are you sure you want to Start this cluster' %>
+	</td></tr>
+	<% end %>
+	<tr><td>
+		<table class="tableList">
+		  <tr>
+		    <th>Job ID</th>
+		    <th>Job Name</th>
+			<th>Instance ID</th>
+		    <th>Public Dns</th>
+		    <th>User</th>
+		    <th>password</th>
+			<th>role</th>
+			<th>State</th>
+		  </tr>
+		 
+		  <%count = 0 %>
+		  <% for job in @jobs %>
+		  <% if Cmd.find(:all,:conditions => ['job_id = ?', job.id]).size != 0 || Runcommand.find(:all,:conditions => ['job_id = ?', job.id]).size != 0 %>
+		  <% if count % 2 == 1 %>
+		  <tr class="row_1">
+		  <% else %>
+		  <tr class="row_0">
+		  <% end %>
+		    <td><img src="/images/expand_on.png" title="Expand" onclick="upordown(<%= count%>)" id="updownImage<%=count %>">&nbsp;&nbsp;<%=h job.id %></td>
+		    <td><%= link_if can_access('show','jobs'), (h job.name), job %></td>
+			<td><%=h @ec2machine[count].instance_id if @ec2machine[count]%></td>
+		    <td><%= if @ec2machine[count] 
+		             if @ec2machine[count].public_dns != nil and @ec2machine[count].public_dns.include?('ec2')
+		                 h @ec2machine[count].public_dns
+		             else
+		               if job.state == "Capturing"
+		                 "<b>The machine is creating template, please hold on all your operations</b>"  
+		               else
+		                 "<b> Please refresh this page minutes later, the IP will show after machine is deployed</b>"
+		               end 
+		             end
+		          end%>
+			</td>
+		    <td ><%=h @user[count] %></td>
+		    <td ><%=h @password[count] %></td>
+			<td ><%=h job.role if job.role %></td>
+			<td align="center"><%=h job.state if job.state %></td>
+		  </tr>
+		  
+		  <tr bgcolor="white"><td colspan="8" style="padding:0">
+			<table class="seperateTable" style="display:none;" id="displaytable<%= count%>">	
+			  <tr>
+			  	<th>Command</th>
+			    <th>State</th>
+				<th></th>
+			  </tr>
+			  <% for cmd in Cmd.find(:all,:conditions => ['job_id = ?', job.id]) %>
+			    <tr>
+				  <td>&nbsp;<%=h cmd.description %></td>
+				  <td><%=h cmd.state %></td>
+				  <td></td>
+			    </tr>
+			  <% end %>
+			  <% if Runcommand.find(:all,:conditions => ['job_id = ?', job.id]) %>
+			    <tr>
+			      <th>VDI Client Machine Command</th>
+			      <th>State</th>
+				  <th>Command path</th>
+			    </tr>
+			    <% for telnetcommand in Runcommand.find(:all,:conditions => ['job_id = ?', job.id]) %>
+			    <tr>
+				  <td><%=link_to mask_sensitive_string(telnetcommand.commands),:action =>'commandsreturn', :id => telnetcommand.id, :job_id => @job_id, :controller=>"jobs" %></td>
+				  <td><%=h telnetcommand.state %></td>
+				  <td><%=h telnetcommand.cmd_path %></td>
+			    </tr>
+			    <% end %>
+			  <% end %>
+			</table>
+		  </td></tr>
+		  <% count=count+1 %>
+		  <% end %>
+		<% end %>
+		
+		<tr><td align="right" colspan="8">
+			<b id="titleText">close</b>&nbsp;&nbsp;<img src="/images/close.png"  id="closeImage" onclick="closerow()">
+		</td></tr>
+		
+		<tr><td colspan="8" style="padding:0">
+			<table width="100%" style="display:inline-table;" id="displaytable2">
+				 <%count1 = 0 %>
+				  <% for job in @jobs %>
+				  <% if Cmd.find(:all,:conditions => ['job_id = ?', job.id]).size==0 && Runcommand.find(:all,:conditions => ['job_id = ?', job.id]).size == 0 %>
+				  <% if count1 % 2 == 1 %>
+				  <tr class="row_1">
+				  <% else %>
+				  <tr class="row_0">
+				  <% end %>
+				    <td><img src="/images/expand_off.png" title="Expand">&nbsp;&nbsp;<%=h job.id %></td>
+				    <td><%= link_if can_access('show','jobs'), (h job.name), job %></td>
+					<td><%=h @ec2machine[count1].instance_id if @ec2machine[count1]%></td>
+				    <td><%= if @ec2machine[count1] 
+				             if @ec2machine[count1].public_dns != nil and @ec2machine[count1].public_dns.include?('ec2')
+				                 h @ec2machine[count1].public_dns
+				             else
+				               if job.state == "Capturing"
+				                 "<b>The machine is creating template, please hold on all your operations</b>"  
+				               else
+				                 "<b> Please refresh this page minutes later, the IP will show after machine is deployed</b>"
+				               end 
+				             end
+				          end%>
+					</td>
+				    <td ><%=h @user[count1] %></td>
+				    <td ><%=h @password[count1] %></td>
+					<td ><%=h job.role if job.role %></td>
+					<td align="center"><%=h job.state if job.state %></td>
+				  </tr>
+				  <% count1=count1+1 %>
+				  <% end %>
+				<% end %>
+			</table>	
+		</td></tr>
+		
+		</table>
+	</td></tr>
+	
+	<tr><td style="padding:10px 0px 10px 35px">
+		<% if @run_cluster.state == "actives" %>
+		<%= link_if can_access('actives','clusters'), "<b>Back</b>", :action => 'actives',:controller=>"clusters"%>
+		<% else %>
+		<%= link_if can_access('history','clusters'), "<b>Back</b>", :action => 'history',:controller=>"clusters"%>
+		<% end %>
+	</td></tr>
+</table>
+<script>
+	function upordown(count){
+		var updownImage =  document.getElementById("updownImage"+count); 
+		if(updownImage.title == "Expand"){
+			updownImage.src = updownImage.src.replace("expand_on.png","close.png");
+			updownImage.title = "Close";
+			var table = document.getElementById("displaytable"+count);
+			table.style.display = "inline-table";
+		}else{
+			updownImage.src = updownImage.src.replace("close.png","expand_on.png");
+			updownImage.title = "Expand";
+			var table = document.getElementById("displaytable"+count);
+			table.style.display = "none";
+		}
+	};
+	
+	function closerow(){
+		if(document.getElementById("titleText").innerHTML == "close"){
+			var closeImage = document.getElementById("closeImage");
+			document.getElementById("titleText").innerHTML = "expand";
+			closeImage.src = "/images/expand_on.png";
+			document.getElementById("displaytable2").style.display = "none";
+		}else{
+			var closeImage = document.getElementById("closeImage");
+			document.getElementById("titleText").innerHTML = "close";
+			closeImage.src = "/images/close.png";
+			document.getElementById("displaytable2").style.display = "inline-table";
+		}
+		
+	};
+</script>

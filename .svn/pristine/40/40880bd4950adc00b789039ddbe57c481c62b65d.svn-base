@@ -1,0 +1,67 @@
+<h2 class="bodyTitle">Administer Roles</h2>
+<%if @role != nil%>
+  
+  <%if @user.is_admin%>
+      <%actions = Action.find(:all,:order=>"controller,description")%>
+  <%else%>
+      <%actions = Action.find_by_sql("SELECT distinct a.* FROM actions a, actions_roles ar,roles_users r
+            WHERE ar.action_id=a.id and ar.role_id = r.role_id and r.user_id = "+@user.id.to_s + 
+            " ORDER BY controller,description")%>
+  <%end%>
+  <table class="mainTable">
+  	<tr><td>
+  		<table class="tableFilter">
+  		  <tr style="display:none"><td colspan="2">
+	        <div id="notice"><%= flash[:notice] %></div><br>
+	      </td></tr>
+		  <tr>
+		  	<td>
+	            <% form_tag roles_path, :method => 'get' do %>
+	            ROLE NAME: <%=@role.role_name%> <br><br> <%=select("role", "id", @roles.collect {|p| [ p.role_name, p.id ]})%>
+	            <%= submit_tag "Search"%>
+				&nbsp;&nbsp;&nbsp;&nbsp;<img src="/images/new.png"><%= link_to 'Create role', :action => 'new' %>
+	            <% end %>
+		    </td>
+		  </tr>
+  		</table>
+  	</td></tr>
+	
+	<tr><td>
+		 <table class="tableList">   
+		    <tr>
+		      <th>Action</th>
+		      <th>Controller</th>
+		      <th>Description</th>
+		      <th>Can Access</th>
+		    </tr>
+		
+			<% count = 0 %>
+		  <% for action in actions %>
+		  <% if count % 2 == 0  %>
+		  	<tr class="row_0">
+		  <% else %>
+		  	<tr class="row_1">
+		  <% end %>
+		      <td><%=h action.action %></td>
+		      <td><%=h action.controller %></td>
+		      <td><%=h action.description %></td>
+		      <td>
+		        <%checked = @role.actions.include?action%>
+		        <%=check_box_tag( action.id,action.id,checked, :onclick =>
+		  remote_function(
+		    :update=>"notice",
+		    :before => "style.cursor= 'wait';",
+		    :success => "style.cursor= 'default';",
+		    :url => {:controller =>'roles',:action=>'update_role_action', :role_id => @role.id,:action_id => action.id}))%>
+		      </td>
+		    </tr>
+			<% count = count + 1 %>
+		  <% end %>
+		  </table>
+	</td></tr>
+  </table>
+<%else%>
+    No Role in current group. 
+<%end%>
+
+

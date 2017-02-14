@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,800italic,400,600,700,800' rel='stylesheet' type='text/css'>
+  <title><%= controller.action_name %></title>
+  <%= stylesheet_link_tag 'common' %>
+  <%= stylesheet_link_tag 'scaffold' %>
+  <%= stylesheet_link_tag 'login' %>
+
+  <%= stylesheet_link_tag 'jquery/jqueryslidemenu' %>
+  <%= javascript_include_tag 'jquery/jquery.min' %>
+  <%= javascript_include_tag 'jquery/jqueryslidemenu' %>
+
+  <%= javascript_include_tag :defaults %>
+
+</head>
+
+<body>
+<div style="width:100%;position:absolute;">
+  <p style="color: red; font-weight: bold"><%= flash[:notice] %></p>
+  <%= yield %>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<li class="<%= li_style if defined? li_style %>">
+  <a class="<%= link_style %>" rel="example_group" href="#residual<%= index %>">
+    <%= ((defined? link_content) && link_content) ? link_content : "<span>#{link_text}</span>" %>
+  </a>
+</li>
+<div style="display: none;">
+  <div id="residual<%= index %>" style="width:482px; overflow:hidden; height:auto;">
+    <div class="wraper2">
+      <div class="clear"></div>
+      <div class="residual_popup">
+        <div class="residual_popup_top">
+          <h3><%= title %></h3>
+        </div>
+        <div class="residual_pop_cont">
+          <h4><%= message %></h4>
+          <div class="residual_buttons">
+            <ul>
+              <li>
+                <%= link %>
+              </li>
+              <li>
+                <a class="residual_buttons_cancel" href="javascript:;" onclick="jQuery.fancybox.close()" title="Cancel">Cancel</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="clear"></div>
+      </div>
+    </div>
+  </div>
+</div>

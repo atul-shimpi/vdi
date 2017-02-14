@@ -1,0 +1,29 @@
+<div class="headlabel" align="center">
+	<h1>New User</h1>
+<table class="mainTable">
+	<tr><td>
+		<div style="height:10px;">&nbsp;</div>
+	</td></tr>
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', :action => 'index' %></div></td>
+		    	<td><div align="center"><%= error_messages_for :new_user %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<% form_tag :action => 'createuser' do %>
+					<%=render :partial => "form_fulluser"%>
+				</table>
+			</td></tr>
+			<tr><td colspan="2" align="right">
+				<%= submit_tag "Create" %>
+			</td></tr>
+			 <% end %>
+		</table>
+	</td></tr>
+	<tr><td>
+		<div style="height:10px;">&nbsp;</div>
+	</td></tr>
+</table>
+</div>	

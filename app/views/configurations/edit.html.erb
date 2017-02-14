@@ -1,0 +1,121 @@
+<%CalendarDateSelect.format = ("iso_date").to_sym%>
+<%= calendar_date_select_includes "silver" %>
+<div class="headlabel" align="center">
+	<h1>Editing configuration</h1>
+	<% form_for(@configuration) do |f| %>
+	<table class="mainTable">
+		<tr><td>&nbsp;</td></tr>
+		<tr><td>
+			<table class="tableList" id="noTrHover">
+				<tr id="firstRow">
+					<td><div align="left"><%= link_to 'Back', configurations_path %></div></td>
+					<td><div align="center"><%= error_messages_for :configuration %></div></td>
+				</tr>
+				<tr><td colspan='2'>
+					<table class="tableDetail">
+						<tr>
+					      <td><label for="configuration_name">Name</label></td>
+					      <td id="secondTd"><%= f.text_field :name %></td>
+					    </tr>
+					    <tr>
+					      <td><label for="configuration_description">Description</label></td>
+					      <td id="secondTd"><%= f.text_field :description %></td>
+					    </tr>
+						<tr>
+					      <td><label for="configuration_template_mapping_id">Templates Mapping</label></td>
+					      <td id="secondTd"><%=f.select "template_mapping_id", TemplateMapping.find_by_sql("select * from template_mappings").collect {|r| [ (r.id.to_s + " -- " + r.name) ,r.id ]} ,{:include_blank => true},:class=>"input_search"%>  </td>
+					    </tr>	
+						<tr>
+					      <td><label for="configuration_template_id">Templates</label></td>
+					      <td id="secondTd"><%=f.select "template_id", Configuration.find_by_sql("SELECT t.name,t.id FROM templates t, configurations c where t.id=c.template_id and t.id= #{@template.id.to_s} union SELECT t2.name,t2.id from templates t2 where t2.deleted!=1").collect {|r| [ (r.id.to_s + " -- " + r.name) ,r.id ]} ,{:include_blank => false},:class=>"input_search"%>
+						    Notes: if template mapping is selected, template option will be ignored
+						  </td>
+					    </tr>	
+					    <tr>
+					      <td>Lease time</td>
+						  <td id="secondTd">
+						    <%=f.select "lease_time", @lease_time_list, {:selected =>  @configuration.lease_time.to_s, :include_blank => false}, :class=>"input_time"%> days 
+						  </td>
+					    </tr>
+					    <tr>
+					      <td><label for="configuration_share_group_id">Groups</label></td>
+					      <!--<td><%= @groupname%></td>
+						  <input type="hidden" name="groupname" value="<%= @groupname %>"/>-->
+					      <td id="secondTd"><%=f.select "group_id", Group.find(:all).collect {|r| [ r.name, r.id ]},{:include_blank => true},:class=>"input_search"%></td>
+					    </tr>
+					    <tr>
+					      <td><label for="configuration_permission">Share Read Permission</label></td>
+					      <td id="secondTd"><%= f.check_box :rpermission %></td>
+					    </tr>
+					    <tr>
+					      <td><label for="configuration_permission">Share Write Permission</label></td>
+					      <td id="secondTd"><%= f.check_box :permission %></td>
+					    </tr>
+					    <tr>
+					      <td><label for="configuration_instancetype_id">Instance Types</label></td>
+						  <%if @region != "iland"%>
+					        <td id="secondTd"><%=f.select "instancetype_id", Configuration.find_by_sql("SELECT i.name,i.id,i.description FROM instancetypes i, configurations c where i.id=c.instancetype_id and i.id=" + @instancetype_id + " union SELECT i2.name,i2.id,i2.description from instancetypes i2 where i2.architecture=" + "'" + @instancetype_architecture + "'").collect {|r| [ r.name + " - " + r.description, r.id ]} ,{:include_blank => false},:class=>"input_search"%></td>
+					   	  <%else%>
+					        <td id="secondTd"><%=f.select "instancetype_id", Configuration.find_by_sql("SELECT i.name,i.id,i.description FROM instancetypes i, configurations c where i.id=c.instancetype_id and i.id=" + @instancetype_id + " union SELECT i2.name,i2.id,i2.description from instancetypes i2 where i2.architecture=" + "'" + @instancetype_architecture + "'  and i2.dc = " +"'"+@region+"'").collect {|r| [ r.name + " - " + r.description, r.id ]} ,{:include_blank => false},:class=>"input_search"%></td>
+						  <%end%>
+					    </tr>
+						<%if @region != "iland"%>
+					    <tr>
+					      <td><label for="configuration_securitygroup_id">Security Groups</label></td>
+					      <td id="secondTd"><%=f.select "securitygroup_id", Securitygroup.find_by_sql("SELECT s.name,s.id FROM securitygroups s, configurations c where s.id=c.securitygroup_id and s.id=" + @configuration.securitygroup_id.to_s + " union SELECT s2.name,s2.id from securitygroups s2").collect {|r| [ r.name, r.id ]} ,{:include_blank => false},:class=>"input_search"%></td>
+					    </tr>
+						<%end%>
+						<tr>
+						  <td><label for="configuration_deploymentway_id">Deployment Way</label></td>
+						  <td id="secondTd"><%=f.select "deploymentway", @configuration_deploymentway,{:include_blank => false},:class=>"input_search", :onchange=>"deploymentSetting(this)", :id=>"job_deploymentway"%>
+						  &nbsp;<img src="/images/question-small-white.png" align="top" height="25px" title="Daily Off: Please set the off time correctly, the machine will be automatically powered off with the set time.">
+						  </td>
+						</tr>
+						<tr id="subnetid">
+				          <td><label for="job_subnet_id">VPC Subnet ID</label></td>
+				          <td id="secondTd"><%=f.select "subnet_id", @subnets.collect {|r| [ r.name, r.id]}, {:include_blank => false}, :class=>"input_search"%></td>
+				        </tr>	
+						<% if @configuration.deploymentway == "DailyOff"%>
+						<tr id="powerOffTime">
+						  <td>Daily Poweroff time</td>
+						  <td id="secondTd">
+						    <%=f.select "poweroff_hour", @poweroff_hourlist, {:selected => @configuration.poweroff_hour.to_s, :include_blank => false}, :class=>"input_time"%> <b>:</b> 
+							<%=f.select "poweroff_min", @poweroff_minlist,{:selected => @configuration.poweroff_min.to_s, :include_blank => false},:class=>"input_time"%>
+						  </td>
+						</tr>	
+						<%end%>
+					    <tr>
+					      <td>Ec2machine User:</td>
+					      <td id="secondTd"><%=h @tempalte.user %></td>
+					    </tr>
+					    <tr>
+					      <td>Password:</td>
+					      <td id="secondTd"><%=h @tempalte.password %></td>
+					    </tr>
+					    <tr>
+					      <td>Platform:</td>
+					      <td id="secondTd"><%=h @tempalte.platform %></td>
+					    </tr>
+						<tr>
+					      <td><label for="configuration_init_command">Init Commands:</label></td>
+					      <td id="secondTd"><%= f.text_area :init_commands, :rows =>3  %></td>
+					    </tr>
+					</table>
+				</td></tr>
+				<tr><td align="right" colspan="2"><%= f.submit "update" %></td></tr>
+			</table>
+		</td></tr>
+	</table>
+	<% end %>
+</div>
+<script type="text/javascript">
+deploymentSetting(document.getElementById("job_deploymentway"));	
+function deploymentSetting(obj){
+	value = obj.value
+	if(value == "vpc-default" || value == "vpc-dedicated") {
+		document.getElementById("subnetid").style.display = "";
+	} else {
+		document.getElementById("subnetid").style.display = "none";
+	}
+} 
+</script>

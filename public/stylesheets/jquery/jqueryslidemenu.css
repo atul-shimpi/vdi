@@ -1,0 +1,221 @@
+.jqueryslidemenu{
+font: bold 12px Verdana;
+overflow:hidden;
+position:absolute;
+width:1200px;
+left:35px;
+top:127px;
+}
+
+.jqueryslidemenu ul{
+margin: 0;
+padding: 0;
+list-style-type: none;
+}
+
+/*Top level list items*/
+.jqueryslidemenu ul li{
+position: relative;
+display: inline;
+float: left;
+margin-left:2pt;
+margin-right:4px;
+margin-top:1pt;
+}
+
+/*Top level menu link items style*/
+.jqueryslidemenu ul li a{
+display: block;
+/*background: grey; /*background of tabs (default state)*/
+color:#333344;
+text-decoration: none;
+height:22px;
+}
+
+* html .jqueryslidemenu ul li a{ /*IE6 hack to get sub menu links to behave correctly*/
+display: inline-block;
+}
+
+.jqueryslidemenu ul li a:link, .jqueryslidemenu ul li a:visited{
+color: #333344;
+}
+
+.jqueryslidemenu ul li a:hover{
+background: grey; /*tab link background during hover state*/
+color: white;
+-moz-border-radius: 14px 14px 14px 14px ; 
+border-bottom: 1px  black;
+border-top: 1px  black ;
+height:25px;
+}
+	
+/*1st sub level menu*/
+.jqueryslidemenu ul li ul{
+position: absolute;
+margin-top:3px;
+left: 0;
+display: block;
+visibility: hidden;
+z-index:2;
+}
+
+/*Sub level menu list items (undo style from Top level List Items)*/
+.jqueryslidemenu ul li ul li{
+padding-left:8px;
+padding-right:8px;
+background-color:grey;
+display: list-item;
+float: none;
+margin-top:0pt;
+}
+
+
+.firstli{
+	-moz-border-radius: 8px 8px 0px 0px ;
+}
+
+.lastli{
+	-moz-border-radius: 0px 0px 8px 8px ;
+}
+
+/*All subsequent sub menu levels vertical offset after 1st level sub menu */
+.jqueryslidemenu ul li ul li ul{
+top: 0;
+}
+
+/* Sub level menu links style */
+.jqueryslidemenu ul li ul li a{
+font: normal 13px Verdana;
+width: 160px; /*width of sub menus*/
+padding: 5px;
+margin: 0;
+border-top-width: 0;
+background:grey;
+color:#000000 !important;
+}
+
+.jqueryslidemenu ul li ul li a:hover{ /*sub menus hover style*/
+color:white !important;
+height:auto;
+background-color:#6d6d6f;
+-moz-border-radius: 8px 8px 8px 8px ;
+}
+
+.jqueryslidemenuz ul li ul li a:hover{ /*sub menus hover style*/
+background: #eff9ff;
+color: black;
+}
+
+/* ######### CSS classes applied to down and right arrow images  ######### */
+
+.downarrowclass{
+position: absolute;
+top: 12px;
+right: 7px;
+}
+
+.rightarrowclass{
+position: absolute;
+top: 6px;
+right: 5px;
+}
+
+
+/*changes june 1*/
+.jqueryslidetab{
+    font: bold 12px Verdana;
+text-decoration:none;
+width: 1560pt;
+}
+
+.jqueryslidetab ul{
+margin: 0;
+padding: 0;
+}
+
+.jqueryslidetab ul li{
+text-decoration:none;
+float: left;
+}
+
+.jqueryslidetab ul li{
+display: block;
+color: white;
+padding: 8px 10px;
+text-decoration: none;
+}
+
+.jqueryslidetab ul li a{
+color: black;
+text-decoration: none;
+}
+
+.jqueryslidetab ul li a:hover{
+background: white; /*background of tabs (default state)*/
+text-decoration:underline;
+}
+
+.menuImage,.secondBarImage{
+border-bottom-width:0px;
+border:none;
+}
+
+.secondBarImage{
+	position:relative;
+	top:2px;
+	height:10pt;
+}
+
+.menuImage{
+	position:relative;
+	top:4px;
+	height:15pt;
+}
+
+#current_time,#headText{
+	font-family:"Arial";
+	font-size:11pt;
+	font-weight:bold;
+	color:#7F7F7F;
+}
+
+
+.header-button {
+    -moz-border-radius: 14px 14px 14px 14px !important;
+    background: -moz-linear-gradient(center top , grey, grey) repeat scroll 0 0 transparent !important;
+    border-bottom: 1px  black !important;
+    border-top: 1px  black !important;
+    color: white !important;
+    display: inline !important;
+	padding: 3px 5px !important;
+	vertical-align: middle !important;
+}
+
+#img_bag{
+	width:769px;
+}
+
+.img_bag_a{
+	float:left;
+	width:20px;
+	display:block;
+}
+
+.barTable{
+	border-width:0px;
+	background:url("/images/menu.png");
+	background-repeat:repeat-x;
+	height:42px;
+	width:1280px;
+}
+
+.barA a{
+	background:none;
+}
+
+#divp{
+	width:1270px;
+	position:absolute;
+	margin-left:10px;
+	margin-right:10px;
+}

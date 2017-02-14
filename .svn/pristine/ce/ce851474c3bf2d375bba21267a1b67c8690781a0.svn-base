@@ -1,0 +1,145 @@
+<table class="mainTable">
+	<tr><td>
+		<div style="height:20px;">&nbsp;</div>
+	</td></tr>
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td>
+					<%= link_to 'BACK', template_mappings_path %>
+				</td>
+				<td align="right" class="imageConfig">
+					<%= link_to 'EDIT', edit_template_mapping_path(@show_template_mapping) %>
+				</td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<tr>
+						<td><b> Templates operations: </b></td>
+						<td id="secondTd">
+							<% if @show_template.deleted == 1%>
+							  The template has been deleted <br><br>
+							  Delete By : <%= @show_template.deleted_user.name unless @show_template.deleted_user.nil?%>
+							<% else %>
+						  	  <% if @show_template.state == "available"%>
+							    <%= link_if can_access('new','jobs'), 'Create Job', new_job_path(:template_ids=>@show_template) %><br>
+							  <% end %>
+							  <%= link_if can_access('templatejobs','jobs'), 'Jobs From Template', :controller => "jobs", :action => "templatejobs", :templateid => @show_template.id %> <br>
+						      <%= link_if can_access('new','configurations'), 'Create Configuration', :controller => "configurations", :action => "new", :template_mapping_id => @show_template_mapping.id %> <br>
+							  <%= link_if can_access('news','configurations'), 'Create a batch of Configurations', :controller => "configurations", :action => "news", :template_mapping_id => @show_template_mapping.id %> <br>
+							  <%= link_if can_access('index','configurations'), 'Configurations from template mapping', :controller => "configurations", :action => "index", :template_mapping_id => @show_template_mapping.id %>
+							<% end %>
+						</td>
+					</tr>
+					<tr>
+						<td><b>Template Mapping ID:</b></td>
+						<td id="secondTd"><%= @show_template_mapping.id%></td>
+					</tr>
+					<%unless @show_template_mapping.updater.blank?%>
+					<tr>
+						<td><b>Latest Update</b></td>
+						<td id="secondTd"><%="By #{@show_template_mapping.updater.name} at #{@show_template_mapping.updated_at.strftime("%Y-%m-%d %H:%M:%S")}"%></td>
+					</tr>
+					<%end%>
+					<tr>
+						<td><b>Template mapping name:</b></td>
+						<td id="secondTd"><%= @show_template_mapping.name%></td>
+					</tr>
+					<tr>
+						<td><b>Version:</b></td>
+						<td id="secondTd"><%=h @show_template_mapping.version %></td>
+					</tr>
+					<tr>
+						<td><b>Template Usage:</b></td>
+						<td id="secondTd"> <%= @show_template_mapping.usage%></td>
+					</tr>
+					<tr>
+						<td><b>Template ID:</b></td>
+						<td id="secondTd"> <%= @show_template.id%></td>
+					</tr>
+					<tr>
+						<td><b>Tempalte Name:</b></td>
+						<td id="secondTd"> <%=link_to (h @show_template.name), :action => "show",:controller => "templates", :id=> @show_template.id %></td>
+					</tr>
+					<tr>
+						<td><b>Ec2 ami:</b></td>
+						<td id="secondTd"> <%=h @show_template.ec2_ami %></td>
+					</tr>
+					<tr>
+						<td><b>User:</b></td>
+					  	<td id="secondTd"><%=h @show_template.user %></td>
+					</tr>
+					<tr>
+						<td><b>Password:</b></td>
+						<td id="secondTd"><%=h @show_template.password %></td>
+					</tr>
+					<tr>
+						<td><b>State:</b></td>
+						<td id="secondTd"> <%=h @show_template.state %></td>
+					</tr>
+					<tr>
+						<td><b>Description:</b></td>
+						<td id="secondTd"><%=h @show_template.description %></td>
+					</tr>
+					<tr>
+						<td><b>Region:</b></td>
+						<td id="secondTd"><%=h @show_template.region %></td>
+					</tr>
+					<tr>
+						<td><b>Team:</b></td>
+						<td id="secondTd">
+							<%= if @show_template.team_id
+						         h @show_template.team.name
+						      else 
+						         "Unknown"
+						      end %>
+						</td>
+					</tr>
+					<tr>
+						<td><b>Root Devices:</b></td>
+						<td id="secondTd"><%= if @show_template.is_ebs
+				            "EBS"
+				          else 
+				            "S3"
+				          end%>
+						 </td>
+					</tr>
+					<tr>
+						<td><b>Architecture</b></td>
+						<td id="secondTd"><%=h @show_template.architecture %></td>
+					</tr>
+					<tr>
+						<td><b>Platform:</b</td>
+						<td id="secondTd"><%=h @show_template.platform %></td>
+					</tr>
+					<tr>
+						<td><b>Image_type:</b</td>
+						<td id="secondTd"><%=h @show_template.image_type %></td>
+					</tr>
+					<tr>
+						<td><b>Image_size:</b</td>
+						<td id="secondTd"><%=h @show_template.image_size %></td>
+					</tr>
+					<tr>
+						<td><b>Dev_pay:</b</td>
+						<td id="secondTd"><%=h @show_template.dev_pay %></td>
+					</tr>
+					<% if current_user.is_admin%>
+					<tr>
+						<td><b>Shared to group:<b></td>
+						<td id="secondTd"><%=h @shared_group %></td>
+					</tr>
+					<%end%>
+					<tr>
+						<td><b>Telnet_Enabled:</b></td>
+						<td id="secondTd"><%=h @show_template.telnet_enabled %></td>
+					</tr>
+					<tr>
+						<td><b>History Templates:</b></td>
+						<td id="secondTd"><%= link_to 'History Templates', url_for(:action => 'history_templates', :id => @show_template_mapping.id) %></td>
+					</tr>
+				</table>
+			</td></tr>
+		</table>
+	</td></tr>
+</table>

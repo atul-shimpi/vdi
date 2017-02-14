@@ -1,0 +1,31 @@
+<div class="headlabel" align="center">
+<h1>Command</h1>
+<table class="mainTable" id="t" style="width:45%">
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', :action => "show",:id => @job_id, :controller=>"jobs" %></div></td>
+			</tr>
+			<tr><td>
+				<table class="tableDetail">
+				<% form_for(@new_commands) do |f| %>
+					<tr style="display:none;"><td><%= hidden_field_tag :job_id, @job_id %></td></tr>
+					<tr>
+				      <td><b>Commands path:</b></td>
+				      <td id="secondTd"><%=f.text_field :cmd_path, :size =>58%></td>
+				    </tr>
+					<tr>
+				      <td><b>Commands:</b></td>
+				      <td id="secondTd"><%=f.text_area :commands, :rows =>3 %></td>
+				    </tr>
+				</table>
+			</td></tr>
+			<tr><td align="right">
+				<%=f.submit "add command"%>
+			</td></tr>
+			 <% end %>
+		</table>
+	</td></tr>
+</table>
+				
+</div>

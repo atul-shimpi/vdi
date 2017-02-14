@@ -1,0 +1,83 @@
+# ******************************************************************************************************************************************
+# Createion Timestamp : 14/Dec/2014 09:40
+# Author              : Atul Shimpi (atul.shimpi@gteamstaff.com)
+# Purpose             : Updated ec2 ami prices in the vdi database
+# Descriptoin         : Reads ami prices from https://raw.githubusercontent.com/powdahound/ec2instances.info/master/www/instances.json
+#                     : and updates prices for each instance type in vdi database
+# ******************************************************************************************************************************************
+
+require 'rubygems'
+require 'open-uri'
+require 'json'
+require 'pp'
+
+APP_DIR = File.join(File.dirname(File.expand_path(__FILE__)), '..')
+require  File.join(APP_DIR, 'script/lib/setup')
+require File.join('config', 'environment')
+
+EC2_AMI_PRICES_URL='https://raw.githubusercontent.com/powdahound/ec2instances.info/master/www/instances.json'
+NORTH_VIRGINIA='us-east-1'
+PRICING='pricing'
+WINDOWS='mswin'
+LINUX='linux'
+
+@@logger = Logger.new(STDOUT)
+
+class UpdateInstanceTypesPrices
+  def self.update_prices
+    @@logger.info("Started updating Instance Types prices at #{Time.now}")
+
+    request_query = ''
+    url = "#{EC2_AMI_PRICES_URL}#{request_query}"
+    buffer = open(url).read
+    amazon_machine_images = JSON.parse(buffer)
+ 
+    vdi_machine_images_count = 0 
+    vdi_machine_images = Instancetype.all 
+    vdi_machine_price_found = false;
+
+    vdi_machine_images.each do |vdi_machine_image| # //1
+      vdi_machine_images_count = vdi_machine_images_count + 1
+      prices = "#{vdi_machine_images_count}) #{vdi_machine_image.name}"
+
+      amazon_machine_images.each do |amazon_machine_image| # //2
+        if vdi_machine_image.name == amazon_machine_image['instance_type'] # //3
+          vdi_machine_price_found = true
+          
+          # windows ami price
+          win_price = ''
+          win_price = amazon_machine_image[PRICING][NORTH_VIRGINIA][WINDOWS]
+          if not win_price.empty?
+            prices = prices + " Windows Price = #{win_price.to_s}"
+            vdi_machine_image.windows_price = win_price.to_f
+          end
+
+          # linux ami price
+          linux_price = ''
+          linux_price = amazon_machine_image[PRICING][NORTH_VIRGINIA][LINUX]
+          if not linux_price.empty?
+            prices = prices + " Linux Price = #{linux_price}"
+            vdi_machine_image.linux_price = linux_price.to_f
+          end 
+
+          if vdi_machine_image.changed?
+            if vdi_machine_image.save
+              @@logger.info("Updated prices for #{vdi_machine_image.name}")
+            else
+              @@logger.info("Error encounetered while updating prices for #{vdi_machine_image.name}")
+            end
+          end
+         
+         break;        
+        end # //3
+      end # //2
+
+      @@logger.info("No Price found for #{vdi_machine_image.name}") if not vdi_machine_price_found
+      vdi_machine_price_found = false
+
+    end # //1
+  end
+
+end
+
+UpdateInstanceTypesPrices.update_prices

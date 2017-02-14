@@ -1,0 +1,37 @@
+<h2 class="bodyTitle">Listing sensitivemasks</h2>
+<table class="mainTable">
+	<tr><td>
+		<table class="tableList">
+		  <tr>
+		    <th>ID</th>
+		    <th>Name</th>
+		    <th>Mask String</th>
+			<th>Operations</th>
+		  </tr>
+		<% count = 0 %>
+		<% for sensitivemask in @sensitivemasks %>
+		<% if count % 2 == 0 %>
+			<tr class="row_0">
+		<% else %>
+			<tr class="row_1">
+		<% end %>		  
+		    <td><%=h sensitivemask.id %></td>
+		    <td><%=h sensitivemask.name %></td>
+		    <td><%=h sensitivemask.mask_string %></td>
+		    <td class="imageConfig">
+		    	<%= link_if can_access('show','sensitivemasks'), '<img src="/images/application_form_magnify.png" title="Show">', sensitivemask%>
+		       <%= link_if can_access('edit','sensitivemasks'), '<img src="/images/application_form_edit.png" title="Edit">', edit_sensitivemask_path(sensitivemask) %>
+               <%= link_if can_access('destroy','sensitivemasks'), '<img src="/images/application_form_delete.png" title="Delete">', sensitivemask, :confirm => 'Are you sure?', :method => :delete %>
+			</td>
+		  </tr>
+		<% count = count + 1 %>
+		<% end %>
+		</table>
+	</td></tr>
+	<tr>
+		<td class="lastTd">
+			<div align="left"><img src="/images/new.png">&nbsp;<%= link_if can_access('new','sensitivemasks'), 'New sensitivemask', new_sensitivemask_path %></div>
+		</td>
+	</tr>
+</table>
+

@@ -1,0 +1,68 @@
+
+		<table class="tableList">
+			<tr>
+			    <th>ID</th>
+			    <th>Name</th>
+				<th>Usage</th>
+			    <th>Lease Time</th>
+			    <th>Owner</th>
+				<% if current_user.is_admin %>
+			    <th>Instancetype</th>
+				<th>Share(R/W)</th>
+				<% end%>	
+				<th>State</th>
+				<th>Cost</th>
+			    <th colspan="3">Operations</th>
+				<th>Description</th>
+			  </tr>
+			  <% count = 0 %>
+			<% for job in @jobs %>
+			<% if count % 2 == 0 %>
+				<tr class="row_0">
+			<% else %>
+				<tr class="row_1">
+			<% end %>
+			    <td width="60px;"><%=h job.id %></td>
+			    <td><div title="<%=job.name%>" id="AutoNewLine" style="width:100px;"><%= link_if can_access('show','jobs'), (h job.name), job %></div></td>
+				<td><div id="AutoNewLine" style="width:90px;">
+			    <%= if job.project_id
+			      (h job.usage) + '-' + (h job.project_id)
+			    else 
+			      (h job.usage)
+			    end%></div>
+				</td>
+			    <td><%=h job.lease_time.to_date if job.lease_time %></td>
+				<td >
+				  <% if current_user.is_admin && job.user%>
+			         <%= link_if can_access('byuser','jobs'), (h job.user.name), :action => 'byuser',:userid=> job.user.id, :onlyactive=>"true"%>
+				  <% else%>
+				     <%=h job.user.name if job.user %>
+				  <%end%>
+				</td>
+				<% if current_user.is_admin %>
+			    <td ><%=h job.instancetype.name if job.instancetype %></td>
+				<td ><%= (h (job.rpermission=='1') ) + "/" + (h (job.permission == '1')) %></td>
+				<% end%>	
+				<td align="center"><div title="<%=job.state%>" id="AutoNewLine" style="width:70px;"><%=h job.state if job.state %></div></td>
+				<td align="center"><%= "$" + (h job.cost)%></td>
+				<% if job.can_read_job(current_user) %>
+			    <td class="imageConfig"><%= link_if can_access('show','jobs'), '<img src="/images/application_form_magnify.png" title="Show">', job %></td>
+			    <%end%>
+				<% if job.can_write_job(current_user) %>
+			    <td class="imageConfig"><%= link_if can_access('edit','jobs'), '<img src="/images/application_form_edit.png" title="Edit">', edit_job_path(job) %></td>
+				<% if job.state == "Pending" || job.state == "Undeploy" || job.state == "Deploying" || job.state == "Open" || job.state == "Expired"%>
+				<td></td>
+				<%else%>
+				<%if job.runcluster_id == 0 || job.runcluster_id == nil || job.runcluster_id == ""%>
+			    <td class="imageConfig"><%= link_if can_access('destroy','jobs'), '<img src="/images/application_form_delete.png" title="Delete">', job, :confirm => 'Are you sure?', :method => :delete %></td>
+				<%else%>
+				<td class="imageConfig"><%= link_if can_access('showruncluster','runcluster'), '<img src="/images/application_form_delete.png" title="Delete">',:id =>job.runcluster_id, :action => 'showruncluster',:controller=>"clusters"%></td>
+				<%end%>
+				<%end%>
+				<%end%>
+				<td><div title="<%=job.description%>" id="AutoNewLine" style="width:100px;"><%=h job.description %></div></td>
+			  </tr>
+			  <% count = count + 1 %>
+			<% end %>
+		</table>
+

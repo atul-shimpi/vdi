@@ -1,0 +1,34 @@
+<h2 class="bodyTitle">All Active Spot</h2>
+<table class="mainTable">
+<tr><td>
+<table class="tableList">
+  <tr>
+    <th>Spot ID</th>
+	<th>State</th>
+	<th>Instance ID</th>
+	<th>OS</th>
+	<th>Region</th>
+    <th>Instance Type</th>	
+	<th>Operations</th>
+  </tr>
+
+<% count = 0 %>
+<% for record in @records %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+    <td><%=h record[:spot_id] %></td>
+	<td><%=h record[:status] %></td>
+	<td><%=h record[:instance_id] %></td>
+    <td><%=h record[:os] %></td>
+	<td><%=h record[:instance_type] %></td>
+	<td><%=h record[:region] %></td>
+	<td></td>
+  </tr>
+<% count = count + 1 %>
+<% end %>
+</table>
+</td></tr>
+</table>

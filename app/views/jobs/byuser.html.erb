@@ -1,0 +1,5 @@
+<h2 class="bodyTitle">Jobs by User</h2>
+
+<%=render :partial => "list_jobs"%>
+
+<%=will_paginate(@jobs ,:prev_label=>'Previous',:next_label=>'Next',:separator=>" | ") %>

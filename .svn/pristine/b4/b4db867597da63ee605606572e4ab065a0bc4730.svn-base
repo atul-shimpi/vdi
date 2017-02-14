@@ -1,0 +1,40 @@
+<h2 class="bodyTitle">Machines by available zone</h2>
+<table class="mainTable">
+<tr><td>
+<table class="tableList">
+  <tr>
+  	<th>Job id</th>
+	<th>Job name</th>
+	<th>Security_group</th>
+	<th>Deploymentway</th>
+	<th>Usage</th>	
+	<th>User</th>
+	<th>Created at</th>	
+    <th>Instance Type</th>
+    <th>OS</th>
+    <th>Available zone</th>		
+  </tr>
+
+<% count = 0 %>
+<% for record in @records %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+    <td><%=h record[:id] %></td>
+	<td><%=h record[:name] %></td>
+	<td><%=h record[:security_group] %></td>
+	<td><%=h record[:deploymentway] %></td>	
+	<td><%=h record[:usage] %></td>	
+	<td><%=h record[:account] %></td>
+	<td><%=h record[:created_at] %></td>	
+    <td><%=h record[:instance_type] %></td>
+    <td><%=h record[:os] %></td>
+    <td><%=h record[:zone] %></td>			
+  </tr>
+<% count = count + 1 %>
+<% end %>
+</table>
+</td></tr>
+</table>

@@ -1,0 +1,44 @@
+<h2 class="bodyTitle">Dirty Snapshot</h2>
+<table class="mainTable">
+<tr><td style="padding-left:30px;">
+<div>
+<%= link_if can_access('dirty_snapshot','reports'), 'All Dirty Snapshots', :action=> 'dirty_snapshot', :controller=>'reports'%> |
+<%= link_if can_access('dirty_snapshot','reports'), 'For deleted AMI', :action=> 'dirty_snapshot', :controller=>'reports', :deleted=> "1"%> |
+<%= link_if can_access('dirty_snapshot','reports'), 'Not For AMI', :action=> 'dirty_snapshot', :controller=>'reports', :deleted=> "0"%> 
+	
+</div>
+</td></tr>
+<tr><td>
+<table class="tableList">
+  <tr>
+    <th>Snapshot ID</th>
+	<th>AMI</th>
+    <th>Status</th>
+    <th>Volume Size</th>
+	<th>Region</th>
+  </tr>
+
+<% count = 0 %>
+<% for record in @records %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+    <td><%=h record[:snapshot_id] %></td>
+	<td>
+	    <% if record[:ami] %>
+		  <%=h record[:ami] %>
+		<%else%>
+		  Not For AMI
+		<%end%>  
+    </td
+	<td><%=h record[:status] %></td>
+    <td><%=h record[:volumeSize] %></td>
+	<td><%=h record[:region] %></td>
+  </tr>
+<% count = count + 1 %>
+<% end %>
+</table>
+</td></tr>
+</table>

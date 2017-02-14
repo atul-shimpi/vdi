@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<%= stylesheet_link_tag 'demo'%>
+    </head>
+	<body>
+	  <div id="main">
+		<div id="header">
+			<%if !@demo_product.nil? %>
+			   <%= image_tag("/demo_products/product_logo?id=" + @demo_product.id.to_s, :size=>'270x70') %>
+			<%else%>
+			<%end%>   
+	    </div>
+        <div id="requet_form">
+        	<p style="color: red; font-weight: bold"><%= flash[:notice] %></p>
+          <%if !@demo_product.nil? %>
+           <% form_tag('/demos/creat_demo_job', :id=>"demo_request") do%>
+		     <input type="hidden" name="product" value=<%= @demo_product.name%>>
+             <div id="request_table_div">
+			   <table id="request_table">
+               	 <tr>
+               	   <td class='left_td'>Name: </td> 
+				   <td><%= text_field_tag :name, params[:name], :class=>"text_input"%></td>
+			     </tr>
+                 <tr>
+               	   <td class='left_td'> Company: </td>
+				   <td><%= text_field_tag :company, params[:company], :class=>"text_input"%></td>
+			     </tr>
+                 <tr>
+               	    <td class='left_td'> Email: </td>
+					<td><%= text_field_tag :email, params[:email], :class=>"text_input"%></td>
+			     </tr>
+               	 <tr>
+               	   <td class='left_td'>Demo: </td> 
+				   <td><%= select_tag "demo_id", options_from_collection_for_select(Demo.find(:all, :conditions=> "demo_product_id = '#{@demo_product.id}'"), 'id', 'name'),{:include_blank => false, :class=>"text_input"}%></td>
+			     </tr>				 
+                 <tr>
+               	    <td class='left_td'> Authentication Key: </td>
+					<td><%= text_field_tag :auth_key, params[:auth_key], :class=>"text_input"%></td>
+			     </tr>				 
+			     <tr>
+			       <td class='left_td'> Terms&Conditions</td>
+			       <td><textarea id="agreement" cols="" rows="" readonly="true" style="width:480px;height:110px;font-size:12px;color:#666"></textarea><br>
+			           <input type="checkbox" id="agreed" name="agreed">I accept the terms and conditions</td>
+			     </tr>
+			   </table>	
+			 </div>
+			 <div id="submit_link" onclick="javascript:submit();" onmouseover="javascript:handCursor(this);">
+			    <img src="/images/submit_button.png">	   
+             </div>
+			<% end %> 
+		  <%else%>
+		     Your demo deploy link is not correct, please contact the product team
+		  <%end%>		    
+		</div>
+		<div id="footer" align="center">
+			<span>Copyright © 2011, Versata FZ-LLC. All Rights Reserved</span>
+		</div>	
+	  </div>	
+	</body>	
+	<script>
+		document.getElementById("agreement").value = "                          LIMITED USE AGREEMENT\n" 
+		           + "PLEASE READ CAREFULLY:  IF YOU AND YOUR COMPANY (“LICENSEE”/ “YOU”) AGREE WITH THE FOLLOWING, PLEASE ACCEPT THE TERMS AND CONDITIONS OF THIS LIMITED USE AGREEMENT (“AGREEMENT”) AND PROCEED WITH THE INSTALLATION. ACCEPTING THIS AGREEMENT OR INSTALLING OR USING THE SOFTWARE (AS DEFINED BELOW) SIGNIFIES LICENSEE’S AGREEMENT TO ADHERE TO THIS AGREEMENT WITH VERSATA FZ-LLC. (“VERSATA”).  IF LICENSEE DOES NOT AGREE, YOU MUST IMMEDIATELY ABORT THE INSTALLATION, IF ANY AND DECLINE TO ACCEPT THIS AGREEMENT, AND DELETE OR RETURN THE SOFTWARE TO VERSATA, AS THE CASE MAY BE.\n" 
+                   + "PLEASE READ CAREFULLY:  THIS AGREEMENT IS A LEGAL AND BINDING AGREEMENT BETWEEN LICENSEE AND VERSATA.  USE OF THE VERSATA SOFTWARE, INCLUDING WITHOUT LIMITATION ALL ASSOCIATED DOCUMENTATION, IS SUBJECT TO THE TERMS AND CONDITIONS OF THIS AGREEMENT.\n"
+				   + "All questions concerning this Agreement should be directed to Versata FZ-LLC., 706 707 Al Thuraya 1, Dubai Media City, Post Box No.502092, Dubai, United Arab Emirates.\n"
+                   + "1. Definitions. “Authorized Purpose” means evaluation of the Software for purchase and deployment. “License Term” shall mean a period of seven (7) days from date of Licensee’s acceptance of this Agreement. “Software” means and includes the related documentation and the Versata software provided to Licensee in connection with this Agreement, in object code format only, available to Licensee through Versata’s Website, solely for such limited use as specified in this Agreement. “Website” shall mean vdi.gdev.com and demo.versata.com \n"
+                   + "2. Software License.  Versata hereby grants to Licensee a limited, nonexclusive and nontransferable right and license to use one (1) copy of Versata’s proprietary Software described, strictly in accordance with the terms and conditions of this Agreement solely for Licensee’s internal use and for the Authorized Purpose. Versata shall deploy and make available an instance for the Licensee’s use. Licensee may not install or use the Software at any other location without the written agreement with Versata. The Licensee understands that the Software shall automatically terminate and disappear at the end of the above-mentioned License Term. Any purchase of the Software shall be governed by a separate agreement that shall be executed between Versata and the Licensee.\n"
+                   + "3. Restrictions.  Licensee may not:  (i) modify, disassemble, de-compile, reverse engineer, or otherwise attempt to determine the source code or protocols from the object code of the Software or knowingly permit or encourage any third party to do so; (ii) use the Software in any manner to provide service bureau, time-sharing or other computer services to third parties; or (iii) use the Software, or allow the transfer, transmission, export, or re-export of the Software or portion thereof in violation of any export control laws or regulations administered by any government agency.\n"
+                   + "4. Ownership.  This license confers no ownership rights to Licensee and is not a sale of any rights in the Software, or the media on which either is recorded or printed.  Versata shall own and retain ownership of all right, title, and interest in and to (i) the Software and any copies thereof; (ii) any ideas, suggestions, or feedback relating to the Software (“Feedback”); and (iii) all intellectual property rights embodied within the foregoing (i)-(ii).  Licensee hereby irrevocably assigns and agrees to assign all of Licensee’s right, title, and interest in and to any Feedback to Versata.  To the extent such Feedback cannot be assigned, Licensee hereby grants and agrees to grant to Versata at no charge a perpetual, irrevocable, royalty-free, worldwide right and license to use, reproduce, disclose, sublicense, distribute, modify, and otherwise exploit the Feedback without restriction\n"
+                   + "5. Confidentiality.  The Software contains proprietary and confidential information of Versata or Versata’s licensors as well as trade secrets owned by Versata or Versata’s licensors.  Licensee agrees to hold the Software in strict confidence and not to use or disclose the Software in any way except as expressly permitted hereunder.  Licensee agrees to protect the Software at least to the same extent that it protects its similar confidential information, but in no event less than reasonable care.\n"
+                   + "6. Disclaimer of Warranties. VERSATA MAKES NO WARRANTIES, EXPRESS OR IMPLIED, WITH RESPECT TO THE SOFTWARE, INSTALLATION, SERVICES OR ANY OTHER MATERIALS OR INFORMATION (TANGIBLE OR INTANGIBLE) SUPPLIED BY VERSATA, OR ITS AGENTS, AND VERSATA HEREBY EXPRESSLY DISCLAIMS ANY IMPLIED WARRANTIES, INCLUDING WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INTERFERENCE, ACCURACY OF DATA, AND NON-INFRINGEMENT. ALL SOFTWARE, DATA, INFORMATION AND OTHER MATERIALS ARE PROVIDED ON AN AS-IS BASIS WITHOUT WARRANTY OF ANY FIND WHATSOEVER.\n"
+                   + "7. Limitation of Liability.  LICENSEE AGREES THAT NEITHER VERSATA NOR ITS THIRD PARTY LICENSORS, IF ANY, SHALL BE LIABLE FOR ANY DIRECT, INDIRECT, CONSEQUENTIAL OR OTHER DAMAGES, WHATSOEVER, ARISING OUT OF THE USE OF THE SOFTWARE, EVEN IF VERSATA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES AND NOTWITHSTANDING THE FAILURE OF ESSENTIAL PURPOSE OF ANY REMEDY. THE DISCLAIMER OF WARRANTIES AND LIMITATIONS OF LIABILITY CONTAINED IN THIS AGREEMENT ARE FUNDAMENTAL PARTS OF THE BASIS OF VERSATA’S BARGAIN HEREUNDER, AND LICENSEE ACKNOWLEDGES THAT VERSATA WOULD NOT BE ABLE TO PROVIDE THE SOFTWARE TO LICENSEE ABSENT SUCH LIMITATIONS.  THE FOREGOING LIMITATIONS WILL APPLY NOTWITHSTANDING THE FAILURE OF ESSENTIAL PURPOSE OF ANY LIMITED REMEDY HEREIN.\n"
+                   + "8. Indemnification. Licensee shall defend Versata against any third party claims or causes of action, of any type, brought against Versata to the extent that such claim is based upon actions arising out of Licensee’s use of the Software and/ or any breach of its obligations hereunder.\n"
+                   + "9. Government Users.  If Licensee is a branch or agency of the United States Government or a contractor thereto, the following provision applies.  The Software is comprised of “commercial computer software” and “commercial computer software documentation” as such terms are used in 48 C.F.R. 12.212 (Sept. 1995) and are provided to the Government (i) for acquisition by or on behalf of civilian agencies, consistent with the policies set forth in 48 C.F.R. 12.212; or (ii) for acquisition on behalf of the department of defense consistent with the policies set for the in 48 C.F.R. 227.7202-1 (Aug. 1995) and 227.7202-3 (Aug. 1995).\n"
+                   + "10. Termination.  This Agreement is effective upon installation of the Software, and shall remain in effect for the License Term as defined in Section 1, unless terminated in accordance with this section.  The Agreement will automatically terminate upon Licensee’s failure to comply with any term or condition of this Agreement.\n" 
+                   + "11. Consequences of Termination. Upon termination, (i) Licensee shall cease all use of the Software; (ii) Licensee shall either return to Versata or destroy the Software together with any copies thereof; and (iii) all terms and conditions of this Agreement shall cease, except for Sections 1 (Definitions), 3 (Restrictions), 4 (Ownership), 5 (Confidentiality), 6 (Disclaimer of Warranties), 7 (Limitation of Liability), 8 (Indemnification), 11 (Consequences of Termination) and 12 (General) which shall survive termination of this Agreement.\n"
+	               + "12. General.  This Agreement shall be governed by and interpreted in accordance with the laws of the State of New York, USA, without regard to any principles of conflict of laws of any state or jurisdiction.  All disputes arising under this Agreement shall be brought exclusively in a federal or state court located in New York, New York.  If any provision of this Agreement is held by a court of competent jurisdiction to be unenforceable for any reason, the remaining provisions hereof shall be unaffected and remain in full force and effect.  Failure or delay in enforcing any right or provision of this Agreement shall not be deemed a waiver of such right or provision with respect to any subsequent breach.  No terms, provisions, or conditions of any purchase order, acknowledgement, check, or other business form that Licensee may use in connection with the acquisition or licensing of the Software will have any effect on the rights, duties, or obligations of the parties under this Agreement, regardless of any failure of Versata to object to such terms, provisions, or conditions.  This Agreement constitutes the complete agreement between the parties and supersedes all prior or contemporaneous discussions, representations, and proposals, whether in writing or oral, with respect to the subject matter of this Agreement.  This Agreement may not be amended or modified in any respect unless approved in writing and signed by the parties. Licensee’s rights under this Agreement may not be transferred or assigned without the prior express written consent of Versata, and any such attempted assignment shall be void.  Versata may assign this Agreement in its discretion.\n"
+	</script>
+	<script>
+		function submit(){
+			agreed = document.getElementById("agreed").checked
+			if(agreed) {
+			   document.getElementById("demo_request").submit()	
+			} else {
+			   alert("You should agree the terms to process further");				
+			}
+		}
+		function handCursor(obj) {
+            obj.style.cursor = 'hand';
+            obj.style.cursor = 'pointer';
+        }		
+	</script>	
+</html>
+	

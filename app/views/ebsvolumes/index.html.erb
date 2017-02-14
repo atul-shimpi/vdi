@@ -1,0 +1,11 @@
+<h2 class="bodyTitle">EBS Volume List</h2>
+<table class="mainTable">
+	<tr><td>
+
+<%=render :partial => "list_ebsvolumes"%>
+
+</td></tr>
+	<tr><td class="lastTd">
+		<div align="right"><%=will_paginate(@ebsvolumes ,:prev_label=>'Previous',:next_label=>'Next',:separator=>" | ") %></div>
+	</td></tr>
+</table>

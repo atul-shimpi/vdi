@@ -1,0 +1,61 @@
+<script type="text/javascript">
+    var counttemp = document.getElementById("counttemp");
+    var lockcounttemp = document.getElementById("lockcounttemp");
+    var count = <%= @size - 1 %>;
+    var lockcount = <%= @locksize - 1 %>;
+
+    function addLockRow(source) {
+        var addBtn = jQuery(source).closest('.new_cluster_config_button'),
+                block = addBtn.prev().clone(),
+                textField = block.find("input[type='text']");
+
+        lockcount += 1;
+        lockcounttemp.value = lockcount;
+        textField.attr('name', 'lock' + lockcount);
+
+        if (block.find(".delete").length === 0) {
+            block.find(':last-child').before(newDeleteButton('deleteLock'));
+        }
+        block.insertBefore(addBtn);
+    }
+
+    function newDeleteButton(deleteAction) {
+        return jQuery('<div class="even_control ncc"><ul><li><a href="#" onclick="' + deleteAction + '(this);return false" class="delete add_u"><span>Remove</span></a></li></ul></div>');
+    }
+
+    function addConfigurationRow(source) {
+        var addBtn = jQuery(source).closest('.new_cluster_config_button'),
+                roleBlock = addBtn.prev().clone(),
+                roleTxt = roleBlock.find("input[type='text']"),
+                configBlock = newConfigBlock(++count);
+
+        counttemp.value = count;
+        roleTxt.attr('name', 'role' + count);
+
+        if (roleBlock.find(".delete").length === 0) {
+            roleBlock.find(':last-child').before(newDeleteButton('deleteConfig'));
+        }
+        configBlock.insertBefore(addBtn);
+        roleBlock.insertBefore(addBtn);
+        jqTransformAll();
+    }
+
+    function newConfigBlock(configCount) {
+        var configBlock = '<div class="edit_config_page clearfix"><label>Configurations:</label><div class="select"><div class="edit_config_dd"><select name="configurations' + configCount + '" >';
+        <% for configuration in @configurations %>
+        configBlock += '<option value= <%=h configuration.id %>><%=h (configuration.id.to_s + "-" + configuration.name.gsub("\'", "")) %></option>'
+        <% end %>
+        configBlock += '</select></div></div><div class="cl"></div></div>';
+        return jQuery(configBlock);
+    }
+
+    function deleteLock(source) {
+        jQuery(source).closest('div.edit_config_page').remove();
+    }
+
+    function deleteConfig(source) {
+        var roleBlock = jQuery(source).closest('div.edit_config_page');
+        roleBlock.prev().remove();
+        roleBlock.remove();
+    }
+</script>

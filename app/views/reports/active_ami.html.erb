@@ -1,0 +1,36 @@
+<h2 class="bodyTitle">All Active AMI</h2>
+<table class="mainTable">
+<tr><td>
+<table class="tableList">
+  <tr>
+    <th>AMI ID</th>
+	<th>State</th>
+	<th>Architecture</th>
+    <th>Platform</th>
+	<th>Region</th>
+	<th>Template Name</th>
+	<th>Operations</th>
+    <th>Name</th>
+  </tr>
+
+<% count = 0 %>
+<% for record in @records %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+    <td><%=h record[:ami_id] %></td>
+	<td><%=h record[:imageState] %></td>
+	<td><%=h record[:architecture] %></td>
+    <td><%=h record[:platform] %></td>
+	<td><%=h record[:region] %></td>
+	<td><%=h record[:template_name] %></td>
+	<td></td>
+	<td><%=h record[:name] %></td>	
+  </tr>
+<% count = count + 1 %>
+<% end %>
+</table>
+</td></tr>
+</table>

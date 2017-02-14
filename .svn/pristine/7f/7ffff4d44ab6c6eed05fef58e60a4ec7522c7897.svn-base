@@ -1,0 +1,78 @@
+#!/bin/bash
+#
+# vdiclient        This starts and stops vdiclient
+#
+# chkconfig: 2345 95 05
+# description: This scipt downloads and launches vdiclient
+#              init script.
+#
+#
+# processname: /opt/vdiclient/vdiclient.sh
+#
+# Return values according to LSB for all commands but status:
+# 0 - success
+# 1 - generic or unspecified error
+# 2 - invalid or excess argument(s)
+# 3 - unimplemented feature (e.g. "reload")
+# 4 - insufficient privilege
+# 5 - program is not installed
+# 6 - program is not configured
+# 7 - program is not running
+#
+
+VDICLIENT_BIN=/opt/vdiclient/vdiclient.sh
+test -x $VDICLIENT_BIN || { echo "$VDICLIENT_BIN not installed.";
+        if [ "$1" = "stop" ]; then exit 0;
+        else exit 5; fi; }
+
+# Source function library.
+. /etc/init.d/functions
+
+# Allow anyone to run status
+if [ "$1" = "status" ] ; then
+        status $VDICLIENT_BIN
+        RETVAL=$?
+        exit $RETVAL
+fi
+
+# Check that we are root ... so non-root users stop here
+test $EUID = 0  ||  exit 4
+
+RETVAL=0
+
+start(){
+        echo -n "Starting vdiclient "
+        daemon $VDICLIENT_BIN
+
+}
+
+stop(){
+        echo -n "Shutting down vdiclient "
+        killproc "vdiclient.sh"
+}
+
+restart(){
+        stop
+        start
+}
+
+
+# See how we were called.
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        restart
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart}"
+        RETVAL=3
+esac
+
+exit $RETVAL
+
+

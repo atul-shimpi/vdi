@@ -1,0 +1,29 @@
+<div align="center">
+<table class="mainTable" id="widthControl1">
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', demos_path %></div></td>
+				<td><div align="right"><%= link_to 'Edit', edit_demo_path(@demo) %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<tr>
+						<td><b>Name:</b></td>
+						<td id="secondTd"> <%=h @demo.name %></td>
+					</tr>
+					<tr>
+						<td><b>Configuration:</b></td>
+						<td id="secondTd"><%=link_to (h @demo.configuration.name), :action => "show",:controller => "configurations", :id=> @demo.configuration_id %></td>
+					</tr>
+					<tr>
+						<td><b>Product:</b></td>
+						<td id="secondTd"><%=link_to (h @demo.demo_product.name), :action => "show",:controller => "demo_products", :id=> @demo.demo_product_id %></td>
+					</tr>
+				</table>
+			</td></tr>
+		</table>
+	</td></tr>
+</table>
+</div>
+

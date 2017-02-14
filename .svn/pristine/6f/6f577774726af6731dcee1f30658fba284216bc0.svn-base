@@ -1,0 +1,118 @@
+<div class="headlabel" align="center">
+<h1>License Detail of  <%=@software.name%></h1>
+<table class="mainTable">
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td>
+					<div align="left"><%= link_to 'Back', softwares_path %></div>
+					<h2 align="center"><b>jobs</b></h2>
+				</td>
+			</tr>
+			<tr><td>
+				<table class="tableDetail">
+					<tr>
+						<th>NUM</th>
+					    <th>JOB ID</th>
+					    <th>Name</th>
+						<th>Usage</th>
+					    <th>Lease Time</th>
+					    <th>Owner</th>
+						<% if current_user.is_admin %>
+					    <th>Instancetype</th>
+						<th>Share(R/W)</th>
+						<% end%>	
+						<th>State</th>
+						<th>Cost</th>
+						<th>Description</th>
+				  	</tr>
+					
+					  <% count = 0 %>
+					<% for job in @job_licenses %>
+					<% if count % 2 == 0 %>
+						<tr class="row_0">
+					<% else %>
+						<tr class="row_1">
+					<% end %>
+						<td><%=count+1%></td>
+					    <td width="60px;"><%=h job.id %></td>
+					    <td><div title="<%=job.name%>" id="AutoNewLine" style="width:100px;"><%= link_if can_access('show','jobs'), (h job.name), job %></div></td>
+						<td><div id="AutoNewLine" style="width:90px;">
+					    <%= if job.project_id
+					      (h job.usage) + '-' + (h job.project_id)
+					    else 
+					      (h job.usage)
+					    end%></div>
+						</td>
+					    <td><%=h job.lease_time.to_date if job.lease_time %></td>
+						<td >
+						  <% if current_user.is_admin && job.user%>
+					         <%= link_if can_access('byuser','jobs'), (h job.user.name), :action => 'byuser',:controller=>'jobs',:userid=> job.user.id, :onlyactive=>"true"%>
+						  <% else%>
+						     <%=h job.user.name if job.user %>
+						  <%end%>
+						</td>
+						<% if current_user.is_admin %>
+					    <td ><%=h job.instancetype.name if job.instancetype %></td>
+						<td ><%= (h (job.rpermission=='1') ) + "/" + (h (job.permission == '1')) %></td>
+						<% end%>	
+						<td align="center"><div title="<%=job.state%>" id="AutoNewLine" style="width:70px;"><%=h job.state if job.state %></div></td>
+						<td align="center"><%= "$" + (h job.cost)%></td>
+						<td><div title="<%=job.description%>" id="AutoNewLine" style="width:100px;"><%=h job.description %></div></td>
+					  </tr>
+					  <% count = count + 1 %>
+					<% end %>
+				</table>
+			</td></tr>
+			<tr>
+				<td class="lastTd">
+					<div align="right"><%=will_paginate(@job_licenses ,:prev_label=>'Previous',:next_label=>'Next',:separator=>" | ") %></div>
+				</td>
+			</tr>
+			<tr>
+				<td><h2 align="center"><b>users</b></h2></td>
+			</tr>
+			<tr><td>
+				<table class="tableDetail">
+				  <tr>
+				  	<th>NUM</th>
+				  	<th width="60px;"><div>License</div><div>id</div></th>
+				    <th>Software</th>
+				    <th>Requester</th>
+					<th>Approver</th>
+					<th>Count</th>
+					<th>Status</th>
+				    <th id="kong">&nbsp;</th>
+				  </tr>
+				  <%@user_licenes.each_with_index do |user_license,index|%>
+					<% if index % 2 == 1 %>
+					<tr>
+					<% else %>
+				 	<tr class="row_1">
+				 	<% end %>
+						<td><%=index+1%></td>
+						<td><%=h user_license.id %></td>
+						<td>
+							<div title="<%=user_license.software.name%>" id="AutoNewLine" ><%= link_if can_access('show','softwares'), (h user_license.software.name), user_license.software %>
+						</td>
+					    <td><%=h user_license.requester.name unless user_license.requester.nil? %></td>
+					    <td><%=h user_license.approver.name unless user_license.approver.nil? %></td>
+					    <td><%=h user_license.count %></td>
+						<td><%=h user_license.status %></td>
+						<td class="imageConfig">
+							<div id="AutoNewLine">
+							<%= link_if can_access('show','license_requests'), '<img src="/images/application_form_magnify.png" title="Show">', user_license %>
+						    <%= link_if can_access('edit','license_requests'), '<img src="/images/application_form_edit.png" title="Edit">', edit_license_request_path(user_license)%>
+							<%= link_if (user_license.status=='new' && can_access_license_request(user_license.id,'approve')),'approve',:action=>'edit',:controller=>'license_requests',:id=>user_license.id,:approve=>true %>
+							<%= link_if (user_license.status!='closed' && can_access_license_request(user_license.id,'close')),'close',:action=>'edit',:controller=>'license_requests',:id=>user_license.id,:close=>true %>
+							</div>
+						</td>
+				    </tr>
+				  <%end%>
+				</table>
+			</td></tr>
+		</table>
+	</td></tr>
+</table>
+
+</div>

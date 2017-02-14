@@ -1,0 +1,65 @@
+<div class="headlabel" align="center">
+<h1>Show Software</h1>
+<table class="mainTable">
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><a onclick="window.history.go(-1)">Back</a></div></td>
+				<td align="right" class="imageConfig">
+					<%= link_if can_access('edit','softwares'), 'Edit', edit_software_path(@software) %>
+				</td>
+			</tr>
+			<tr><td colspan=2>
+				<table class="tableDetail">
+					<tr>
+						<td><b>Name:</b></td>
+						<td id="secondTd"><%=@software.name%></td>
+					</tr>
+					<tr>
+						<td><b>Version:</b></td>
+						<td id="secondTd"><%=@software.version%></td>
+					</tr>
+					<tr>
+						<td><b>License Count:</b></td>
+						<td id="secondTd"><%=@software.license_count%></td>
+					</tr>
+					<%if @software.download_enabled(current_user)%>
+					  <tr>
+						<td><b>Download Link:</b></td>
+						<td id="secondTd"><%=@software.download_link %></td>
+					  </tr>					
+					  <tr>
+						<td><b>Download Account:</b></td>
+						<td id="secondTd"><%=@software.download_account %></td>
+					  </tr>
+					  <tr>
+						<td><b>Download Password:</b></td>
+						<td id="secondTd"><%=@software.password %></td>
+					  </tr>
+					<%else%>
+					  <tr>
+					  	<td><b>Request this software:</b></td> 
+						<td id="secondTd"><%= link_if (can_access('new','license_requests')),'request',:action=>'new',:controller=>'license_requests',:id=>@software.id%></td>
+					  </tr>
+					<%end%> 					 
+					<%if can_access('license_detail','softwares')%>
+					  <tr>
+						<td><b>License Detail:</b></td>
+						<td id="secondTd"><%= link_if can_access('license_detail','softwares'), 'show detail', :action=>'license_detail',:id=>@software.id%></td>
+					  </tr>
+					<%end%>
+					<tr>
+						<td><b>Authorization:</b></td>
+						<td id="secondTd"><%= @software.is_free ? "free" : "not free"%></td>
+					</tr>
+					<tr>
+						<td><b>Open for request:</b></td>
+						<td id="secondTd"><%= @software.open_for_request ? "yes" : "no"%></td>
+					</tr>
+				</table>
+			</td></tr>
+		</table>
+	</td></tr>
+</table>
+
+</div>

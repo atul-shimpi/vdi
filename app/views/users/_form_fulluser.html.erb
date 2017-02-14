@@ -1,0 +1,31 @@
+<tr>
+  <td><label for="user_account">Account</label></td>
+  <td id="secondTd"><%= text_field 'new_user', 'account'%></td>
+</tr>
+<tr>    
+  <td><label for="user_name">Name</label></td>
+  <td id="secondTd"><%= text_field 'new_user', 'name'%></td>
+</tr>
+<tr>
+  <td><label for="user_email">Email</label></td>
+  <td id="secondTd"><%= text_field 'new_user', 'email'%></td>
+</tr>
+<tr>
+  <td><label for="user_email">Password</label></td>
+  <td id="secondTd"><%= password_field 'new_user', 'password', :value => ''%></td>
+</tr>
+<tr>
+  <td><label for="user_email">Confirm Password</label></td>
+  <td id="secondTd"><%= password_field 'new_user', 'confirmpassword', :value => '' %></td>
+</tr>
+<tr>
+  <td><label for="user_email">Role</label></td>
+  <td id="secondTd"><%=select "role", "id", Role.find(:all).collect {|r| [ r.role_name, r.id ]},{:include_blank => true},:class=>"input_search"%></td>
+</tr>
+<!--
+<tr>
+  <td><label for="user_email">Partner</label></td>
+  <td><%=select "partner", "id", User.all_partner.collect {|p| [ p.name, p.id ]},{:include_blank => true},:class=>"input_search"%></td>
+</tr>
+
+-->

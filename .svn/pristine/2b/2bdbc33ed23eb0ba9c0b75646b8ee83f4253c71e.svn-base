@@ -1,0 +1,41 @@
+getInstanceId
+Input: 
+    NONE
+Output:
+    It will get the instanceid of the current vm. And set the value to MYINSTANCEID
+    
+getPublicDNS
+Input:
+    InstacID  -- The instance of the vm
+    RoleName  -- The Role name you want to get the public DNS
+Output:
+    Set the public DNS of the machine you request to the input RoleName
+
+unlock
+Input:
+    InstacID  -- The instance of the vm
+    LockName  -- The name of the lock
+Output:
+    Unlock the specified lock on the server side
+    
+waitlock
+Input:
+    InstacID  -- The instance of the vm
+    LockName  -- The name of the lock
+Output:
+    Check every 30 seconds, and hold on all operations until the lock is released
+    
+    
+Bat Sample:
+Following command will wait all the machines on the cluster startup. then ping the machine 
+with role as serverMachine
+
+Note:
+you should use "call" command to run all VDI scripts
+-----------Start Bat -----
+call getInstanceId.bat
+call unlock.bat %MYINSTANCEID% clusterstartlock
+call waitlock.bat %MYINSTANCEID% clusterstartlock
+call getPublicDNS %MYINSTANCEID% serverMachine
+ping %serverMachine%
+-----------end Bat

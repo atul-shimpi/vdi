@@ -1,0 +1,42 @@
+<div class="headlabel"><h1>History Templats</h1></div>
+	
+<table class="mainTable">
+	<tr><td>&nbsp;</td></tr>
+	<tr><td>
+		<table class="tableList">
+			<tr>
+				<th>Template ID</th>
+				<th>Template Name</th>
+			    <th>User</th>
+			    <th>Password</th>
+			    <th>Team</th>
+			 </tr>
+			 <% count = 0 %>
+			  <% for template in @show_history_templats %>
+			  <% if count % 2 == 0 %>
+			  	<tr class="row_0">
+			  <% else %>
+			  	<tr class="row_1">
+			  <% end %>
+				<td><%=h template.id %></td>
+				<td><%=link_to (h template.name), :action => "show",:controller => "templates", :id => template.id %></td>
+				<td><%=h template.user %></td>
+			    <td><%=h template.password %></td>
+				<td><%=if template.team_id
+			               h template.team.name
+			           else 
+			               "Unknown"
+			           end %>
+			    </td>
+			  </tr>
+			  <% count = count + 1 %>
+			<% end %>
+		</table>
+	</td></tr>
+	<tr>
+		<td class="lastTd">
+			<div align="left" class="lastRow"><%= link_to 'Back', template_mappings_path %></div>
+		</td>
+	</tr>
+</table>	
+

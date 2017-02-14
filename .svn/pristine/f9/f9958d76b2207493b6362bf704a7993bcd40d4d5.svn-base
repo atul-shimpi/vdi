@@ -1,0 +1,1 @@
+<%if @verify != nil %><%if @ec2machine != nil %><%if @job.runcluster_id != nil %><%if @lock != nil %><%=h @return %><% else %>The lock was not existed.<% end %><% else %>The job was not in any cluster.<% end %><% else %>The instance was not existed.<% end %><% else %>Please input the correct verify.<% end %>

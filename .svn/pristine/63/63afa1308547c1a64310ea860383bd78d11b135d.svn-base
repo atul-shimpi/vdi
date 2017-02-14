@@ -1,0 +1,37 @@
+<div class="headlabel" align="center">
+<h1>New action</h1>
+
+<%= error_messages_for :action %>
+
+<% form_tag :action => 'create' do %>
+  <table class="mainTable" id="widthControl1">
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', actions_path %></div></td>
+			</tr>
+			<tr><td>
+				<table class="tableDetail">
+					<tr>
+						<td><b>Action</b></td>
+						<td id="secondTd"><%= text_field "new_action","action" %></td>
+					</tr>
+					<tr>
+						<td><b>Controller</b></td>
+						<td id="secondTd"><%= text_field "new_action","controller" %></td>
+					</tr>
+					<tr>
+						<td><b>Description</b></td>
+						<td id="secondTd"><%= text_field "new_action","description" %></td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td align="right" colspan="2">
+				 <%= submit_tag "Create" %>
+			</td></tr>
+		</table>
+	</td></tr>
+</table>
+<% end %>
+</div>
+

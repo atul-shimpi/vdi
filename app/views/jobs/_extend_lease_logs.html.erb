@@ -1,0 +1,25 @@
+<table class="tableList">
+	<tr>
+	    <th>Extend days</th>
+		<th>Old Lease Time</th>
+	    <th>New Lease Time</th>
+	    <th>Extend By</th>
+		<th>Extend At</th>
+		<th>Reason</th>
+	</tr>
+	<% count = 0 %>
+	<%extend_lease_logs = ExtendLeaseLog.find(:all,:include=>:user,:conditions=>"job_id = #{@job.id}")%>
+	<%extend_lease_logs.each do |log|%>
+	<%_class = (count % 2 == 0 ? "row_0" : "row_1")%>
+	<tr class="<%=_class%>">
+		<td><%=log.days%></td>
+		<td><%=log.old_lease_time.strftime("%Y-%m-%d %H:%M:%S")%></td>
+		<td><%=log.new_lease_time.strftime("%Y-%m-%d %H:%M:%S")%></td>
+		<td><%=log.user.name%></td>
+		<td><%=log.created_on.strftime("%Y-%m-%d")%></td>
+		<td><%=log.reason%></td>
+		<%count += 1%>
+	</tr>
+	<%end%>
+</table>
+

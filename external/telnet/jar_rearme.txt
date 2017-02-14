@@ -1,0 +1,32 @@
+﻿使用时请使用命令
+  java -jar  +jar包所在路径+/telnet.jar +参数
+
+
+ 参数一共为10个必须要按如下顺序输入  ip, port, Account, password,
+                        winType, dbName, dbPassword,
+                                  dbIp, jobId,dbUser
+
+ip :        服务器IP ， 
+port:      服务器端口
+Account：　登录服务器的账号
+password： 登录服务器的密码
+winType：　服务器类型（win,lunix）
+dbName:    数据库名称
+dbPassword：   数据库密码
+dbIp：     数据库IP 
+jobId：　　jobId
+dbUser：   数据库用户名
+
+例：　　java -jar G:\temp\out\dist\Telnet.jar 172.16.3.61 23　Administrator　Supe5Str0ng　Windows　gdevvdi　123　127.0.0.1　2　root　
+
+如果要运行JOB命令输入格式如下
+
+java -jar G:\temp\out\dist\telnet.jar ip port Account password winType dbName dbPassword
+                          dbIp jobId dbUser
+                          
+如果要测试所有的job的服务器是否开启并将已经开启的服务器设置为start状态，输入格式如下
+
+ java -jar G:\temp\out\dist\telnet.jar  winType dbName dbPassword dbIp jobId dbUser                         
+
+　　　　
+

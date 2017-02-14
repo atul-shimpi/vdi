@@ -1,0 +1,12 @@
+<%= stylesheet_link_tag 'jqtransformplugin/jqtransform' %>
+
+<%= javascript_include_tag 'jqtransformplugin/jquery.jqtransform.js' %>
+<script language="javascript">
+    jQuery(document).ready(function () {
+        jqTransformAll();
+    });
+
+    var jqTransformAll = function() {
+        jQuery('.select').jqTransform({imgPath: '/public/stylesheets/jqtransformplugin/img/'});
+    }
+</script>

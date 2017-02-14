@@ -1,0 +1,70 @@
+<h2>1. What is VDI?</h2>
+VDI is the software we use to procure virtual machines for development & QA tasks.  Read more in the <a href="http://confluence.gdev.com/display/gDevKB/gDev+VDI"><b>VDI User Guide</b></a>
+
+<h2>2. Usage rule of VDI</h2>
+VDI machines are expensive. Please use VDI cost effectively. Specifically:
+<ul>
+    <li>Undeploy your machine on time when you do not need it anymore</li>
+	<li>Choose the correct instance type in deployment</li>
+	<li>Choose the correct deployment way</li>
+	<li>Power off the machine when you do not need it for more than 12 hours</li>
+</ul>
+
+<h2>3. VDI machine costs</h2>
+We pays the machine costs for VDI. We need everyone's help to use the machines more efficiently.
+Here are the costs for the different types of machines:
+<br><br>
+<table class="tableList" id="widthControl1">
+<tr>
+	<th>Instance Type</th>
+	<th>Hardware</th>
+	<th>CPU - Memory</th>
+	<th>Windows cost</th>
+	<th>Linux Cost</th>
+	<th>Windows Spot cost</th>
+	<th>Linux Spot cost</th>
+</tr>
+<% count = 0 %>
+<% for instance_type in @instance_types %>
+<% if count % 2 == 0 %>
+<tr class="row_0">
+<% else %>
+<tr class="row_1">
+<% end %>
+    <td><%=h instance_type.name %></td>
+    <td><%=h instance_type.description %></td>
+	<td><%=h instance_type.architecture %></td>
+	<td>$<%=h instance_type.windows_price %></td>
+	<td>$<%=h instance_type.linux_price %></td>
+	<td>$<%=h (instance_type.windows_price * 0.67) %></td>
+	<td>$<%=h (instance_type.linux_price * 0.67)  %></td>
+</tr>
+<% count = count + 1 %>
+<%end%>
+</table>
+<br>
+<b>Notes:</b> <br>
+&nbsp;&nbsp;1. Prices are in dollars per hour. <br>
+&nbsp;&nbsp;2. Jobs in Powered OFF state cost almost nothing.
+<h2>4. VDI job usage</h2>
+Each job deployment should have the usage specified. You deployment should be one of the following usages:
+<ul>
+  <li>PartnerDevelopment -- partner development work</li>
+  <li>Acceptance -- Acceptance Testing</li>
+  <li>Consumption -- Consumption for webeeh projects</li>
+  <li>RFP-Creation -- RFP Creation</li>
+  <li>Rebuttal -- Rebuttal VDI sharing</li>
+  <li>Release -- Release related work</li>
+  <li>Production -- Production servers <b> DO NOT PUT PRODUCTION MACHINES IN VDI</b></li>
+  <li>Support -- Support tasks</li>
+  <li>DevelopmentTask -- Internal development tasks</li>
+  <li>Preview -- Preview/Demo review/RP, the machine need run full time for short term while preview</li>  
+  <li>Training -- Training usage</li>  
+  <li>Others -- Other usages do not delong to above usage</li>  	
+</ul>
+<h2>5. How to ask for support when you have an issue with VDI</h2>
+First, please read <a href="http://confluence.gdev.com/display/gDevKB/gDev+VDI"><b>VDI User Guide</b></a> to try to fix
+the issue by yourself. <br>
+If you have a technical issue that you can't fix by yourself or want to extend the lease time, please open an issue
+with <a href="https://gdev.zendesk.com/">Operations</a>.<br>
+

@@ -1,0 +1,12 @@
+html, body {
+    min-height: 100%;
+}
+body {
+    background-image: url(/images/loginBackground.jpg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+@media (min-width: 1120px), (min-height: 630px) {
+    body { background-size: auto; }
+}

@@ -1,0 +1,12 @@
+<h2 class="bodyTitle">My jobs</h2>
+<table class="mainTable">
+	<tr><td>
+<ul id="welcomeLink">
+<%= link_if can_access('actives','jobs'), 'My Active Jobs', :action => 'myjobs',:controller=>"jobs"%> | <%= link_if can_access('myjobs','jobs'), 'All My Jobs', :action => 'myjobs',:controller=>"jobs", :active => 0%>
+</ul>
+<%=render :partial => "list_jobs"%>
+	</td></tr>
+	<tr><td class="lastTd">
+		<div align="right"><%=will_paginate(@jobs ,:prev_label=>'Previous',:next_label=>'Next',:separator=>" | ") %></div>
+	</td></tr>
+</table>

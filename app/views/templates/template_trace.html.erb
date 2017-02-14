@@ -1,0 +1,75 @@
+<h1>Template Trace </h1>
+
+<% def show_tree(template, scope)
+	 if template.team_id != @this_template.team_id
+	   @templatestyle = "othertemplate"
+       have_team_child = true  
+	 elsif template.id == @this_template.id
+	   @templatestyle = "thistemplate"	
+	 else
+	   @templatestyle = "teamtemplate"
+	 end
+     is_accessible = template.can_access(current_user)
+     if template.get_children.size == 0 %>
+	   <li class='<%=@templatestyle%>'>  	
+	  	 <a href='/templates/show/<%=template.id%>' class='<%=@templatestyle%>'><%= is_accessible ? (h template.name) : "******"%></a>
+	     <% if template.job_id != 0%>
+		   (<a href='/jobs/show/<%=template.job_id%>' class='<%=@templatestyle%>'><%=h template.job_id%></a>)
+	     <%end%>
+		 <% if template.deleted == 1%>
+		   (Deleted)
+		 <%end%>
+	   </li>
+	<%else%>
+	    <li class='<%=@templatestyle%>'>  
+        <a id='a-<%=@i%>' href="javascript:toggle(<%=@i%>)" class='<%@templatestyle%>'>-</a> &nbsp;&nbsp;
+        <a href='/templates/show/<%=template.id%>' class='<%=@templatestyle%>'><%= is_accessible ? (h template.name) : "******"%></a>	  	
+	  	<% if template.job_id != 0%>
+		   (<a href='/jobs/show/<%=template.job_id%>' class='<%=@templatestyle%>'><%=h template.job_id%></a>)
+	    <%end%>
+		<ul id='ul-<%=@i%>'>
+	  	  <% @i += 1 
+		  template.get_children.each do |child|       
+            if scope == "team" && !child.has_team_template(@this_template.team_id)
+              # Skip the regardingless templates if the scope if team
+              next
+            end
+            show_tree(child, scope) 
+          end%>
+	  	</ul>	
+	  </li>	
+	<%end%>
+<%end%>
+Current Template:
+<%= link_to (h @this_template.name), :action => "show",:controller => "templates", :id=> @this_template.id %>
+| 
+<%if @scope == "team"%>
+  <%= link_to "Show Full Trace", :action => "template_trace",:controller => "templates", :id=> @this_template.id, :scope=>"full" %>
+<%else%>
+  <%= link_to "Show team Templates", :action => "template_trace",:controller => "templates", :id=> @this_template.id, :scope=>"team" %>
+<%end%>
+<br>
+<% first_template = @this_template
+   ancestors = @this_template.get_ancestors
+if ancestors.size > 0
+  first_template = ancestors[0]
+end
+@i=0
+@templatestyle = "othertemplate"%>
+<ul>
+  <% show_tree(first_template, @scope)%>
+</ul>	
+<script>
+  function toggle(id) {
+  	ul = document.getElementById('ul-' + id)
+	a = document.getElementById('a-' + id)
+    if (ul.style.display == '') {
+		ul.style.display = 'none';
+		a.innerHTML = "+"
+	}
+	else {
+		ul.style.display = '';
+		a.innerHTML = "-"
+	}
+  }
+</script>

@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+  <title><%= controller.action_name %></title>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,800italic,400,600,700,800' rel='stylesheet' type='text/css'>
+  <%= stylesheet_link_tag 'common' %>
+  <%= stylesheet_link_tag 'scaffold' %>
+
+  <%= stylesheet_link_tag 'jquery/jqueryslidemenu' %>
+  <%= javascript_include_tag 'jquery/jquery.min' %>
+  <%= javascript_include_tag 'jquery/jqueryslidemenu' %>
+
+  <script type="text/javascript">
+      $.noConflict();
+
+      function setSize() {
+          var w = document.getElementById("divp").style.width;
+          w = w.replace('px', '');
+          if ((document.body.clientWidth - w) > 0) {
+              document.getElementById("divp").style.left = ((document.body.clientWidth - w) / 2) + 'px';
+          }
+          if ((document.body.clientWidth - w) < 0) {
+              document.getElementById("divp").style.left = '0px';
+          }
+          $("myslidemenu").style.top = $("welcomeLink").offsetTop + $("welcomeLink").offsetHeight + 25 + "px";
+      }
+  </script>
+  <script>
+      function $(obj) {
+          return document.getElementById(obj)
+      }
+
+      var targetx = 200;
+      var dx;
+      var a = null;
+
+      function moveLeft() {
+          var le = parseInt($("myslidemenu").scrollLeft);
+          if (le > 200) {
+              targetx = parseInt($("myslidemenu").scrollLeft) - 200;
+          }
+          else {
+              targetx = parseInt($("myslidemenu").scrollLeft) - le - 1
+          }
+          scLeft();
+      }
+
+
+      function scLeft() {
+          dx = parseInt($("myslidemenu").scrollLeft) - targetx;
+          $("myslidemenu").scrollLeft -= dx * .3;
+          clearScroll = setTimeout(scLeft, 50);
+          if (dx * .3 < 1) {
+              clearTimeout(clearScroll)
+          }
+      }
+
+
+      function moveRight() {
+          var maxWidth = $("myslidemenu").getElementsByTagName("ul")[0].getElementsByTagName("li").length * 105;
+          var le = parseInt($("myslidemenu").scrollLeft) + 200;
+          var maxL = maxWidth - 749;
+          if (le < maxL) {
+              targetx = parseInt($("myslidemenu").scrollLeft) + 200;
+          }
+          else {
+              targetx = maxL
+          }
+          scRight();
+      }
+
+
+      function scRight() {
+          dx = targetx - parseInt($("myslidemenu").scrollLeft);
+          $("myslidemenu").scrollLeft += dx * .3;
+          a = setTimeout(scRight, 50);
+          if (dx * .3 < 1) {
+              clearTimeout(a)
+          }
+      }
+
+      function moveonheight() {
+          $('myslidemenu').style.height = '500px';
+      }
+
+      function moveoutheight() {
+          $('myslidemenu').style.height = '30px';
+      }
+  </script>
+  <%= javascript_include_tag :defaults %>
+
+</head>
+
+<body>
+<div style="width:1280px;position:absolute;" id="divp">
+  <div align="left">
+    <img align="left" src="/images/logo.jpg" style="height:40pt" onclick="setSize();">
+  </div>
+  <div align="center"><h1 style="margin-right:240px;">Virtual Development Infrastructure</h1></div>
+  <div align="right" id="current_time">Current server time:</div>
+  <% if session[:user]!=nil %>
+      <% @user=session[:user] %>
+      <div align="left">
+        <% if !@user_links.nil? && @user_links.any? %>
+            <% form_for :user_link, :url => switch_user_links_path(original_user) do |f| %>
+                Switch
+                to: <%= f.select :account, @user_links.collect { |x| [x.account.name, x.account.id] }.push([original_user.name, original_user.id]), {:selected => current_user.id}, {:onchange => "this.form.submit()"} -%>
+            <% end %>
+        <% end %>
+      </div>
+      <div align="left"><span id="headText">Welcome, <%= @user.name %>, IP: <%= h get_user_ip %> </span></div>
+      <div align="right" id="welcomeLink">
+        <%= link_to 'Edit My Profile', :action => 'edit', :controller => "users" %>
+        &nbsp|&nbsp<%= link_to 'Logout</span>', :action => 'logout', :controller => "users" %>
+      </div>
+  <% end %>
+  <br/>
+
+  <div id="img_bag">
+    <table class="barTable">
+      <tr>
+        <td class="barA" id="left_bar">
+          <a class="img_bag_a" href="javascript:void(0)" onmousedown="moveLeft()"><img class="menuImage" src="/images/left.png"/></a>
+        </td>
+        <td width="1300px">
+          <div id="myslidemenu" class="jqueryslidemenu" style="height:30px;top:127px;">
+            <ul style="width:1550px" onmouseover="moveonheight();" onmouseout="moveoutheight();">
+              <li id="home_link" class=none><%= link_if can_access('welcome', 'users'), '&nbsp;&nbsp;<img class="menuImage" src="/images/home.png">&nbsp;Home&nbsp;', :action => 'welcome', :controller => "users" %></li>
+
+              <li id="jobs_link"><%= link_if can_access('myjobs', 'jobs'), '&nbsp;&nbsp;<img class="menuImage" src="/images/jobs.png">&nbsp;Jobs', :action => 'myjobs', :controller => "jobs" %>
+                <ul>
+                  <li class="firstli"><%= link_if can_access('myjobs', 'jobs'), 'My Jobs', :action => 'myjobs', :controller => "jobs" %></li>
+                  <li><%= link_if can_access('actives', 'jobs'), 'Active Jobs', :action => 'actives', :controller => "jobs" %></li>
+                  <li><%= link_if can_access('myteamjobs', 'jobs'), 'My Team Jobs', :action => 'myteamjobs', :controller => "jobs" %></li>
+                  <li><%= link_if can_access('history', 'jobs'), 'History jobs', :action => 'history', :controller => "jobs" %></li>
+                  <li><%= link_if can_access('supported', 'jobs'), 'Supported jobs', :action => 'supported', :controller => "jobs" %></li>
+                  <li><%= link_if can_access('index', 'jobs'), 'All jobs', :action => 'index', :controller => "jobs" %></li>
+                  <li class="lastli"><%= link_if can_access('get_job_info', 'jobs'), 'Search job', :action => 'get_job_info', :controller => "jobs" %></li>
+                </ul>
+              </li>
+              <li id="template_link"><%= link_if can_access('index', 'templates'), '&nbsp;&nbsp;<img class="menuImage" src="/images/templates.png">&nbsp;Templates', :action => 'index', :controller => "templates" %>
+                <ul>
+                  <li class="firstli"><%= link_if can_access('index', 'templates'), 'Asia-Pacific Templates', :action => 'index', :controller => "templates", :region => 'ap-southeast-1' %></li>
+                  <li><%= link_if can_access('index', 'templates'), 'iLand Templates', :action => 'index', :controller => "templates", :region => 'iland' %></li>
+                  <li><%= link_if can_access('index', 'template_mappings'), 'Announced Templates', :action => 'index', :controller => "template_mappings" %></li>
+                  <li class="lastli"><%= link_if can_access('index', 'templates'), 'Base Templates', :action => 'base_templates', :controller => "templates" %></li>
+                </ul>
+              </li>
+              <li id="configuration_link"><%= link_if can_access('index', 'configurations'), '&nbsp;&nbsp;<img class="menuImage" src="/images/config.png">&nbsp;Configurations&nbsp;', :action => 'index', :controller => "configurations" %></li>
+              <li id="clusterconfiguration_link"><%= link_if can_access('actives', 'clusters'), '&nbsp;<img class="menuImage" src="/images/clusters.png">&nbsp;Clusters', :action => 'actives', :controller => "clusters" %>
+                <ul>
+                  <li class="firstli"><%= link_if can_access('actives', 'clusters'), 'Active Clusters', :action => 'actives', :controller => "clusters" %></li>
+                  <li><%= link_if can_access('history', 'clusters'), 'History Clusters', :action => 'history', :controller => "clusters" %></li>
+                  <li class="lastli"><%= link_if can_access('index', 'clusters'), 'Cluster Configurations', :action => 'index', :controller => "clusters" %></li>
+                </ul>
+              </li>
+              <li id="security_link"><%= link_if can_access('index', 'securities'), '&nbsp;&nbsp;<img class="menuImage" src="/images/security.png">&nbsp;Network', :action => 'index', :controller => "securities" %>
+                <ul>
+                  <li class="firstli"><%= link_if can_access('index', 'securities'), 'Security Port', :action => 'index', :controller => "securities" %></li>
+                  <li><%= link_if can_access('index', 'securitygroups'), 'Securitygroups', :action => 'index', :controller => "securitygroups" %></li>
+                  <li class="lastli"><%= link_if can_access('index', 'elasticips'), 'Elastic IP', :action => 'index', :controller => "elasticips" %></li>
+                </ul>
+              </li>
+              <li id="storage_link"><%= link_if (can_access('index', 'ebsvolumes') || can_access('index', 'snapshots')), '&nbsp;&nbsp;<img class="menuImage" src="/images/security.png">&nbsp;Storage', :action => 'index', :controller => "snapshots" %>
+                <ul>
+                  <li class="firstli"><%= link_if can_access('index', 'snapshots'), 'Snapshots', :action => 'index', :controller => "snapshots" %></li>
+                  <li class="lastli"><%= link_if can_access('index', 'ebsvolumes'), 'EBS Volumes', :action => 'index', :controller => "ebsvolumes" %></li>
+                </ul>
+              </li>
+              <li id="software_link"><%= link_if can_access('index', 'softwares'), '&nbsp;&nbsp;<img class="menuImage" src="/images/templates.png">&nbsp;Softwares', :action => 'index', :controller => "softwares" %>
+                <ul>
+                  <li class="firstli" id="software_link"><%= link_if can_access('index', 'softwares'), 'Softwares', :action => 'index', :controller => "softwares" %>
+                  <li class="lastli" id="License_request_link"><%= link_if can_access('index', 'license_requests'), 'Licenses Request', :action => 'index', :controller => "license_requests" %>
+                </ul>
+              </li>
+              <li id="report_link"><%= link_if can_access('index', 'reports'), '&nbsp;&nbsp;<img class="menuImage" src="/images/reports.png">&nbsp;Reports&nbsp;', :action => 'index', :controller => "reports" %></li>
+              <li id="release_demo"><%= link_if (can_access('index', 'demos') || can_access('index', 'demos')), '<img class="menuImage" src="/images/security.png">&nbsp;Release Demo', :action => 'index', :controller => "demos" %>
+                <ul>
+                  <li class="firstli"><%= link_if can_access('index', 'demos'), 'Demos', :action => 'index', :controller => "demos" %></li>
+                  <li><%= link_if can_access('index', 'demo_products'), 'Demo Products', :action => 'index', :controller => "demo_products" %></li>
+                  <li class="lastli"><%= link_if can_access('demo_job_list', 'demos'), 'Demo Jobs', :action => 'demo_job_list', :controller => "demos" %></li>
+                </ul>
+              </li>
+              <li id="administration_link">
+                <a href="#" style="padding-right: 23px;">&nbsp;&nbsp;<img class="menuImage" src="/images/admin.png">&nbsp;Administration<img style="border: 0pt none ;" class="downarrowclass" src="/images/down.gif"/></a>
+                <ul>
+                  <li class="firstli"><%= link_if can_access('index', 'users'), 'users', :action => 'index', :controller => "users" %></li>
+                  <li><%= link_if can_access('index', 'roles'), 'Roles', :action => 'index', :controller => "roles" %></li>
+                  <li><%= link_if can_access('index', 'groups'), 'groups', :action => 'index', :controller => "groups" %></li>
+                  <li><%= link_if current_user.is_admin, 'Extend Lease Logs', :action => 'index', :controller => "extend_lease_logs" %></li>
+                  <li class="lastli"><%= link_if can_access('index', 'sensitivemasks'), 'Sensitive Masks', :action => 'index', :controller => "sensitivemasks" %></li>
+                </ul>
+              </li>
+              <li>
+                <div style="display:block;width:35px;">&nbsp;
+              </li>
+            </ul>
+          </div>
+        </td>
+        <td style="width:20px;" class="barA">
+          <a class="img_bag_a" href="javascript:void(0)" onmousedown="moveRight()"><img class="menuImage" src="/images/ReleaseDemo.png"/></a>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <%= view_tabs(params[:controller], params[:action]) %>
+  <p style="color: red; font-weight: bold"><%= flash[:notice] %></p>
+  <!--<p style="color: red; font-weight: bold"><%= flash[:debug] %></p>-->
+  <%= yield %>
+
+  <script type="text/javascript">
+
+
+      <% t = Time.now() %>
+
+      var base_time = new Date(<%=t.year%>, <%=t.month-1%>, <%=t.day%>, <%=t.hour%>, <%=t.min%>, <%=t.sec%>).getTime();
+      var startInterval = new Date().getTime();
+
+      function timer() {
+          if (base_time == 0)
+              return;
+          var curInterval = new Date().getTime();
+          var current_time = base_time + curInterval - startInterval;
+
+          var time = new Date(current_time);
+          var hour = time.getHours();
+          var minute = time.getMinutes();
+          var second = time.getSeconds();
+          var year = time.getFullYear();
+          var month = time.getMonth() + 1;
+          var day = time.getDate();
+          if (month == 0) {
+              month = 12;
+              year = year - 1;
+          }
+          if (month < 10)
+              month = "0" + month;
+          if (day < 10)
+              day = "0" + day;
+          if (hour < 10)
+              hour = "0" + hour;
+          if (minute < 10)
+              minute = "0" + minute;
+          if (second < 10)
+              second = "0" + second;
+          document.getElementById("current_time").innerHTML = "Current server time: " + year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+
+          setTimeout("timer()", 1000);
+          setTimeout("setSize()");
+      }
+      timer();
+
+  </script>
+  <div id="foot" style="color:#292743;font-size:13px;width:1280px;;position:absolute;" align="center">
+    <div foot_center style="height:50px;padding-top:10px;position:relative;text-align:center;">
+      <%= link_to("Copyright ©" + t.year.to_s + ", GDev FZ LLC. All Rights Reserved", :action => "footer", :controller => "users") %>
+    </div>
+  </div>
+</div>
+</body>
+</html>

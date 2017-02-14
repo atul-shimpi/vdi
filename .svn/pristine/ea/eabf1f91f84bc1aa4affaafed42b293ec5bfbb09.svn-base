@@ -1,0 +1,192 @@
+# ******************************************************************************************************************************************
+# Creation Timestamp    : 11/Dec/2014 03:37
+# Author                : Atul Shimpi (atul.shimpi@gteamstaff.com)
+# Purpose               : Allows to Power Off's EC2 instances based on CPU Usage.
+# Parameters            : 1] CPU Usage in %, default is <= 5%
+#                         2] Duration in seconds, default is 3600 seconds (last 1 hours)
+#                         ex . If you want to power all instance whose cpu usage is <= 10% for last 30 min then call power_off_all(10, 1800)
+# Use by Client(s)      : stopLowCPUUsageInstances.rb, stopHighTrafficInstances.rb
+# ******************************************************************************************************************************************
+require 'rubygems'
+require 'yaml'
+require 'mysql'
+require 'logger'
+require 'aws-sdk-v1'
+require  File.join(APP_DIR, 'script/lib/setup')
+
+class MonitorInstances  
+  @avg_cpu_usage = 0
+  @avg_mbps_transferred = 0
+  @max_mbps_transferred = 0
+
+  # =====================================================================================================================  
+  # High CPU Usage : Start  
+  # Power off all instances based on cpu usage (in %) and duration (in seconds)
+  def power_off_by_cpu_usage(cpu_usage = 5, duration = 3600)
+    @@logger.info('Putting all instances to Power off having CPU Usage <= ' + cpu_usage.to_s + '%')
+
+    each_job_with_cpu_usage(cpu_usage, duration) do |instance_id, region|
+      power_off_instance(instance_id)
+    end
+
+    @@logger.info('Putting all instances to Power off having CPU Usage <= ' + cpu_usage.to_s + '% completed ')
+  end
+
+  # Returns jobs having CPU Usage <= <cpu_usage> for last duration/period = <duration> in seconds
+  def each_job_with_cpu_usage(cpu_usage, duration)  
+    each_active_machine do |instance_id, region|
+      get_ec2_cpu_usage(instance_id, region, duration)
+      @@logger.info('Invalid CPU Usage -1') if @avg_cpu_usage == -1 
+      yield(instance_id, region)  if (@avg_cpu_usage <= cpu_usage) and (@avg_cpu_usage != -1)
+    end
+  end
+  {}
+
+  # Returns Average CPU Usage for an instance for last duration(seconds)
+  def get_ec2_cpu_usage(instance_id, region, duration)
+    cw = AWS::CloudWatch::Client.new(:region=>region)
+    @avg_cpu_usage = -1
+
+    metrics = cw.get_metric_statistics('metric_name' => 'CPUUtilization', 'period' => 3600, 'start_time' => (Time.now - duration).iso8601,
+    'end_time' => Time.now.iso8601,  'statistics' => "Average", 'namespace' => "AWS/EC2", :dimensions => [{ :name => 'InstanceId',
+    :value => instance_id }])
+    if metrics.nil? 
+      @@logger.info('Cannot get CPU Usage for instance ' + instance_id + ' in ' + 'region')
+    else
+      metrics.datapoints.each do |datapoint|
+        @avg_cpu_usage =  datapoint[:average]
+        # round to 2 decimal places
+        @avg_cpu_usage = Integer(@avg_cpu_usage * 100) / Float(100)
+        @@logger.info('Average CPU Usage for instance ' + instance_id + ' in ' + region + ' is ' + @avg_cpu_usage.to_s + '%')
+      end
+    end
+
+  end
+  # High CPU Usage:End
+  # ======================================================================================================================================
+  
+  # ======================================================================================================================================
+  # High Data send Out : Start  
+  # Power off all instances based on Average data (in mbps) send out of network for a duration
+  # By default power off all instances with 100 mbps data send out for last 1 hour i.e. 3600 seconds
+  def power_off_by_data_send_out(data_size = 100, duration = 3600)
+    @@logger.info('Putting all instances to Power off sending data >=' + data_size.to_s + ' mbps out started')
+
+    each_job_with_data_send_out(data_size, duration) do |instance_id|
+      power_off_instance_by_high_network( instance_id)
+    end
+
+    @@logger.info('Putting all instances to Power off sending data >=' + data_size.to_s + ' mbps completed')
+  end
+
+  # Returns jobs/instances sending data of size >= <data_size> out of network for a duration
+  def each_job_with_data_send_out(data_size, duration)  
+    each_active_machine do |instance_id, region|
+      if get_ec2_data_send_out(instance_id, region, duration) >= data_size
+        yield instance_id
+      end
+    end 
+  end
+  {}
+
+  # Returns Average size of data send out of network by the instance for given period
+  def get_ec2_data_send_out(instance_id, region, duration)      
+    @avg_mbps_transferred = 0
+    @max_mbps_transferred = 0
+
+    cw = AWS::CloudWatch::Client.new(:region=>region)  
+
+    @@logger.info('For ' + instance_id + '...')
+    metrics = cw.get_metric_statistics('metric_name' => 'NetworkOut', 'period' => 3600, 'start_time' => (Time.now - duration).iso8601,
+    'end_time' => Time.now.iso8601,  'statistics' => ['Average', 'Maximum'], 'unit' => "Bytes", 'namespace' => "AWS/EC2",
+    :dimensions => [{ :name => 'InstanceId', :value => instance_id }]  )
+
+    if metrics.nil?
+      @@logger.info('Cannot get Network data Metrics for ' + instance_id + ' in ' + region + 'region')
+    elsif (metrics.datapoints.size == 0)
+      @@logger.info("Found " + metrics.datapoints.size.to_s + " data points.")
+    else
+      metrics.datapoints.each do |datapoint|
+        @avg_mbps_transferred = ((datapoint[:average]/1024))/1024
+        @max_mbps_transferred = ((datapoint[:maximum]/1024))/1024
+
+        @@logger.info('Network Data sent by ' + instance_id + ' in ' + region + ' is ' +
+                          format('%.2f', @avg_mbps_transferred) + ' mb (average) and ' +
+                          format('%.2f', @max_mbps_transferred) + ' mb (max)')
+      end
+    end
+
+    @avg_mbps_transferred
+  end
+
+  # Power Off an instance
+  def power_off_instance_by_high_network(instance_id)
+    ec2machine = Ec2machine.find_by_instance_id(instance_id)
+
+    if ec2machine.nil? 
+      @@logger.info('Could not find record in ec2machine with instance id ' + instance_id.to_s)
+      Email.mail_to_admin("EC2 Machine #{instance_id} has high network usage and is not in EC2Machines table",
+                          "Average Network Usage: #{@avg_mbps_transferred}.  Max Network Usage: #{@max_mbps_transferred}");
+    else
+      #if ec2machine.running_for_hour?
+        job = Job.find_by_ec2machine_id(ec2machine.id)
+        if job.nil?
+          @@logger.info('Could not find record in jobs with ec2machine id ' + ec2machine.id.to_s)
+          Email.mail_to_admin("EC2 Machine #{instance_id} has high network usage and is not in Jobs table",
+                              "Average Network Usage: #{@avg_mbps_transferred} MB/s.  Max Network Usage: #{@max_mbps_transferred} MB/s.")
+        else
+          if job.allow_high_traffic
+            @@logger.info('Job Id ' + job.id.to_s + ' (' + instance_id.to_s + ') is allowed high traffic')
+          else
+            Email.send_network_warning(job, @avg_mbps_transferred, @max_mbps_transferred)
+            job.high_network_off
+            @@logger.info('Instance ' + instance_id.to_s + ' is Power off ')
+          end
+        end
+      end
+   #end
+  end
+  # High data send Out : End
+  # ======================================================================================================================================
+
+  # Returns jobs with state == 'Run'
+  def each_active_machine()
+    machines = ActiveMachine.find_all_by_state("running")
+    machines.each do |machine|
+      begin
+        yield machine.instance_id, machine.region
+      rescue Exception => e
+        @@logger.info('Exception received when requesting network data: ' + e.message)
+        @@logger.info(e.backtrace.inspect)
+      end
+    end
+  end
+  {}
+
+  # Power Off an instance
+  def power_off_instance(instance_id)
+    ec2machine = Ec2machine.find_by_instance_id(instance_id)
+
+    if ec2machine.nil? 
+      @@logger.info('Could not find record in ec2machine with instance id ' + instance_id)
+      Email.mail_to_admin("EC2 Machine #{instance_id} has low CPU usage and is not in EC2Machines table",
+                          "Average CPU usage: #{@avg_cpu_usage}");
+    else
+      if ec2machine.running_for_hour?
+        job = Job.find_by_ec2machine_id(ec2machine.id)
+        if job.nil?
+          @@logger.info('Could not find record in jobs with ec2machine id ' + ec2machine.id.to_s)
+          Email.mail_to_admin("EC2 Machine #{instance_id} has low CPU usage and is not in Jobs table",
+                              "Average CPU usage: #{@avg_cpu_usage}");
+        elsif job.usage.casecmp('Production') == 0
+          @@logger.info("Skipping production job '#{job.name}' with 'instance #{instance_id}'")
+        else  
+          Email.send_low_cpu_usage_power_off_notification(job, @avg_cpu_usage)
+          job.power_off
+          @@logger.info("Job '#{job.name}' with instance '#{instance_id}' is Power off")
+        end
+      end
+    end 
+  end
+
+end

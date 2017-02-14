@@ -1,0 +1,215 @@
+<table class="mainTable">
+	<tr><td>
+		<div style="height:20px;">&nbsp;</div>
+	</td></tr>
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td>
+					<%= link_to 'BACK', templates_path %>
+				</td>
+				<td align="right" class="imageConfig">
+				</td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<tr>
+						<td><b>Name:</b></td>
+						<td id="secondTd"><%=h @show_template.name %></td>
+					</tr>
+					<tr>
+						<td><b> Templates operations: </b></td>
+						<td id="secondTd">
+							<% if @show_template.deleted == 1%>
+							  The template has been deleted <br><br>
+							  Delete By : <%= @show_template.deleted_user.name unless @show_template.deleted_user.nil?%>
+							<% else %>
+						  	  <% if @show_template.state == "available"%>
+							    <%= link_if can_access('new','jobs'), 'Create Job', new_job_path(:template_ids=>@show_template) %><br>
+						        <%= link_if can_access('new','configurations'), 'create configuration', new_configuration_path(:template_ids=>@show_template) %> <br>
+								<%= link_if can_access('news','configurations'), 'create a batch of configurations',  :controller => "configurations", :action => "news", :template_ids => @show_template %>
+							  <% end %>							  
+							  <br> <%= link_if can_access('edit','templates') && can_manage_template(current_user,@show_template), 'Edit', edit_template_path(@show_template) %>
+							  <br> <%= link_if can_access('destroy','templates') && can_manage_template(current_user,@show_template), 'Delete', @show_template, :confirm => 'Are you sure?', :method => :delete %>
+							<% end %>
+						</td>
+					</tr>
+					<tr>
+					   <td><b> Templates Reports: </b></td>
+					   <td id="secondTd">
+						  <%= link_if can_access('template_trace','templates'), 'Template Trace', :controller => "templates", :action => "template_trace", :id => @show_template.id, :scope=>"team" %><br>				   	
+					   	  <%= link_if can_access('templatejobs','jobs'), 'Jobs From Template', :controller => "jobs", :action => "templatejobs", :templateid => @show_template.id %><br>
+						  <%= link_if can_access('index', 'configurations'), 'Configurations From Template', :controller=>"configurations", :actions=>"index", :template_id=> @show_template.id%> <br>
+						  <%= link_if can_access('index', 'template_mappings'), 'Template mappings From Template', :controller=>"template_mappings", :actions=>"index", :template_id=> @show_template.id%>
+					   </td>
+					</tr>
+					<tr>
+						<td><b>Ec2 ami:</b></td>
+						<td id="secondTd"><%=h @show_template.ec2_ami %></td>
+					</tr>
+					<tr>
+						<td><b>User:</b></td>
+						<td id="secondTd"><%=h @show_template.user %></td>
+					</tr>
+					<tr>
+						<td><b>Password:</b></td>
+						<td id="secondTd"> <%=h @show_template.password %></td>
+					</tr>
+					<tr>
+						<td><b>State:</b></td>
+						<td id="secondTd"> <%=h @show_template.state %></td>
+					</tr>
+					<tr>
+						<td><b>Description:</b></td>
+						<td id="secondTd"> <%=h @show_template.description %></td>
+					</tr>
+					<tr>
+						<td><b>Region:</b></td>
+						<td id="secondTd"><%=h @show_template.region %></td>
+					</tr>
+					<tr>
+						<td><b>Team:</b></td>
+						<td id="secondTd">
+							 <%= if @show_template.team_id
+						         h @show_template.team.name
+						      else 
+						         "Unknown"
+						      end %>
+						</td>
+					</tr>
+					<tr>
+						<td><b>Root Devices:</b></td>
+					  	<td id="secondTd">
+					  		<%= if @show_template.is_ebs
+					           "EBS"
+					         else 
+					            "S3"
+					         end%>
+						</td>
+					</tr>
+					<tr>
+						<td><b>Architecture:</b></td>
+						<td id="secondTd"><%=h @show_template.architecture %></td>
+					</tr>
+					<tr>
+						<td><b>Platform:</b></td>
+						<td id="secondTd"><%=h @show_template.platform %></td>
+					</tr>
+					<tr>
+						<td><b>Image_type:</b></td>
+						<td id="secondTd"><%=h @show_template.image_type %></td>
+					</tr>
+					<tr>
+						<td><b>Image_size:</b></td>
+						<td id="secondTd"><%=h @show_template.image_size %></td>
+					</tr>
+					<tr>
+						<td><b>Dev_pay:</b></td>
+						<td id="secondTd"><%=h @show_template.dev_pay %></td>
+					</tr>
+					<tr>
+						<td><b>Is Cluster Instance:</b></td>
+						<td id="secondTd"><%=h @show_template.is_cluster_instance %></td>
+					</tr>
+					<tr>
+						<td><b>Is Larger instance allowed:</b></td>
+						<td id="secondTd"><%=h @show_template.allow_large %></td>
+					</tr>					
+					<tr>
+						<td><b>Is Base Template:</b></td>
+						<td id="secondTd"><%=h @show_template.base_template %></td>
+					</tr>	
+					<tr>
+					<td>
+						<b>Is Virus Risk Template:</b></td>
+						<td id="secondTd"><%=h @show_template.is_unsecure %></td>
+					</tr>											
+					<% if current_user.is_admin%>
+					<tr>
+						<td><b>Shared to group:<b></td>
+						<td id="secondTd"><%=h @shared_group %></td>
+					</tr>
+					<%end%>
+					<tr>
+						<td><b>Telnet_Enabled:</b></td>
+						<td id="secondTd"><%=h @show_template.telnet_enabled %></td>
+					</tr>
+					<tr>
+						<td><b>Creator:</b></td>
+						<td id="secondTd"><%=h @show_template.creator.name unless @show_template.creator.nil?%></td>
+					</tr>
+					<tr>
+						<td><b>Created at:</b></td>
+						<td id="secondTd"><%=h @show_template.created_at%></td>
+					</tr>			
+					<%unless @show_template.is_latest%>
+					<tr>
+					  <td><b>The Template is not latest:</b></td>
+					  <td id="secondTd"><%= link_to 'Template Mapping', url_for(:controller => 'template_mappings', :action => 'show', :id => @show_template.template_mapping_id)%></td>
+					</tr>
+					<%end%>
+					<tr>
+						<td><b>Exported Path:</b></td>
+						<td id="secondTd">
+						  <%=h @show_template.export_path if @show_template.export_path%>
+						  <%=h @templates_exported.path if @show_template.export_path.blank? && !@templates_exported.blank?%>
+						</td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td colspan=2><h2>Softwares Installed</h2></td></tr>
+			<tr><td colspan=2>
+				<table class="tableDetail">
+					  <tr>
+					  	<th>NUM</th>
+					    <th>Name</th>
+					    <th>Version</th>
+					    <th>Usage Detail</th>
+						<th>Authorization</th>
+					    <th id="kong">Operations</th>
+					  </tr>
+						<% @show_software.each_with_index do |software,index|%>
+						<% if index % 2 == 1 %>
+						<tr>
+						<% else %>
+					 	<tr class="row_1">
+					 	<% end %>
+						<td><%=h index+1 %></td>
+					    <td><% if can_access('show','softwares') %>
+					    	  <%=link_to software.name, software%>
+							<%else%>
+							  <%=software.name%>
+							<%end%>
+					    </td>
+					    <td><%=h software.version %></td>
+						<td><%= link_if can_access('license_detail','softwares'), 'show detail', :controller=>'softwares',:action=>'license_detail',:id=>software.id%></td>
+						<td><%=(software.is_free ? "Free":"Not Free") %></td>
+						<td class="imageConfig">
+							<%= link_if can_access('show','softwares'), '<img src="/images/application_form_magnify.png" title="Show">', software%>
+						    <%= link_if can_access('remove_software_from_template','templates'), 'remove', {:action=>"remove_software_from_template",:controller=>"templates",:id=>@show_template.id,:software=>software.id} %>
+						</td>
+					  </tr>
+					  <% end %>
+				</table>	
+			</td></tr>
+			<tr>
+				<td class="lastTd">
+					<div align="right"><%=will_paginate(@show_software ,:prev_label=>'Previous',:next_label=>'Next',:separator=>" | ") %></div>
+				</td>
+			</tr>
+
+			<% if can_access('edit','templates') && can_manage_template(current_user,@show_template) %>
+			  <tr><td>
+				<% form_for(:template_software,:url=>{:action=>"add_software_to_template",:controller=>"templates"}) do |f| %>
+				<tr>
+					<%=hidden_field_tag :template,@show_template.id%>
+					<td ><b>add new Software to template </b>&nbsp;&nbsp;&nbsp;&nbsp;
+					<%=f.select "software",Software.find_by_sql("select s.name,s.id from softwares s order by s.name").collect {|s| [s.name, s.id]},{:include_blank => false},:class=>"input_search"%>
+					&nbsp;&nbsp;&nbsp;&nbsp;<%= f.submit "Add" %></td>
+				</tr>
+				<%end%>
+			  </td></tr>
+			<%end%>
+		</table>
+	</td></tr>
+</table>

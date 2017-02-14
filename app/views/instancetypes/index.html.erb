@@ -1,0 +1,37 @@
+<div align="center">
+<h2 class="bodyTitle">Listing instancetypes</h2>
+
+<table class="mainTable" id="widthControl1">
+	<tr><td>
+		<table class="tableList">
+		  <tr>
+		    <th>Name</th>
+		    <th id="kong">&nbsp;</th>
+		    <th id="kong">&nbsp;</th>
+		    <th id="kong">&nbsp;</th>
+		  </tr>
+		
+		<% count = 0 %>
+		<% for instancetype in @instancetypes %>
+		<% if count % 2 == 0 %>
+			<tr class="row_0">
+		<% else %>
+			<tr class="row_1">
+		<% end %>
+		    <td><%=h instancetype.name %></td>
+		    <td><%= link_to 'Show', instancetype %></td>
+		    <td><%= link_to 'Edit', edit_instancetype_path(instancetype) %></td>
+		    <td><%= link_to 'Destroy', instancetype, :confirm => 'Are you sure?', :method => :delete %></td>
+		  </tr>
+		<% count = count + 1 %>
+		<% end %>
+		</table>
+	</td></tr>
+	<tr>
+		<td class="lastTd">
+			<div align="left"><img src="/images/new.png">&nbsp;<%= link_to 'New instancetype', new_instancetype_path %></div>
+		</td>
+	</tr>
+</table>
+</div>
+

@@ -1,0 +1,53 @@
+<div align="center">
+	<table class="mainTable" id="widthControl1">
+		<tr><td>
+			<table class="tableList" id="noTrHover">
+				<tr id="firstRow">
+					<td><div align="left"><%= link_to 'Back', demo_products_path %></div></td>
+					<td><div align="right"><%= link_to 'Edit', edit_demo_product_path(@demoproduct) %></div></td>
+				</tr>
+				<tr><td colspan="2">
+					<table class="tableDetail">
+						<tr>
+							<td><b>ID:</b></td>
+							<td id="secondTd"><%=h @demoproduct.id %></td>
+						</tr>
+						<tr>
+							<td><b>Name:</b></td>
+							<td id="secondTd"><%=h @demoproduct.name %></td>
+						</tr>
+						<tr>
+							<td><b>Tech Contact Mail:</b></td>
+							<td id="secondTd"><%=h @demoproduct.contact_mail %></td>
+						</tr>
+						<tr>
+							<td><b>Sales Contact Mail:</b></td>
+							<td id="secondTd"><%=h @demoproduct.sales_mail %></td>
+						</tr>
+						<tr>
+							<td><b>Auth Key:</b></td>
+							<td id="secondTd"><%=h @demoproduct.auth_key %></td>
+						</tr>
+						<tr>
+							<td><b>Mail Subject:</b></td>
+							<td id="secondTd"><%=h @demoproduct.mail_subject %></td>
+						</tr>
+						<tr>
+							<td><b>Email Template:</b></td>
+							<td id="secondTd">
+								<textarea name="demoproduct" readonly="true" style="width:480px;height:110px;font-size:12px;color:#666">
+								  	<%=h @demoproduct.mail_template %>
+								  </textarea> 
+							</td>
+						</tr>
+						<tr>
+							<td><b>logo:</b></td>
+							<td id="secondTd"><%= image_tag("/demo_products/product_logo?id=" + @demoproduct.id.to_s, :size=>'270x70') %></td>
+						</tr>
+					</table>
+				</td></tr>
+			</table>
+		</td></tr>
+	</table>
+</div>
+

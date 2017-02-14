@@ -1,0 +1,54 @@
+<h2 class="bodyTitle">Dirty AMI</h2>
+<table class="mainTable">
+<tr><td style="padding-left:30px;">
+<div>
+<%= link_if can_access('dirty_ami','reports'), 'All Dirty AMI', :action=> 'dirty_ami', :controller=>'reports'%> |
+<%= link_if can_access('dirty_ami','reports'), 'Deleted on VDI', :action=> 'dirty_ami', :controller=>'reports', :deleted=> "1"%> |
+<%= link_if can_access('dirty_ami','reports'), 'Not Imported on VDI', :action=> 'dirty_ami', :controller=>'reports', :deleted=> "0"%> 
+</div>
+</td></tr>
+<tr><td>
+<table class="tableList">
+  <tr>
+    <th>AMI ID</th>
+	<th>Running Count</th>
+	<th>VDI Template Name</th>
+    <th>Name</th>
+    <th>Dirty State</th>
+	<th>Deleted At</th>
+	<th>Deletad Day Ago</th>
+	<th>Platform</th>
+	<th>Region</th>
+  </tr>
+
+<% count = 0 %>
+<% for record in @records %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+    <td><%=h record[:ami_id] %></td>
+	<td><%=h record[:ic] %></td>
+	<td><%=h record[:templatename] %></td>
+    <td><%=h record[:name] %></td>
+    <td><%if record[:deleted] == '1' %>
+           Deleted
+	    <%else%>
+		   Not Found
+        <%end%>
+	</td>
+	<td><%if record[:updated_at] %>
+		  <%=h record[:updated_at].strftime("%Y-%m-%d") %>
+		<%end%>
+	</td>
+	<td><%if record[:updated_at] %>
+		  <%=h ((Time.now - record[:updated_at])/60/60/24).round %>
+		<%end%>
+	</td>
+	<td><%=h record[:platform] %></td>
+	<td><%=h record[:region] %></td>
+  </tr>
+<% count = count + 1 %>
+<% end %>
+</table>

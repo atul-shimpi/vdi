@@ -1,0 +1,34 @@
+<div class="headlabel" align="center">
+<h1>New security</h1>
+<table class="mainTable" id="widthControl1">
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', demos_path %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+				<% form_for(@demo) do |f| %>
+  				<%= f.error_messages %>
+				  <tr> 	  
+				      <td><b><%= f.label :name %></b></td>
+				      <td id="secondTd"><%= f.text_field :name %></td>
+				  </tr>	
+				  <tr> 	  
+				      <td><b><%= f.label :configuration_id %></b></td>
+				      <td id="secondTd"><%= f.text_field :configuration_id %></td>
+				  </tr>
+				  <tr> 	  
+				      <td><b for="demo_product_id">Product</b></td>
+				      <td id="secondTd"><%=f.select "demo_product_id", DemoProduct.find(:all).uniq.collect {|r| [ r.name, r.id ]},{:include_blank => false},:class=>"input_search"%></td>
+				  </tr>
+			</td></tr>
+			<tr><td align="right" colspan="2">
+				 <%= f.submit "Create" %>
+			</td></tr>
+			<% end %>
+		</table>
+	</td></tr>
+</table>
+</div>
+

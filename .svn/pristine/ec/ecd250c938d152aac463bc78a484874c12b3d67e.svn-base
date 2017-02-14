@@ -1,0 +1,3 @@
+#!/bin/sh
+
+ruby /var/www/gdevvdi/script/import_instances.rb >> /etc/httpd/logs/import_instances.log 2>&1

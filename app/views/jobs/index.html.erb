@@ -1,0 +1,10 @@
+<div class="headlabel"><h1>Listing jobs</h1></div>
+<table class="mainTable">
+	<tr><td>&nbsp;</td></tr>
+	<tr><td>
+<%=render :partial => "list_jobs"%>
+	</td></tr>
+	<tr><td class="lastTd">
+		<div align="right"><%=will_paginate(@job_ids ,:prev_label=>'Previous',:next_label=>'Next',:separator=>" | ") %></div>
+	</td></tr>
+</table>

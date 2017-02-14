@@ -1,0 +1,188 @@
+<%CalendarDateSelect.format = ("iso_date").to_sym%>
+<%= calendar_date_select_includes "silver" %>
+<div class="headlabel" align="center">
+	<h1>New job</h1>
+
+<table class="mainTable">
+	<tr><td>
+		<div style="height:20px;">&nbsp;</div>
+	</td></tr>
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow"><td><div align="left"><%= link_to 'BACK', jobs_path %></div></td>
+		    	<td><div align="center"><%= error_messages_for :job %></div></td>
+			</tr>
+			<% form_for(@job) do |f| %>
+			<%= hidden_field_tag :template_id, @tempalte_ids %>
+  			<%= f.error_messages %>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<%if !@is_virus_secure%>
+					<tr>
+				      <td><label for="job_name">Warning:</label></td>
+				      <td id="secondTd">
+				      	This template has some secuirty issue. So 3389 port will not open by defult. you should open the port manually from the job page after it's deployed.
+					  </td>
+				    </tr>
+					<%end%>					
+					<tr>
+				      <td><b>Template:</b></td>
+				      <td id="secondTd"><%= h @templatename %></td>
+				    </tr>
+					<tr>
+						<td><label for="job_usage">Job Usage</label></td>
+      					<td id="secondTd"><%=f.select "usage", @job_usages,{:include_blank => false},:class=>"input_search", :onchange=>"onJobUsage(this)", :id=>"job_usages"%>
+						&nbsp;<img src="/images/question-small-white.png" align="top" height="25px" title="Please input proper job usage, see detail in VDI Job usage">
+						</td>
+					</tr>
+					<tr id='project_id_tr'>
+				      <td><label for="job_project_id">Webeeh Project ID</label></td>
+				      <td id="secondTd"><%= f.text_field :project_id %>
+					  &nbsp;<img src="/images/question-small-white.png" align="top" height="25px" title="Please input the webeeh project id, like 55555">
+					  </td>
+				    </tr>
+				    <tr>
+				      <td><label for="job_name">Name</label></td>
+				      <td id="secondTd"><%= f.text_field :name %>
+					  &nbsp;<img src="/images/question-small-white.png" align="top" height="25px" title="Please input proper name of the vm. It's should describe the usage of the vm properly">
+					  </td>
+				    </tr>
+				    <tr>
+				      <td><label for="job_description">Description</label></td>
+				      <td id="secondTd"><%= f.text_field :description %>
+					  &nbsp;<img src="/images/question-small-white.png" align="top" height="25px" title="Explain why you need change lease time and instance type following">
+					  </td>
+				    </tr>
+				    <tr>
+				      <td><label for="job_lease_time">Lease Time</label></td>
+					  <% if current_user.is_admin || current_user.is_sys_admin %>
+				      	<td id="secondTd"><%= f.calendar_date_select :lease_time, :time => false, :year_range => 10.years.ago..10.years.from_now, :value =>@day.strftime("%Y-%m-%d") %>
+						&nbsp;<img src="/images/question-small-white.png" align="top" height="25px" title="The lease time of the job. Add reason to description if you need lease time longer than default">
+						</td>
+				      <% else %>
+					     <td id="secondTd"><%= f.text_field :lease_time, :value =>@day.strftime("%Y-%m-%d"), :disabled =>"disabled"%>
+						 &nbsp;<img src="/images/question-small-white.png" align="top" height="25px" title="The lease time of the job. Add reason to description if you need lease time longer than default">
+						 </td>
+					  <% end %>
+					</tr>
+				    <tr>
+				      <td><label for="job_share_group_id">Groups</label></td>
+				      <td id="secondTd"><%=f.select "group_id", (Group.find(:all, :conditions=> "ispublic = 1") + current_user.groups).uniq.collect {|r| [ r.name, r.id ]},{:include_blank => false},:class=>"input_search"%>
+					  &nbsp;<img src="/images/question-small-white.png" align="top" height="25px" title="Do not enable following 2 permission settings if you want keep the job private">
+					  </td>
+				    </tr>
+					<tr>
+				      <td><label for="job_permission">Share Read Permission</label></td>
+				      <td id="secondTd"><%= f.check_box :rpermission %>
+					  &nbsp;<img src="/images/question-small-white.png" align="top" height="25px" title="If you want share read permission to the group. Enable it">
+					  </td>
+				    </tr>
+				    <tr>
+				      <td><label for="job_permission">Share Write Permission</label></td>
+				      <td id="secondTd"><%= f.check_box :permission %>
+					  &nbsp;<img src="/images/question-small-white.png" align="top" height="25px" title="If you want share write/delete permission of this job. Enable it">
+					  </td>
+				    </tr>
+				    <tr>
+				      <td><label for="job_instancetype_id">Instance Types</label></td>
+				      <td id="secondTd"><%=f.select "instancetype_id", @instancetype_names.collect {|r| [ r.name + " - " + r.description, r.id ]},{:include_blank => false},:class=>"input_search"%>
+					  &nbsp;<img src="/images/question-small-white.png" align="top" height="25px" title='Please keep this as default. Add info to description if you want to change the default setting. See detail in Cost of instances'>
+					  </td>
+					</tr>
+				   	<%if @region != "iland"%>
+				    <tr>
+				      <td><label for="job_securitygroup_id">Security Port Groups</label></td>
+				      <td id="secondTd"><%=f.select "securitygroup_id", Securitygroup.find(:all).collect {|r| [ r.name, r.id ]},{:include_blank => false},:class=>"input_search"%>
+					  &nbsp;<img src="/images/question-small-white.png" align="top" height="25px" title="Specify the port you want to open. See detail in securitygroups page">
+					  </td>
+					</tr>
+					<%end%>
+					<tr>
+					  <td><label for="job_deploymentway_id">Deployment Way</label></td>
+					  <td id="secondTd"><%=f.select "deploymentway", @job_deploymentway,{:include_blank => false},:class=>"input_search", :onchange=>"deploymentSetting(this)", :id=>"job_deploymentway"%>
+					  &nbsp;<img src="/images/question-small-white.png" align="top" height="25px" title="Daily Off: Please set the off time correctly, the machine will be automatically powered off with the set time.">
+					  </td>
+					</tr>
+					<tr id="subnetid">
+				      <td><label for="job_subnet_id">VPC Subnet ID</label></td>
+				      <td id="secondTd"><%=f.select "subnet_id", @subnets.collect {|r| [ r.name, r.id]}, {:include_blank => false}, :class=>"input_search"%></td>
+				    </tr>	
+					<tr id="powerOffTime">
+					  <td>Daily Poweroff time</td>
+					  <td id="secondTd">
+					    <%=f.select "poweroff_hour", @poweroff_hourlist, {:selected => "18", :include_blank => false}, :class=>"input_time"%> <b>:</b> 
+						<%=f.select "poweroff_min", @poweroff_minlist,{:include_blank => false},:class=>"input_time"%>
+					  	&nbsp;<img src="/images/question-small-white.png" align="top" height="25px" title="Please set the daily off time in hour:min correctly. It's the time based on IST(+5:30)">
+					  </td>
+					</tr>
+				</table>
+			</td></tr>
+		</table>
+	</td></tr>
+	<tr><td  class="noteText">
+		<div align="right" style="vertical-align:text-top;">
+			<%= f.submit "CREATE"%>
+		</div>
+		<div align="left">
+			Notes: <br>
+			1. In most case, you should not change the instance type. Larger instance will cost us much more money. For example: <br>
+			&nbsp;&nbsp;&nbsp; c1.medium will cost us 2.5x cost of m1.small. <br>
+			2. We use spot instance in deployment now which is not suit for server. Please contact admin team if you want deploy a server.<br>
+			&nbsp;&nbsp;&nbsp; Spot machine may be auto-undeployed sometime without any notification. Though in more than 90% case, it works well. 
+		</div>
+	</td></tr>
+</table>
+<% end %>
+</div>
+<script type="text/javascript">
+deploymentSetting(document.getElementById("job_deploymentway"));	
+function deploymentSetting(obj){
+	value = obj.value
+	if(value == "DailyOff"){
+		document.getElementById("powerOffTime").style.display = "";
+	}else{
+		document.getElementById("powerOffTime").style.display = "none";
+	}
+	if(value == "vpc-default" || value == "vpc-dedicated") {
+		document.getElementById("subnetid").style.display = "";
+	} else {
+		document.getElementById("subnetid").style.display = "none";
+	}
+}
+function setLease(day) {
+	var current_time = new Date().getTime();
+	lease_time = new Date(current_time + day*24*60*60*1000);
+	year = lease_time.getFullYear();
+	month = lease_time.getMonth() + 1;
+	day = lease_time.getDate();
+	monthString = "";
+	dayString = "";
+	if (month < 10) {
+		monthString = "0";	
+	}
+	if (day < 10) {
+		dayString = "0";
+	}
+	dateString = year + "-" + monthString + month + "-" + dayString + day;
+	job_lease_time = document.getElementById('job_lease_time');
+	job_lease_time.value = dateString
+}
+function onJobUsage(obj){
+	value = obj.value
+	if(value == "PartnerDevelopment" || value == "Rebuttal") {
+		document.getElementById("project_id_tr").style.display = "";
+  		setLease(7); 
+	} else if(value == "Acceptance" || value == "Consumption") {
+		document.getElementById("project_id_tr").style.display = "";
+		setLease(2);
+			
+	} else {
+		document.getElementById("project_id_tr").style.display = "none";
+		setLease(7);
+	}
+}
+window.onload = function() {
+	job_usage = document.getElementById("job_usages");
+	onJobUsage(job_usage);
+}
+</script>

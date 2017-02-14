@@ -1,0 +1,25 @@
+<div align="center">
+<h2 class="bodyTitle">Template by Team</h2>
+<table class="mainTable" id="widthControl2">
+<tr><td>
+<table class="tableList">
+  <tr>
+    <th>Team</th>
+	<th>Template Count</th>
+  </tr>
+<% count = 0 %>
+<% for record in @records %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+    <td><%=h record[:team] %></td>
+	<td><%=h record[:number] %></td
+  </tr>
+<% count = count + 1 %>
+<% end %>
+</table>
+</td></tr>
+</table>
+</div>

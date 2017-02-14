@@ -1,0 +1,85 @@
+<h2 class="bodyTitle">Listing template mappings</h2>
+
+<table class="mainTable">
+	<tr>
+		<td>
+		<% form_tag('/template_mappings/index') do%>
+  		  <table class="tableFilter">
+    		<tr>	
+	 		  <td>Template mapping name contains</td>
+			  <td><%= text_field_tag :mapping_name, params[:mapping_name],:class=>"input_search" %></td>
+		      <td>Template name contains</td>
+			  <td><%= text_field_tag :template_name, params[:template_name],:class=>"input_search" %></td>
+		      <% if !current_user.is_external%>
+			  <td>Team</td>
+			  <td><%=select "filter", "team_id", User.find_by_sql("SELECT u.name,u.id FROM users u, roles_users ru, roles r where  u.id = ru.user_id and ru.role_id=r.id and r.role_name='client' and u.disabled=0 order by u.name").collect {|p| [ p.name, p.id ]},{:include_blank => true},:class=>"input_search"%></td>
+			  <td>Usage</td>
+	  		  <td><%=select "filter", "usage", @template_usages,{:include_blank => true},:class=>"input_search"%></td>
+			  <% end %>
+		      <td><%= submit_tag "Search", :name => 'submit' %></td>
+		    <tr>
+		  </table>
+		<% end %> 
+		</td>
+	</tr>
+	<tr>
+		<td>
+		<table class="tableList">
+		  <tr>
+		    <th>ID</th>
+		    <th>Template<br> Mapping<br> Name</th>
+			<th>Template Usage</th>
+			<th>Template ID</th>
+			<th>Template<br> Name</th>
+			<th>Archit-<br>ecture</th>
+		    <th>User</th>
+		    <th>Password</th>
+		    <th>Team</th>
+			<th>Version</th>
+		    <th id="kong">&nbsp;</th>
+		    <th id="kong">&nbsp;</th>
+		    <th id="kong">&nbsp;</th>
+		    <th id="kong">&nbsp;</th>
+		  </tr>
+		  
+			<% @template_mappings.each_with_index do |template_mapping,index|%>
+			<% template = template_mapping.template %>
+			<% if index % 2 == 1 %>
+			<tr>
+			<% else %>
+		 	<tr class="row_1">
+		 	<% end %>
+		    <td><%=h template_mapping.id%></td>
+		    <td><div title="<%=template_mapping.name%>" id="AutoNewLine" style="width:100px;"><%=link_if can_access('show','template_mappings'), (h template_mapping.name), template_mapping%></div></td>
+			<td><%=h template_mapping.usage%></td>
+			<td><%=h template.id %></td>
+			<td><div title="<%=template.name%>" id="AutoNewLine" style="width:120px;"><%=link_to (h template.name), :action => "show",:controller => "templates", :id=> template.id %></div></td>
+			<td><%=h template.architecture %></td>
+			<td><%=h template.user %></td>
+		    <td><%=h template.password %></td>
+			<td><%=if template.team_id
+		               h template.team.name
+		           else 
+		               "Unknown"
+		           end %>
+		    </td>
+			<td><%=h template_mapping.version %></td>
+			<% if template.state == "available" %>
+			  <td class="imageConfig"><%= link_if can_access('new','jobs'), '<img src="/images/application_form_add.png" title="Create New Job">', new_job_path(:template_ids=>template) %></td>
+		    <% end %>
+			<td class="imageConfig"><%= link_if can_access('show','template_mappings'), '<img src="/images/application_form_magnify.png" title="Show">', template_mapping%></td>
+		    <td class="imageConfig"><%= link_if can_access('edit','template_mappings'), '<img src="/images/application_form_edit.png" title="Edit">', edit_template_mapping_path(template_mapping)%></td>
+		    <td class="imageConfig"><%= link_if can_access('destroy','template_mappings'), '<img src="/images/application_form_delete.png" title="Delete">', template_mapping, :confirm => 'Are you sure?', :method => :delete %></td>
+		  </tr>
+		  <% end %>
+		</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="lastTd">
+			<div align="left" class="lastRow"><img src="/images/new.png">&nbsp;<%= link_if can_access('new','template_mappings'), 'New template mapping', new_template_mapping_path %></div>
+			<div align="right"><%=will_paginate(@template_mappings ,:prev_label=>'Previous',:next_label=>'Next',:separator=>" | ") %></div>
+		</td>
+	</tr>
+</table>
+

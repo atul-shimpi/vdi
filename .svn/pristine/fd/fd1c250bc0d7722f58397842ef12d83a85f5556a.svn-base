@@ -1,0 +1,343 @@
+<table class="mainTable">
+    <tr><td><div style="height:10px;">&nbsp;</div></td></tr>
+    <tr><td>
+            <table class="tableDetail" style="width:50%">
+                <tr>
+                    <td class="firstTd"><b>Warning:</b></td>
+                    <td id="secondTd">1.Please make sure your job meet <a href="http://confluence.gdev.com/display/gDevKB/Security">DevFactory Security requirement</a>. You job may be force undeployed if it's virus infected, and it did not meet security requirement
+					  <br>
+					  2. If you are not able to connect to the machine.  please make sure the port if open for your IP
+					</td>
+                </tr>
+                <tr>
+                    <td class="firstTd"><b>Job Operations:</b></td>
+					
+                    <td id="secondTd">
+                        <% if Job.is_operation_enabled(@job) %>
+                            <%= link_to 'Edit', edit_job_path(@job) %>
+                        <%= link_to 'Delete', job_path(@job), :confirm => 'Are you sure you want to Undeploy this job?', :method => :delete %>
+                        <%= link_to 'Reboot', {:action => "reboot", :id => @job.id} , :confirm => 'Are you sure you want to Reboot this machine?' %>
+                            <%= link_to 'Refresh IP', {:action => "refreship", :id => @job.id} %>
+                                 <% if @tempalte.is_ebs && can_access('capturetemplate', 'templates') %>
+                                   <%= link_to 'Capture Template', {:action => "capturetemplate", :controller => "templates", :jobid => @job.id} %>
+                                 <% end %>
+                                 <% if Job.is_power_enalbed(@job) %>
+                                    <%= link_to 'Power Off', {:action => "stop", :id => @job.id} , :confirm => 'Are you sure you want to Stop this machine?' %>
+                                    <%= link_to 'Power ON', {:action => "start", :id => @job.id} , :confirm => 'Are you sure you want to Start this machine?' %>
+                                 <% end %>
+                                 <% if can_access('update_password', 'jobs') %>
+                                    <%= link_to "Update Password", :action => "update_password", :id =>@job.id %>
+                                 <% end %>
+						  <%if current_user.is_admin%>
+						    <%if @job.locked == 0%>
+						      <%= link_to 'Lock', {:action => "lock", :id => @job.id} , :confirm => 'Are you sure you want to Lock this machine?' %>
+						    <%else%>
+						      <%= link_to 'UnLock', {:action => "unlock", :id => @job.id} , :confirm => 'Are you sure you want to UnLock this machine?' %>
+						    <%end%>
+						  <%end%>
+						  <% if can_access('extend_lease', 'jobs') && @job.can_extend_lease? || current_user.is_admin %>
+                            <%= link_to 'Extend Lease', {:action => "extend_lease", :controller => "jobs", :id => @job.id} %>
+                          <% end %>
+                        <% end %>
+                    </td>
+                </tr>
+				<%if @job.ec2machine%>
+                <tr>
+                    <td class="firstTd"><b>Security Operations:</b></td>
+					
+                    <td id="secondTd">
+                        <% if Job.is_operation_enabled(@job) %>
+						      <%= link_to 'Open RDP For Me', {:action => "open_port", :portname=>"RDP", :id => @job.id, :source=>'me'} , :confirm => 'Are you sure you want to open RDP port?' %>
+                              <%= (link_to 'Open RDP For All', {:action => "open_port", :portname=>"RDP", :id => @job.id} , :confirm => 'Are you sure you want to open RDP port for everyone?') if @job.allow_open_for_all(current_user) %>
+                              <%= link_to 'Close RDP Port', {:action => "close_port", :portname=>"RDP", :id => @job.id} , :confirm => 'Are you sure you want to close RDP port?' %>
+                        <br><br>
+						      <%= link_to 'Open VNC For Me', {:action => "open_port", :portname=>"VNC", :id => @job.id, :source=>'me'} , :confirm => 'Are you sure you want to open VNC port?' %>
+                              <%= link_to 'Open VNC For All', {:action => "open_port", :portname=>"VNC", :id => @job.id} , :confirm => 'Are you sure you want to open VNC port for everyone?' %>
+                              <%= link_to 'Close VNC Port', {:action => "close_port", :portname=>"VNC", :id => @job.id} , :confirm => 'Are you sure you want to close VNC port?' %>
+                        <br><br>
+						      <%= link_to 'Open SSH For Me', {:action => "open_port", :portname=>"SSH", :id => @job.id, :source=>'me'} , :confirm => 'Are you sure you want to open SSH port?' %>
+                              <%= link_to 'Open SSH For All', {:action => "open_port", :portname=>"SSH", :id => @job.id} , :confirm => 'Are you sure you want to open SSH port for everyone?' %>
+                              <%= link_to 'Close SSH Port', {:action => "close_port", :portname=>"SSH", :id => @job.id} , :confirm => 'Are you sure you want to close SSH port?' %>
+                        <% end %>
+                    </td>
+                </tr>
+				<%end%>
+				<tr>
+                     <td class="firstTd"><b>Job Status:</b></td>
+                     <td id="secondTd"><%=h @job.state %></td>
+                </tr>
+				
+                <tr>
+                    <td class="firstTd"><b>Job Name:</b></td>
+                    <td id="secondTd"><%=h @job.name %></td>
+                </tr>
+                <tr>
+                    <td class="firstTd"><b>User:</b></td>
+                    <td id="secondTd"><%=h @job.user.name if @job.user %></td>
+                </tr>
+                <%if @job.support %>
+                <tr>
+                    <td class="firstTd"><b>Support Owner:</b></td>
+                    <td id="secondTd"><%=h @job.support.name %></td>
+                </tr>
+                <%end %>
+                <tr>
+                    <td class="firstTd"> <b>Usage:</b></td>
+                    <td id="secondTd"><%=h @job.usage %></td>
+                </tr>
+                <% if @job.project_id %>
+                <tr>
+                    <td class="firstTd"><b>Webeeh Project:</b></td>
+                    <td id="secondTd"><a href="<%= 'https://webeeh.gdev.com/projects/projects/show/' + (h @job.project_id)%>"/><%= h @job.project_id %></a></td>
+                </tr>
+				<% end %>
+                <tr>
+                    <td class="firstTd"><b>Cost:</b></td>
+                    <td id="secondTd"><%= "$" + (h @job.cost) %>&nbsp;&nbsp;&nbsp;&nbsp;See <%= link_to "What's the cost", :action => "welcome",:controller => "users" %></td>
+                </tr>
+                <tr>
+                    <td class="firstTd"><b>Template:</b></td>
+                    <td id="secondTd"><%= link_to (h @tempalte.name), :action => "show",:controller => "templates", :id=> @tempalte.id %></td>
+                </tr>
+                <tr>
+                    <td class="firstTd"><b>Instance Type:</b></td>
+                    <td id="secondTd"><%=h (@job.instancetype.name + ' - ' + @job.instancetype.description) if @job.instancetype %></td>
+                </tr>
+                <tr>
+                    <td class="firstTd"><b>Security Group:</b></td>
+                    <td id="secondTd"><%= link_to (h @job.securitygroup.name), :action => "show",:controller => "securitygroups", :id=> @job.securitygroup.id if @job.securitygroup %></td>
+                </tr>
+                <tr>
+                    <td class="firstTd"><%if @ilandmachine %><b>Ilandmachine User:</b><%else %><b>Ec2machine User:</b><%end %></td>
+                    <td id="secondTd"><%=h @tempalte.user %></td>
+                </tr>
+                <tr>
+                    <td class="firstTd"><%if @ilandmachine %><b>Ilandmachine Password:</b><%else %><b>Ec2machine Password:</b><%end %></td>
+                    <td id="secondTd"><%if @job.machinepassword.blank? %><%=h @tempalte.password %><%else %><%=h @job.machinepassword %><%end %></td>
+                </tr>
+                <tr>
+                    <td class="firstTd"><%if @ilandmachine %><b>Ilandmachine Platform:</b><%else %><b>Ec2machine Platform:</b><%end %></td>
+                    <td id="secondTd"><%=h @tempalte.platform %></td>
+                </tr>
+                <tr>
+                    <td class="firstTd"><b>Public DNS:</b></td>
+                    <td id="secondTd"><%= if @ec2machine
+                                if @ec2machine.is_publicdns_valid
+                                    h @ec2machine.public_dns
+                                else
+                                  if @job.state == "Capturing"
+                                     "<b>The machine is creating template, please hold on all your operations</b>"
+                                  else
+                                     "<b> Please refresh this page minutes later, the IP will show after machine is deployed</b>"
+                                  end
+                                end
+                    end%>
+                    <%= if @ilandmachine
+                               if @ilandmachine.is_publicdns_valid
+                                  h @ilandmachine.public_dns
+                               else
+                                 if @job.state == "Capturing"
+                                    "<b>The machine is creating template, please hold on all your operations</b>"
+                                 else
+                                    "<b> Please refresh this page minutes later, the IP will show after machine is deployed</b>"
+                                 end
+                               end
+                    end %></td>
+                </tr>
+                <%if @ec2machine && @ec2machine.is_publicdns_valid && @tempalte.platform == 'Windows' %>
+                <tr>
+                    <td class="firstTd"><b>Download RDP:</b></td>
+                    <td id="secondTd">
+                        <%=link_if (can_access('generate_rdp','jobs')),
+                                @ec2machine.public_dns + '.rdp', :controller => "jobs", :action => "generate_rdp", :public_dns => @ec2machine.public_dns, :user =>  @tempalte.user %>
+                    </td>
+                </tr>
+                <%end %>
+                <tr>
+                    <td class="firstTd"><b>Private DNS:</b></td>
+                    <td id="secondTd">
+                        <%=h @ec2machine.private_dns if @ec2machine %>
+                        <%=h @ilandmachine.private_dns if @ilandmachine %>
+                    </td>
+                </tr>
+                <tr>
+                    <%if @ec2machine %>
+                        <td class="firstTd"><b>EC2 Machine Status:</b></td>              
+                        <%if @ec2machine
+                    active_machine = ActiveMachine.find(:last, :conditions=> "instance_id = '#{@ec2machine.instance_id}'") %>
+                        <td id="secondTd"><%=h active_machine.state if active_machine %></td>
+                        <%else %>
+                        <td id="secondTd"><%=h @ec2machine.status if @ec2machine %></td>
+                        <%end %>
+				    <%end %>
+                    <%if @ilandmachine %>
+                        <td class="firstTd"><b>Iland Machine Status:</b></td>
+                        <%if @ilandmachine
+                    active_ilandmachine = ActiveIlandmachine.find(:last, :conditions=> "instance_id = '#{@ilandmachine.instance_id}'") %>
+                        <td id="secondTd"><%=h active_ilandmachine.state if active_ilandmachine %></td>
+                        <%else %>
+                        <td id="secondTd"><%=h @ilandmachine.status if @ilandmachine %></td>
+                        <%end %>
+				    <%end %>
+                </tr>
+            <% if current_user.is_admin %>
+            <tr>
+                <td class="firstTd"><b>Email:</b></td>
+                <td id="secondTd"><%=h @job.user.email if @job.user %></td>
+            </tr>
+            <tr>
+                <td class="firstTd"><b>Zone:</b></td>
+                <td id="secondTd"><%=h @ec2machine.zone if @ec2machine %><%=h @ilandmachine.zone if @ilandmachine %></td>
+            </tr>
+            <tr>
+                <td class="firstTd"><b>Security Group:</b></td>
+                <td id="secondTd"><%=h @ec2machine.security_group if @ec2machine %></td>
+            </tr>
+            <tr>
+                <td class="firstTd"><b>Key Pair:</b></td>
+                <td id="secondTd"><%=h @ec2machine.key_pair if @ec2machine %><%=h @ilandmachine.key_pair if @ilandmachine %></td>
+            </tr>
+            <tr>
+                <td class="firstTd"><b>Block Devices:</b></td>
+                <td id="secondTd"><%=h @ec2machine.block_devices if @ec2machine %><%=h @ilandmachine.block_devices if @ilandmachine %></td>
+            </tr>
+            <% end %>
+            <tr>
+                <td class="firstTd"><b>Root Devices:</b></td>
+                <td id="secondTd">
+                    <%= if @tempalte.is_ebs
+                    "EBS"
+                    else
+                    "S3"
+                    end %></td>
+            </tr>
+            <tr>
+                <td class="firstTd"><b>Shared to -- R/W:</b></td>
+                <td id="secondTd"><%=h @job.group.name + " -- " + (h (@job.rpermission=='1') ) + "/" + (h (@job.permission == '1')) %></td>
+            </tr>
+            <tr>
+                <td class="firstTd"><b>Deployment Way:</b></td>
+                <td id="secondTd"><%=h @job.deploymentway %></td>
+            </tr>
+            <% if @job.deploymentway == "DailyOff" %>
+            <tr>
+                <td class="firstTd"><b>Daily off time:</b></td>
+                <td id="secondTd"><%=h @job.poweroff_hour %>: <%=h @job.poweroff_min %></td>
+            </tr>
+            <% end %>
+            <tr>
+                <td class="firstTd"><b>Create Time:</b></td>
+                <td id="secondTd"><%=h @job.created_at if @job.created_at %></td>
+            </tr>
+            <tr>
+                <td class="firstTd"><b>Lease Time:</b></td>
+                <td id="secondTd"><%=h @job.lease_time if @job.lease_time %>
+				<% if can_access('extend_lease', 'jobs') && @job.can_extend_lease? || current_user.is_admin%>
+                	<%= link_to 'Extend Lease', {:action => "extend_lease", :controller => "jobs", :id => @job.id} %>
+                <% end %>
+				</td>
+            </tr>
+            <tr>
+                <td class="firstTd"><b>Launch Time:</b></td>
+                <td id="secondTd"><%=h @ec2machine.local_launch_time if @ec2machine %><%=h @ilandmachine.launch_time if @ilandmachine %></td>
+            </tr>
+            <!--
+            <tr>
+            <td><b>Machine Status:</b></td>
+            <td><%=h @ec2machine.status if @ec2machine%></td>
+            </tr>
+            -->
+            <tr>
+                <td class="firstTd"><b>Instance ID:</b></td>
+                <td id="secondTd"><%=if @ec2machine
+                    h @ec2machine.instance_id
+                    end %>
+					<%=if @ilandmachine
+                    h @ilandmachine.instance_id
+                    end %></td>
+            </tr>
+            <tr>
+                <td class="firstTd"><b>Telnet service:</b></td>
+                <td id="secondTd"><%=h @job.telnet_service if @job.telnet_service %></td>
+            </tr>
+        </table>
+    </td></tr>
+    <tr><td>
+            <%if current_user.is_admin && @volumes and @volumes.size > 0 %>
+            <table class="tableList">
+                <tr>
+                    <th>Volume</th>
+                    <th>Attach Device</th>
+                    <th>Size</th>
+                    <th>Operations</th>
+                </tr>
+                <% count = 0 %>
+                <% for volume in @volumes %>
+                <% if count % 2 == 0 %>
+                    <tr class="row_0">
+                <% else %>
+                    <tr class="row_1">
+                <% end %>
+                    <td><%=h volume[:volume_id] %></td>
+                    <td><%=h volume[:attach_device] %></td>
+                    <td><%=h volume[:size] %></td>
+                    <td><%= link_if can_access('new','snapshots'), 'Create Snapshot', :action => 'new',:controller=>"snapshots", :ebsvolume_id=>volume[:volume_id], :region=>@job.template.region, :job_id=>@job.id %></td>
+                </tr>
+                <% count = count + 1 %>
+                <% end %>
+            </table>
+            <% end %>
+        </td></tr>
+    <tr><td>
+            <table class="tableList">
+                <tr>
+                    <th>Command</th>
+                    <th id="kong">&nbsp;</th>
+                    <th>State</th>
+                    <th>Time</th>
+                </tr>
+                <% count2 = 0 %>
+                <% for cmd in @cmds %>
+                <% if count2 % 2 == 0 %>
+                    <tr class="row_0">
+                <% else %>
+                    <tr class="row_1">
+                <% end %>
+                    <td><%=h cmd.description %></td>
+                    <td></td>
+                    <td><%=h cmd.state %></td>
+                    <td><%=h cmd.updated_at %></td>
+                </tr>
+                <% count2 = count2 + 1 %>
+                <% end %>
+                <% if @telnetcommands %>
+                <tr>
+                    <th>VDI Client Machine Command</th>
+                    <th>Command path</th>
+                    <th>State</th>
+                    <th>Time</th>
+                </tr>
+                <% count3 = 0 %>
+                <% for telnetcommand in @telnetcommands %>
+                <% if count3 % 2 == 0 %>
+                    <tr class="row_0">
+                <% else %>
+                    <tr class="row_1">
+                <% end %>
+                    <td><%=link_to mask_sensitive_string(telnetcommand.commands),:action =>'commandsreturn', :id => telnetcommand.id, :job_id => @job_id, :controller=>"jobs" %></td>
+                    <td><%=h telnetcommand.cmd_path %></td>
+                    <td><%=h telnetcommand.state %></td>
+                    <td><%=h telnetcommand.updated_at %></td>
+                   </tr>
+                   <% count3 = count3 + 1 %>
+                <% end %>
+                <% end %>
+            </table>
+        </td></tr>
+	<tr><td>
+		<%=render :partial => "extend_lease_logs"%>
+	</td></tr>	
+    <tr><td style="padding-left:30px" class="lastTd">
+            <%= link_to 'Back', jobs_path %>
+        </td></tr>
+</table>

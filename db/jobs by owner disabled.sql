@@ -1,0 +1,1 @@
+INSERT INTO actions (ACTION,controller,description) VALUES('all_jobs_by_owner_disabled','reports','jobs by owner disabled');

@@ -1,0 +1,32 @@
+<div class="headlabel" align="center">
+<h1>Editing ec2machine</h1>
+
+<% form_for(@ec2machine) do |f| %>
+  <%= f.error_messages %>
+	<table class="mainTable" id="widthControl1">
+  	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', ec2machines_path %></div></td>
+				<td><div align="right"><%= link_to 'Show', @ec2machine %> </div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<tr>
+						<td><%= f.label :instance_id %></td>
+						<td id="secondTd"><%= f.text_field :instance_id %></td>
+					</tr>
+					<tr>
+						<td><%= f.label :public_dns %></td>
+						<td id="secondTd"><%= f.text_field :public_dns %></td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td align="right" colspan="2">
+				  <%= f.submit "Update" %>
+			</td></tr>
+		</table>
+	</td></tr>
+  </table>
+<% end %>
+</div>	

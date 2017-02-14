@@ -1,0 +1,25 @@
+<div class="headlabel"><h1>Unsecure Jobs</h1></div>
+<table class="mainTable">
+	<tr><td class="warning">
+	<b>Warning:</b><br> 	
+		Some of your jobs have unsecure password. You can only deploy new jobs after you have all unsecure passwords fixed.
+		Please change the passwords by following steps:
+		<ul>
+			<li>1. RDP to the vm which have bad password</li>
+			<li>2. Right click "My Computer"</li>
+			<li>3. Click "Manage" to open the manage board</li>
+			<li>4. Click "Local Users and groups" -> "Users"</li>
+			<li>5. Review all accounts, disable the useless accounts</li>
+			<li>6. Right click account "Administratr", then clock "set password"</li>
+			<li>7. Update it to a strong enough password. The password should be more than 8 bits, you can get a auto generate password from the "update password" page in VDI(Suggested)</li>
+			<li>8. Open the job show link like http://vdi.gdev.com/jobs/141662</li>
+			<li>9. Click "update password" link, to update it to the new password you set</li>
+		</ul>	
+	 Following password are unsecure passwords: <%= Job.get_invalid_password%> <br>
+	 <br>
+	 Following are jobs you need fix password issue	 
+	</td></tr>	
+	<tr><td>
+<%=render :partial => "list_jobs"%>
+	</td></tr>
+</table>

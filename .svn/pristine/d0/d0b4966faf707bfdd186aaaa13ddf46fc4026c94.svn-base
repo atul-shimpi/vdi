@@ -1,0 +1,77 @@
+<table class="mainTable">
+	<tr><td><div style="height:10px;">&nbsp;</div></td></tr>
+	<tr><td>
+		<div align="left" style="width:50%;margin-left:22px;">
+		<table class="tableDetail">
+			<tr>
+			  <td class="firstTd"><b>Cluster Operations:</b></td>
+			  <td id="secondTd">
+			    <%= link_if can_access('edit','clusters'), 'Edit', :id =>@clusters.id, :action => 'edit',:controller=>"clusters"%> <br>
+			    <%= link_if can_access('destroy','clusters'), 'Delete', @clusters, :action => 'delete',:controller=>"clusters", :confirm => 'Are you sure?', :method => :delete %>
+			  </td>
+			</tr>
+			<tr>
+			  <td class="firstTd"><b>cluster Configuration Name:</b></td>
+			  <td id="secondTd"><%=h @clusters.name %></td>
+			</tr>
+			
+			<tr>
+			  <td class="firstTd"><b>Description:</b></td>
+			  <td id="secondTd"><%=h @clusters.description %></td>
+			</tr>
+			<tr>
+			  <td class="firstTd"><b>State:</b></td>
+			  <td id="secondTd"><%=h @clusters.state %></td>
+			</tr>
+			
+			<tr>
+			  <td class="firstTd"><b>Lock Name:</b></td>
+			  <td id="secondTd">
+			  	<%if @locks.size != 0 %>
+			  	  <%for lock in @locks%>
+				    <p><%=h lock.name %></p>
+			      <%end%>
+				<%end%>
+			  </td>
+			</tr>
+			
+			<tr>
+			  <td class="firstTd"><b> Click here to create job:</b></td>
+			  <td id="secondTd"><%= link_to 'deploy cluster', :action => 'deploycluster', :id => @clusters.id, :controller => "clusters" %></td>
+			</tr>
+		</table>
+	</div>
+	</td></tr>
+	<tr><td>
+		<table class="tableList">
+		  <tr>
+		  	<th>Role</th>
+		    <th>Configuration Name</th>
+			<th>Initial Command</th>
+			<th>&nbsp;</th>
+		  </tr>
+		  <%count = 0 %>
+		<% for configuration in @configurations %>
+		<% if count % 2 == 0 %>
+			<tr class="row_0">
+		<% else %>
+			<tr class="row_1">
+		<% end %>
+		    <td><%=h @role[count] %></td>
+		    <td><%= link_if can_access('show','configurations'), (h configuration.name), configuration %></td>
+			<td>
+		      <% for cmd in mask_sensitive_string(configuration.init_commands).split("\r\n") %>
+			    <div><%=h cmd %></div>
+			  <% end %>
+			</td>
+			<td class="imageConfig"><%= link_to '<img src="/images/application_form_edit.png" title="Edit">', edit_configuration_path(configuration) %></td>
+		  </tr>
+		  <% count=count+1 %>
+		<% end %>
+		</table> 
+	</td></tr>
+	<tr><td class="lastTd">
+		<div><%= link_to 'Back', clusters_path %></div>
+	</td></tr>
+</table>
+

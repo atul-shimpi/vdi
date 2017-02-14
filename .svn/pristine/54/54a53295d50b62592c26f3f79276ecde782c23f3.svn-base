@@ -1,0 +1,29 @@
+<table class="tableList">
+<thead>
+    <th>Name</th>
+    <th>Description</th>
+	<th>Is Public</th>
+    <th id='kong'>&nbsp;</th>
+    <th id='kong'>&nbsp;</th>
+    <th id='kong'>&nbsp;</th>
+    <th id='kong'>&nbsp;</th>
+  </thead>
+  
+<% count = 0 %>  
+<% for group in @groups %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+    <td><%=h group.name%></td>
+    <td><%=h group.description %></td>
+	<td><%=h group.ispublic %></td>
+    <td width="100px"><%#=h user.send('email') %></td>
+    <td class="imageConfig"><%= link_if can_access('show','groups'), '<img src="/images/application_form_magnify.png" title="Assign user">', group %></td>
+    <td class="imageConfig"><%= link_if can_access('edit','groups'), '<img src="/images/application_form_edit.png" title="Edit">', edit_group_path(group) %></td>
+    <td class="imageConfig"><%= link_if can_access('destroy','groups'), '<img src="/images/application_form_delete.png" title="Delete">', group, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+ <% count = count +1 %>
+<% end %>
+  </table>

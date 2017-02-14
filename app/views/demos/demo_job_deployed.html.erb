@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<%= stylesheet_link_tag 'demo'%>
+    </head>
+	<body>
+	  <div id="main">	
+		<div id="header">
+			<%if !@demo_product.nil? %>
+			   <%= image_tag("/demo_products/product_logo?id=" + @demo_product.id.to_s, :size=>'270x70') %>
+			<%end%>   
+	    </div>
+        <div id="content">
+        	Your demo job has been deployed successfully, you should recieve the detailed demo instance info in 30 minutes through the email you input
+		</div>
+		<div id="footer" align="center">
+			<span>Copyright © 2011, Versata FZ-LLC. All Rights Reserved</span>
+		</div>	
+	  </div>		
+	</body>
+</html>
+	

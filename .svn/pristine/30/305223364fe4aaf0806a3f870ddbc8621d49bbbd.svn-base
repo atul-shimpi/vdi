@@ -1,0 +1,176 @@
+<div class="headlabel" align="center">
+<h1>Edit Cluster Configuration</h1>
+<form action="/clusters/update" method="post">
+<table class="mainTable" id="widthControl1">
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'BACK', clusters_path %></div></td>
+				<td><div align="right"><%= link_if can_access('show','clusters'), 'Show', @clusters%></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<input id="counttemp" name="counttemp" type="text" style="width:150px;display:none;" value=<%= @size-1 %>></input>
+					<input id="lockcounttemp" name="lockcounttemp" type="text" style="width:150px;display:none;" value=<%= @locksize-1 %>></input>
+					<input name="id" type="text" style="width:150px;display:none;" value= <%= @clusters_id %>></input>
+					<tr>
+				  	  <td>
+				  	    <label>Name:</label>
+					  </td>
+				      <td>
+				        <input name="name" type="text" style="width:150px;" value= <%= @clusters.name %>></input>
+				      </td>
+					  <td></td><td></td><td></td>
+					</tr>
+					
+					<tr>
+				  	  <td>
+				  	    <label>Description:</label>
+					  </td>
+				      <td>
+				        <input name="description" type="text" style="width:150px;" value= <%= @clusters.description %>></input>
+				      </td>
+					  <td></td><td></td><td></td>
+					</tr>
+					
+					<tbody id="lock">
+					<% n = 0 %>
+					<% for m in @locktempcount%>
+					<% if n ==0 %>
+					  <tr>
+					<% else %>
+				  	  <tr id="locktr<%=h n%>">
+				  	<% end %>
+					  <td>
+				  	    <label>Lock Name:</label>
+					  </td>
+					  <td>
+				        <input name="lock<%=h n%>" type="text" style="width:150px;" value= <%= @lockchoosed[n] %>></input>
+				      </td>
+					  <% if n !=0 %>
+					    <td><input type='button' value='Delete' onclick='deleteRow("locktr<%=h n%>","lock")'></input></td>
+					  <% else %>
+					  	<td></td>
+					  <% end %>
+					  <td></td><td></td>
+					</tr>
+					<% n = n + 1 %>
+					<% end %>
+					</tbody>
+					<tr>
+					  <td></td><td></td>
+					  <td></td><td></td>
+					  <td><input type="button" onclick="addlockRow()" value="add lock"></input></td>
+					</tr>
+					
+					<tbody id="con">
+					<% i = 0 %>
+					<% for j in @tempcount%>
+					<% if i ==0 %>
+					    <tr>
+					<% else %>
+				  	<tr id="tr<%=h i%>">
+				  	<% end %>
+				  	  <td>
+				  	    <label>Configurations:</label>
+					  </td>
+				      <td>
+				        <select name="configurations<%=h i%>" style="width:150px;">
+						  <option value=""></option> 
+				          <% for configuration in @configurations %>
+						  	<%if configuration.id == @choosed[i]%>
+				            <option value= <%=h configuration.id %> selected><%=h (configuration.id.to_s + "-" + configuration.name.gsub("\'", "")) %></option> 
+							<% else %>
+							<option value= <%=h configuration.id %>><%=h (configuration.id.to_s + "-" + configuration.name.gsub("\'", "")) %></option>
+							<% end %>
+						  <% end %>
+					    </select>
+				      </td>
+					  <td>
+				  	    <label>Role:</label>
+					  </td>
+					  <td>
+				        <input name="role<%=h i%>" type="text" style="width:150px;" value= <%= @rolechoosed[i] %>></input>
+				      </td>
+					  <% if i !=0 %>
+					    <td><input type='button' value='Delete' onclick='deleteRow("tr<%=h i%>","con")'></input></td>
+					  <% else %>
+					  	<td></td>
+					  <% end %>
+					</tr>
+					<% i = i + 1 %>
+					<% end %>
+					</tbody>
+					<tr>
+					  <td></td><td></td><td></td><td></td>
+					  <td><input type="button" onclick="addRow()" value="add configuration"></input></td>
+					</tr>
+					
+					<tr>
+				  	  <td>
+				  	  	<input type="submit" value="update"/>
+					  </td>
+					</tr>
+					
+				</table>
+			</td></tr>
+		</table>
+	</td></tr>
+</table>
+</form>
+</div>
+<script type="text/javascript">
+    var con = document.getElementById("con");
+	var counttemp = document.getElementById("counttemp");
+	var count = eval(counttemp.value);
+    function addRow(){
+		count = count + 1;
+		counttemp.value = count;
+        var tr = document.createElement("tr");
+		tr.id = "tr" + count;
+        var tdlabel= document.createElement("td");
+		var tdlabelrole= document.createElement("td");
+		var tdselect = document.createElement("td");
+		var tdtext = document.createElement("td");
+		var tdbutton = document.createElement("td");
+		//var text = document.createElement("input");
+		tdlabel.appendChild(document.createTextNode("Configurations:"));
+		tdlabelrole.appendChild(document.createTextNode("Role:"));
+		tdselect.innerHTML = '<select name="configurations' + count +'" style="width:150px;"><option value=""></option> <% for configuration in @configurations %><option value= <%=h configuration.id %>><%=h (configuration.id.to_s + "-" + configuration.name.gsub("\'", "")) %></option> <% end %></select>';
+		tdtext.innerHTML = '<input name="role' + count +'" type="text" style="width:150px;"></input>';
+		tdbutton.innerHTML = "<input type='button' value='Delete' onclick='deleteRow("+'"'+tr.id+'"'+',"con"'+")'>";
+        
+        tr.appendChild(tdlabel);
+		tr.appendChild(tdselect);
+		tr.appendChild(tdlabelrole);
+		tr.appendChild(tdtext);
+		tr.appendChild(tdbutton);
+        con.appendChild(tr);
+    }
+	
+	var lock = document.getElementById("lock");
+	var lockcounttemp = document.getElementById("lockcounttemp");
+	var lockcount = eval(lockcounttemp.value);
+    function addlockRow(){
+		lockcount = lockcount + 1;
+		lockcounttemp.value = lockcount;
+        var tr = document.createElement("tr");
+		tr.id = "locktr" + lockcount;
+		var tdlabellock= document.createElement("td");
+		var tdtext = document.createElement("td");
+		var tdbutton = document.createElement("td");
+		tdlabellock.appendChild(document.createTextNode("Lock Name:"));
+		tdtext.innerHTML = '<input name="lock' + lockcount +'" type="text" style="width:150px;"></input>';
+		tdbutton.innerHTML = "<input type='button' value='Delete' onclick='deleteRow("+'"'+tr.id+'"'+',"lock"'+")'>";
+        
+        tr.appendChild(tdlabellock);
+		tr.appendChild(tdtext);
+		tr.appendChild(tdbutton);
+        lock.appendChild(tr);
+    }
+	function deleteRow(btn,deletebutton){
+        var tr = document.getElementById(btn);
+		var d = document.getElementById(deletebutton);
+		d.removeChild(tr);
+    }
+</script>

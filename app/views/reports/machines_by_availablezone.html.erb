@@ -1,0 +1,32 @@
+<h2 class="bodyTitle">Machines by available zone</h2>
+<table class="mainTable">
+<tr><td>
+<table class="tableList">
+  <tr>
+    <th>Instance Type</th>
+    <th>OS</th>
+    <th>Available zone</th>
+	<th>Running count</th>
+	<th>Not running count</th>
+	<th></th>
+  </tr>
+
+<% count = 0 %>
+<% for record in @records %>
+<% if count % 2 == 0 %>
+	<tr class="row_0">
+<% else %>
+	<tr class="row_1">
+<% end %>
+    <td><%=h record[:instance_type] %></td>
+    <td><%=h record[:os] %></td>
+    <td><%=h record[:zone] %></td>
+	<td><%=h record[:running] %></td>
+	<td><%=h record[:no_running] %></td>
+    <td><%=link_if can_access('machines_in_availablezone','reports'), "See job", :action => 'machines_in_availablezone',:controller=> "reports", :os=>record[:os], :zone=>record[:zone], :instance_type=>record[:instance_type]%></td>	
+  </tr>
+<% count = count + 1 %>
+<% end %>
+</table>
+</td></tr>
+</table>

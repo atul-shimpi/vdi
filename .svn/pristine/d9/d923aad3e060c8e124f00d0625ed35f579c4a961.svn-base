@@ -1,0 +1,1 @@
+<%if @clusters != nil && @clusters.size != 0%>Undeployed cluster id:<% for cluster in @clusters %><%=h cluster.id %>&nbsp;&nbsp;<% end %><%else%>The cluster was not existed.<% end %>

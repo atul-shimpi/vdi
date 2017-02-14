@@ -1,0 +1,42 @@
+<div class="headlabel" align="center">
+<h1>Search job info</h1>
+<table class="mainTable" id="widthControl2">
+<tr><td>
+  <table class="tableDetail">
+  <%if @job.nil?%>	
+    <% form_tag('/jobs/get_job_info') do%>
+	  <%if @submit%>
+	    <tr>
+		  <td colspan= "2">Job not found or invalid IP</td>
+	    </tr>
+	  <%end%>
+	  <tr>
+		<td><b>Job IP: </b></td>
+		<td id="secondTd"><%= text_field_tag :ip, params[:ip]%></td>
+	  </tr>
+	  <tr>
+	  	 <td colspan="2"><%= submit_tag "Search", :name => 'submit' %></td>
+	  </tr>	
+	<% end %>  
+  <%else%>
+    <tr>
+	  <td><b>Job ID: </b></td>
+	  <td id="secondTd"><%= link_to @job.id, :action=>"show", :id=>@job.id%></td>
+	</tr>
+	<tr>
+	  <td><b>Owner: </b></td>
+	  <td id="secondTd"><%= h @job.user.name%></td>
+	</tr>
+	<tr>
+	<td><b>Owner Mail: </b></td>
+	  <td id="secondTd"><%= h @job.user.email%></td>
+	</tr>
+	<tr>
+	  <td><b>Public DNS: </b></td>
+	  <td id="secondTd"><%= h @job.ec2machine.public_dns%></td>
+	</tr>	
+  <%end%>	
+  </table>
+</td></tr>
+</table>
+</div>

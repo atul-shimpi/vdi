@@ -1,0 +1,12 @@
+<h2 class="bodyTitle">Elasitic IP List</h2>
+<table class="mainTable">
+	<tr><td>
+
+<%=render :partial => "list_elasticips"%>
+
+</td></tr>
+	<tr><td class="lastTd">
+		<div align="left" class="lastRow"><img src="/images/new.png">&nbsp;<%= link_if can_access('new','elasticips'), 'New Elasticip', new_elasticip_path %></div>
+		<div align="right"><%=will_paginate(@elasticips ,:prev_label=>'Previous',:next_label=>'Next',:separator=>" | ") %></div>
+	</td></tr>
+</table>

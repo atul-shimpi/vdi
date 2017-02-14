@@ -1,0 +1,6 @@
+<div class="job_details_<%= row_type %> clearfix">
+  <div class="job_details_<%= row_type %>_L"><%= name %>:</div>
+  <div class="job_details_<%= row_type %>_R">
+    <%= content %>
+  </div>
+</div>

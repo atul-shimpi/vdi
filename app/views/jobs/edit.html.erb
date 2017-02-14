@@ -1,0 +1,126 @@
+<%CalendarDateSelect.format = ("iso_date").to_sym%>
+<%= calendar_date_select_includes "silver" %>
+<div class="headlabel" align="center">
+	<h1>Editing job</h1>
+	
+<table class="mainTable" id="widthControl2">
+	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow"><td><div align="left"><%= link_to 'Back', jobs_path %></div></td>
+		    	<td><div align="center"><%= error_messages_for :job %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+				<% form_for(@job) do |f| %>
+					<tr>
+				      <td><label for="job_name">Name</label></td>
+				      <td id="secondTd"><%= f.text_field :name %></td>
+				    </tr>
+				    <tr>
+				      <td><label for="job_description">Description</label></td>
+				      <td id="secondTd"><%= f.text_field :description %></td>
+				    </tr>
+					<tr>
+				      <td>Job Usage:</td>
+				      <td id="secondTd"><%=h @job.usage %></td>
+				    </tr>
+					<% if @job.project_id%>
+				      <tr>
+				         <td><label for="job_project_id">Project ID</label></td>
+				         <td id="secondTd"><%= f.text_field :project_id %></td>
+				       </tr>	
+					<%end%>
+				    <!--
+				    <tr>
+				      <td><label for="job_permission">Permission</label></td>
+				      <td><%#= f.text_field :permission %></td>
+				    </tr>
+				    -->
+				    <tr>
+				      <td><label for="job_lease_time">Lease Time</label></td>
+					  <% if current_user.is_admin || current_user.is_sys_admin || current_user.is_external || current_user.is_testbreak_team%>
+				          <td id="secondTd"><%= f.calendar_date_select :lease_time, :time => false, :year_range => 10.years.ago..10.years.from_now %></td>
+				      <% else %>
+					      <td id="secondTd"><%= f.text_field :lease_time, :disabled =>"disabled"%></td>
+					  <% end %>
+					</tr>
+				    
+				    <tr>
+				      <td><label for="job_share_group_id">Groups</label></td>
+				      <!--<td><%= @groupname%></td>
+					  <input type="hidden" name="groupname" value="<%= @groupname %>"/>-->
+				      <td id="secondTd"><%=f.select "group_id", (Group.find(:all, :conditions=> "ispublic = 1") + current_user.groups).uniq.collect {|r| [ r.name, r.id ]},{:include_blank => false},:class=>"input_search"%></td>
+				    </tr>
+					<% if current_user.is_admin || current_user.is_sys_admin || current_user.is_testbreak_team%>
+					<tr>
+				      <td><label for="job_owner">User</label></td>
+				      <td id="secondTd"><%=f.select "user_id", User.find(:all, :conditions=> "disabled = 0", :order=>'account').collect{|u|[u.account + '--' + u.name,u.id]}, {:selected=>@job.user_id, :include_blank=> false}%></td>
+				    </tr>
+					<% end %>
+					<%if (current_user.is_admin || current_user.is_sys_admin)%>
+					  <tr>
+				        <td><label for="support_owner">Support Owner</label></td>
+				        <td id="secondTd"><%=f.select "support_id", @sys_admins.collect{|u|[u.account + '--' + u.name,u.id]}, {:selected=>@job.support_id, :include_blank=> true}%></td>
+				      </tr>					
+					<%end%>	
+				    <tr>
+				      <td><label for="job_permission">Share Read Permission</label></td>
+				      <td id="secondTd"><%= f.check_box :rpermission %></td>
+				    </tr>
+				    <tr>
+				      <td><label for="job_permission">Share Write Permission</label></td>
+				      <td id="secondTd"><%= f.check_box :permission %></td>
+				    </tr>
+				    <tr>
+				      <td><label for="job_instancetype_id">Instance Types</label></td>
+				      <td id="secondTd"><%= @instancetype %></td>
+				    </tr>
+				    <tr>
+				      <td><label for="job_securitygroup_id">Security Groups</label></td>
+				      <td id="secondTd"><%= @securitygroup %></td>
+				    </tr>
+					<% if (current_user.is_admin || current_user.is_team || current_user.is_sys_admin || current_user.is_testbreak_team) && (@job.deploymentway == "DailyOff" || @job.deploymentway == "normal") && @job.template.is_ebs%>
+				      <tr>
+				         <td><label for="job_deployment_way">Deployment Way</label></td>
+				         <td id="secondTd"><%=f.select "deploymentway", @deploymentway,{:selected => @job.deploymentway, :include_blank => false},:class=>"input_search",:onchange=>"deploymentSetting(this)"%></td>
+					   </tr>	
+					<%end%>
+					<tr id="powerOffTime" style="display:<%='none' if @job.deploymentway != "DailyOff"%>;">
+					  <td>Daily Poweroff time</td>
+					  <td id="secondTd">
+					    <%=f.select "poweroff_hour", @poweroff_hourlist, {:selected => @job.poweroff_hour.to_s, :include_blank => false}, :class=>"input_time"%> <b>:</b> 
+						<%=f.select "poweroff_min", @poweroff_minlist,{:selected => @job.poweroff_min.to_s, :include_blank => false},:class=>"input_time"%>
+					  </td>
+					</tr>	
+				    <tr>
+				      <td>Ec2machine User:</td>
+				      <td id="secondTd"><%=h @tempalte.user %></td>
+				    </tr>
+				    <tr>
+				      <td>Ec2machine Password:</td>
+				      <td id="secondTd"><%=h @tempalte.password %></td>
+				    </tr>
+				    <tr>
+				      <td>Ec2machine Platform:</td>
+				      <td id="secondTd"><%=h @tempalte.platform %></td>
+				    </tr>
+				</table>
+			</td></tr>
+			<tr><td colspan="2" align="right">
+				<%= f.submit "update" %>
+			</td></tr>
+			 <% end %>
+		</table>
+	</td></tr>
+</table>
+</div>
+<script type="text/javascript">
+	function deploymentSetting(obj){
+	value = obj.value
+	if(value == "DailyOff"){
+		document.getElementById("powerOffTime").style.display = "";
+	}else{
+		document.getElementById("powerOffTime").style.display = "none";
+	};
+}
+</script>

@@ -1,0 +1,43 @@
+<div class="headlabel" align="center">
+	<h1>New Elastic IP</h1>
+<% form_for(@elasticip) do |f| %>
+	<table class="mainTable" id="widthControl1">
+  	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', elasticips_path %></div></td>
+				<td><div align="center"><%= error_messages_for :elasticip %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">	
+				    <tr>
+				    	<td><b>Name:</b></td>
+						<td id='secondTd'><%= f.text_field :name %></td>
+				    </tr>					
+				  <%if @region && !@region.blank?%>
+				  	<tr style="display:none;"><td><%= hidden_field_tag :region, @region %></td></tr>
+				    <tr> 	  
+				      <td><b>Region:</b></td>
+				      <td id='secondTd'><%= h @region %></td>
+				    </tr>	
+				  <%else%>
+				    <tr> 	  
+				      <td><b>Region:</b></td>
+				      <td id='secondTd'><%=f.select "region", @regions ,{:include_blank => false},:class=>"input_search"%></td>
+				    </tr>
+				  <%end%>
+				  <tr> 	  
+				      <td><b>Scope:</b></td>
+				      <td id='secondTd'><%=f.select "scope", ["standard", 'vpc'] ,{:include_blank => false},:class=>"input_search"%></td>
+				    </tr>
+				</table>
+			</td></tr>
+			<tr><td align="right" colspan="2">
+				  <%= f.submit "Create" %>
+			</td></tr>
+		</table>
+	</td></tr>
+  </table>
+<% end %>
+</div>
+

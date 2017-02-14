@@ -1,0 +1,57 @@
+<div class="headlabel" align="center">
+	<h1>New EBS Volume</h1>
+<% form_for(@ebsvolume) do |f| %>
+	<table class="mainTable" id="widthControl1">
+  	<tr><td>
+		<table class="tableList" id="noTrHover">
+			<tr id="firstRow">
+				<td><div align="left"><%= link_to 'Back', ebsvolumes_path %></div></td>
+				<td><div align="center"><%= error_messages_for :ebsvolume %></div></td>
+			</tr>
+			<tr><td colspan="2">
+				<table class="tableDetail">
+					<%if @snapshot_id && !@snapshot_id.blank?%>  
+				    <tr style="display:none;"><td><%= hidden_field_tag :snapshot_id, @snapshot_id %></td></tr>
+				    <tr> 	  
+				      <td><b>Snapshot ID:</b></td>
+				      <td id='secondTd'><%= h @snapshot_id %></td>
+				    </tr>		
+				  <%else%>
+				    Create an empty ebs volume	    
+				  <%end%>
+				  <%if @region && !@region.blank?%>
+				  	<tr style="display:none;"><td><%= hidden_field_tag :region, @region %></td></tr>
+				    <tr> 	  
+				      <td><b>Region:</b></td>
+				      <td id='secondTd'><%= h @region %></td>
+				    </tr>	
+				  <%else%>
+				    <tr> 	  
+				      <td><b>Region:</b></td>
+				      <td id='secondTd'><%=f.select "region", @regions ,{:include_blank => false},:class=>"input_search"%></td>
+				    </tr>
+				  <%end%>
+				    <tr>
+				      <td><label for="name">Name</label></td>
+				      <td id='secondTd'><%= f.text_field :name %></td>
+				    </tr>
+				
+				    <tr>
+				      <td><label for="availabilityZone">Avaliable Zone</label></td>
+				      <td id='secondTd'><%= f.text_field :availabilityZone %></td>
+				    </tr>
+				    <tr>
+				      <td><label for="size">Size</label></td>
+				      <td id='secondTd'><%= f.text_field :size %></td>
+				    </tr>
+				</table>
+			</td></tr>
+			<tr><td align="right" colspan="2">
+				  <%= f.submit "Create" %>
+			</td></tr>
+		</table>
+	</td></tr>
+  </table>
+<% end %>
+</div>
+

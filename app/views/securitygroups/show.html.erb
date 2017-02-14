@@ -1,0 +1,45 @@
+<div class="headlabel"><h1>Select securities</h1></div>
+
+<table class="mainTable">
+	<tr style="display:none;"><td><div id="notice"><%= flash[:notice] %></div></td></tr>
+	<tr><td>
+		<% form_for(@securitygroup) do |f| %>
+		<table class="tableFilter">
+			<tr>
+				<td><b>Securitygroup name:</b>&nbsp;&nbsp;<%= @securitygroup.name %></td>
+			</tr>
+		</table>
+		<% end %>
+	</td></tr>
+	<tr><td>
+		<table class="tableList">
+			<tr>
+			    <th>Name</th>
+			    <th>Protocol</th>
+			    <th>Port From</th>
+			    <th>Port To</th>	
+			    <th>Source</th>
+			  </tr>
+			
+			<% count = 0 %>
+			<% for security in @securities  %>
+			<% if count % 2 == 0 %>
+				<tr class="row_0">
+			<% else %>
+				<tr class="row_1">
+			<% end %>
+			    <td><%=h security.name %></td>
+			    <td><%=h security.protocol %></td>
+			    <td><%=h security.port_from %></td>
+			    <td><%=h security.port_to %></td>	
+			    <td><%=h security.source %></td>
+			  </tr>
+			  <% count = count + 1 %>
+			<% end %>
+		</table>
+	</td></tr>
+	<tr><td style="padding-left:30px" class="lastTd">
+		<%= link_to 'Back', securitygroups_path %>
+	</td></tr>
+</table>
+

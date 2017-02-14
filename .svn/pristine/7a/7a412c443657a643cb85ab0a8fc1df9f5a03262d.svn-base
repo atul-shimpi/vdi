@@ -1,0 +1,5 @@
+<div class="even_control ncc">
+  <ul>
+    <li><a href="#" class="help"><span><%= message %></span></a></li>
+  </ul>
+</div>
